@@ -13,6 +13,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -251,5 +252,41 @@ public class ProjectManager
     
     return diagrams;
   }
+ 
+  public void updateProjectsTable(DefaultTableModel projectsTable)
+  {
+    // Delete all projects in table
+    int rowCount = projectsTable.getRowCount();
+    for(int i = rowCount-1; i >= 0; i--)
+    {
+      projectsTable.removeRow(i);
+    }
+      
+    ArrayList<Project> projects = getProjects();
+    for(int i = 0; i < projects.size(); i++)
+    {
+      Project proj = projects.get(i);
+      String projName = proj.getName();
+      String description = proj.getDescription();
+      projectsTable.addRow(new String[]{projName, description});
+    }
+  }
   
+  public void updateDiagramsTable(DefaultTableModel diagramsTable)
+  {
+    // Delete all projects in table
+    int rowCount = diagramsTable.getRowCount();
+    for(int i = rowCount-1; i >= 0; i--)
+    {
+      diagramsTable.removeRow(i);
+    }
+      
+    ArrayList<Diagram> diagrams = getDiagrams();
+    for(int i = 0; i < diagrams.size(); i++)
+    {
+      Diagram diagram = diagrams.get(i);
+      String diagName = diagram.getName();
+      diagramsTable.addRow(new String[]{diagName});
+    }
+  }
 }
