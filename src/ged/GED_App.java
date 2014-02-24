@@ -759,44 +759,15 @@ public class GED_App extends javax.swing.JFrame
     // Get project table
     DefaultTableModel existingProjects = 
             (DefaultTableModel)ged.ExistingProjectsTable.getModel();
-    
-    // Delete all projects in table
-    int rowCount = existingProjects.getRowCount();
-    for(int i = rowCount-1; i >= 0; i--)
-    {
-      existingProjects.removeRow(i);
-    }
-      
-    ArrayList<Project> projects = project_mgr.getProjects();
-    for(int i = 0; i < projects.size(); i++)
-    {
-      Project proj = projects.get(i);
-      String projName = proj.getName();
-      String description = proj.getDescription();
-      existingProjects.addRow(new String[]{projName, description});
-    }
+    project_mgr.updateProjectsTable(existingProjects);
   }
   
   private void updateDiagramTable()
   {
     // Get project table
-    DefaultTableModel existingDialogs = 
+    DefaultTableModel existingDiagrams = 
             (DefaultTableModel)ged.ExistingDiagramsTable.getModel();
-    
-    // Delete all projects in table
-    int rowCount = existingDialogs.getRowCount();
-    for(int i = rowCount-1; i >= 0; i--)
-    {
-      existingDialogs.removeRow(i);
-    }
-      
-    ArrayList<Diagram> diagrams = project_mgr.getDiagrams();
-    for(int i = 0; i < diagrams.size(); i++)
-    {
-      Diagram diagram = diagrams.get(i);
-      String diagName = diagram.getName();
-      existingDialogs.addRow(new String[]{diagName});
-    }
+    project_mgr.updateDiagramsTable(existingDiagrams);
   }
     
     /**
