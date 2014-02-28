@@ -9,7 +9,6 @@ package ged;
 import java.io.IOException;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.SwingConstants;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.File;
@@ -41,6 +40,9 @@ public class GED_App extends javax.swing.JFrame
       ConfirmDeleteProjectDlg.setVisible(false);
       NewDiagramDlg.setVisible(false);
       DiagramSelectDialog.setVisible(false);
+      
+      // Delete diagram is not a requirement, hide the button for it
+      DeleteDiagramBtn.setVisible(false);
     }
     
     public static GED_App ged;
