@@ -7,9 +7,7 @@
 package ged;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  *
@@ -45,15 +43,7 @@ public class DiagramController
     String workspacePath = cfg_mgr.getConfigValue(varWsPath);
     String fileName = diagName + DIAG_EXTENSION;
     String filePath = workspacePath + "\\" + fileName;
-    try (PrintWriter outFile = new PrintWriter(filePath))
-    {
-      outFile.println(diagName);
-      outFile.close();
-    }
-    catch(FileNotFoundException ex)
-    {
-      System.err.println("ERROR:File failed to open:" + filePath);
-    }
+    diag.save(filePath);
     
     return diag;
   }
@@ -65,6 +55,51 @@ public class DiagramController
     File diagFile = new File(path);
     if(!diagFile.delete())
       System.out.println("Unable to delete diagram:" + diagName);
+  }
+  
+  public void closeDiagram()
+  {
+    cur_diagram = null;
+  }
+  
+  public boolean openDiagram(String diagName)
+  {
+    boolean openedSuccessfully = false;
+    
+    // Close diagram if one is already open
+    closeDiagram();
+    
+    String workspacePath = cfg_mgr.getConfigValue(varWsPath);
+    String path = workspacePath + "\\" + diagName + DIAG_EXTENSION;
+    cur_diagram = Diagram.loadDiagram(path);
+    if(cur_diagram != null)
+      openedSuccessfully = true;
+    
+    return openedSuccessfully;
+  }
+  
+  public boolean saveDiagram()
+  {
+    boolean success = false;
+    
+    if(cur_diagram != null)
+    {
+      String workspacePath = cfg_mgr.getConfigValue(varWsPath);
+      String diagName = cur_diagram.getName();
+      String fileName = diagName + DIAG_EXTENSION;
+      String filePath = workspacePath + "\\" + fileName;
+      success = cur_diagram.save(filePath);
+    }
+    return success;
+  }
+  
+  public String getOpenDiagramName()
+  {
+    String diagName = "";
+    if(cur_diagram != null)
+      diagName = cur_diagram.getName();
+    
+    return diagName;
   }
   
 }
