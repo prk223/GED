@@ -105,7 +105,6 @@ public class Project
         String name = projRdr.readLine();
         String description = projRdr.readLine();
         
-        // Add the project we found to the list
         loadedProject = new Project(name, description);
         String diagramName = projRdr.readLine();
         while(diagramName != null)
@@ -118,12 +117,12 @@ public class Project
       }
       catch(FileNotFoundException ex)
       {
-        System.err.println("ProjMgr:OpenProj:ERROR:Unable to read file" 
+        System.err.println("Project:loadProj:ERROR:Unable to read file" 
                 + filePath);
       }
       catch(IOException ex)
       {
-        System.err.println("ProjMgr:OpenProj:ERROR:IO Error:" + filePath);
+        System.err.println("Project:loadProj:ERROR:IO Error:" + filePath);
       }
     }
     
