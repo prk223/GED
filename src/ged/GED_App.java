@@ -6,6 +6,7 @@
 
 package ged;
 
+import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.SwingConstants;
@@ -26,6 +27,7 @@ public class GED_App extends javax.swing.JFrame
     
     ProjectManager project_mgr;
     ConfigurationManager config_mgr;
+    DiagramDialog diagram_dlg;
 
     /**
      * Creates new form GED_App
@@ -43,6 +45,8 @@ public class GED_App extends javax.swing.JFrame
       
       // Delete diagram is not a requirement, hide the button for it
       DeleteDiagramBtn.setVisible(false);
+      
+      diagram_dlg = new DiagramDialog(this, true);
     }
     
     public static GED_App ged;
@@ -94,6 +98,9 @@ public class GED_App extends javax.swing.JFrame
     OpenProjectBtn = new javax.swing.JButton();
     SelectWorkspaceBtn = new javax.swing.JButton();
     DeleteProjectBtn = new javax.swing.JButton();
+    MainMenuBar = new javax.swing.JMenuBar();
+    MainMenuFile = new javax.swing.JMenu();
+    MainMenuExit = new javax.swing.JMenuItem();
 
     WorkspaceChooser.setCurrentDirectory(new java.io.File("C:\\"));
       WorkspaceChooser.setDialogTitle("Select Workspace Directory");
@@ -215,7 +222,6 @@ public class GED_App extends javax.swing.JFrame
       );
 
       DiagramSelectDialog.setModal(true);
-      DiagramSelectDialog.setPreferredSize(new java.awt.Dimension(508, 447));
 
       ExistingDiagramsTable.setModel(new javax.swing.table.DefaultTableModel(
         new Object [][]
@@ -544,13 +550,29 @@ public class GED_App extends javax.swing.JFrame
           .addGap(17, 17, 17)
           .addComponent(CreateProjectBtn)
           .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-          .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 277, Short.MAX_VALUE)
+          .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
           .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
           .addGroup(ProjectSelectDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
             .addComponent(OpenProjectBtn)
             .addComponent(DeleteProjectBtn))
           .addContainerGap())
       );
+
+      MainMenuFile.setText("File");
+
+      MainMenuExit.setText("Exit");
+      MainMenuExit.addActionListener(new java.awt.event.ActionListener()
+      {
+        public void actionPerformed(java.awt.event.ActionEvent evt)
+        {
+          MainMenuExitActionPerformed(evt);
+        }
+      });
+      MainMenuFile.add(MainMenuExit);
+
+      MainMenuBar.add(MainMenuFile);
+
+      setJMenuBar(MainMenuBar);
 
       javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
       getContentPane().setLayout(layout);
@@ -691,7 +713,13 @@ public class GED_App extends javax.swing.JFrame
 
   private void OpenDiagramBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_OpenDiagramBtnMouseClicked
   {//GEN-HEADEREND:event_OpenDiagramBtnMouseClicked
-    
+    int rowNum = ExistingDiagramsTable.getSelectedRow();
+    if(rowNum >= 0)
+    {
+      String diagName = (String) ExistingDiagramsTable.getModel().getValueAt(
+              rowNum, 0);
+      diagram_dlg.open(diagName);
+    }
   }//GEN-LAST:event_OpenDiagramBtnMouseClicked
 
   private void DeleteDiagramBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_DeleteDiagramBtnMouseClicked
@@ -754,6 +782,12 @@ public class GED_App extends javax.swing.JFrame
   {//GEN-HEADEREND:event_ConfDeleteDiagCancelBtnMouseClicked
     ConfirmDeleteDiagramDlg.setVisible(false);
   }//GEN-LAST:event_ConfDeleteDiagCancelBtnMouseClicked
+
+  private void MainMenuExitActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_MainMenuExitActionPerformed
+  {//GEN-HEADEREND:event_MainMenuExitActionPerformed
+    dispose();
+    System.exit(0);
+  }//GEN-LAST:event_MainMenuExitActionPerformed
 
   
   private void updateProjectTable()
@@ -837,6 +871,9 @@ public class GED_App extends javax.swing.JFrame
   private javax.swing.JDialog DiagramSelectDialog;
   private javax.swing.JTable ExistingDiagramsTable;
   private javax.swing.JTable ExistingProjectsTable;
+  private javax.swing.JMenuBar MainMenuBar;
+  private javax.swing.JMenuItem MainMenuExit;
+  private javax.swing.JMenu MainMenuFile;
   private javax.swing.JButton NewDiagCancelBtn;
   private javax.swing.JTextField NewDiagNameText;
   private javax.swing.JButton NewDiagOkBtn;
