@@ -6,7 +6,6 @@
 
 package ged;
 
-import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.SwingConstants;
@@ -673,17 +672,7 @@ public class GED_App extends javax.swing.JFrame
 
   private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
   {//GEN-HEADEREND:event_formWindowClosing
-      try
-      {
-        // Save config changes before closing
-        ConfigurationManager cfgMgr;
-        cfgMgr = ConfigurationManager.getInstance();
-        cfgMgr.saveConfiguration();
-      }
-      catch (IOException ex)
-      {
-        Logger.getLogger(GED_App.class.getName()).log(Level.SEVERE, null, ex);
-      }
+      exit();
   }//GEN-LAST:event_formWindowClosing
 
   private void OpenProjectBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_OpenProjectBtnMouseClicked
@@ -785,10 +774,25 @@ public class GED_App extends javax.swing.JFrame
 
   private void MainMenuExitActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_MainMenuExitActionPerformed
   {//GEN-HEADEREND:event_MainMenuExitActionPerformed
-    dispose();
-    System.exit(0);
+    exit();
   }//GEN-LAST:event_MainMenuExitActionPerformed
 
+  private void exit()
+  {
+    try
+    {
+      // Save config changes before closing
+      ConfigurationManager cfgMgr;
+      cfgMgr = ConfigurationManager.getInstance();
+      cfgMgr.saveConfiguration();
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(GED_App.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    dispose();
+    System.exit(0);
+  }
   
   private void updateProjectTable()
   {
