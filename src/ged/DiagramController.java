@@ -6,6 +6,7 @@
 
 package ged;
 
+import java.awt.Graphics;
 import java.io.File;
 import java.io.IOException;
 
@@ -100,6 +101,23 @@ public class DiagramController
       diagName = cur_diagram.getName();
     
     return diagName;
+  }
+  
+  public void addClass(int x, int y)
+  {
+    if(cur_diagram != null)
+    {
+      DiagramElement e = new ClassElement("", x, y);
+      cur_diagram.addElement(e);
+    }
+  }
+  
+  public void draw(Graphics g)
+  {
+    if(cur_diagram != null)
+    {
+      cur_diagram.draw(g);
+    }
   }
   
 }
