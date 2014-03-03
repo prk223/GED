@@ -6,12 +6,17 @@
 
 package ged;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 import javax.swing.Timer;
 
@@ -21,8 +26,34 @@ import javax.swing.Timer;
  */
 public class DiagramDialog extends javax.swing.JDialog
 {
+  private final ConfigurationManager cfg_mgr;
   private final DiagramController diag_controller;
   private Timer save_timer;
+  private final DiagramPanel diag_panel;
+  
+  // Class to handle drawing the diagram
+  public class DiagramPanel extends JPanel
+  {
+    public DiagramPanel()
+    {
+      setBorder(BorderFactory.createLineBorder(Color.black));
+    }
+    
+    @Override
+    public Dimension getPreferredSize()
+    {
+      return new Dimension(25000, 25000);
+    }
+    
+    @Override
+    public void paintComponent(Graphics g)
+    {
+      super.paintComponent(g);
+      
+      // TODO draw everything
+      diag_controller.draw(g);
+    }
+  }
 
   /**
    * Creates new form DiagramDialog
@@ -34,14 +65,25 @@ public class DiagramDialog extends javax.swing.JDialog
   {
     super(parent, modal);
     initComponents();
+    diag_panel = new DiagramPanel();
+    DiagramScrollPane.setViewportView(diag_panel);
+    
+    // Force save message to be on top
+    this.getContentPane().setComponentZOrder(SaveLabel, 0);
+    
+    cfg_mgr = ConfigurationManager.getInstance();
+    int saveTimeoutMs = Integer.parseInt(
+            cfg_mgr.getConfigValue(ConfigurationManager.SAVE_TIMEOUT));
+    
     setVisible(false);  
-    setBounds(GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds());
+    setBounds(GraphicsEnvironment.getLocalGraphicsEnvironment().
+            getMaximumWindowBounds());
     SaveLabel.setVisible(false);
     
     diag_controller = DiagramController.getInstance();
     
     // Set up a timer to make save messages disappear
-    save_timer = new Timer(5000, new ActionListener(){
+    save_timer = new Timer(saveTimeoutMs, new ActionListener(){
       @Override
       public void actionPerformed(ActionEvent e)
       {
@@ -61,13 +103,13 @@ public class DiagramDialog extends javax.swing.JDialog
   private void initComponents()
   {
 
+    SaveLabel = new javax.swing.JLabel();
     AddClassBtn = new javax.swing.JButton();
-    DiagramScrollPane = new javax.swing.JScrollPane();
     AddAssociationBtn = new javax.swing.JButton();
     AddAggregationBtn = new javax.swing.JButton();
     AddInterfaceBtn = new javax.swing.JButton();
     AddSelectBtn = new javax.swing.JButton();
-    SaveLabel = new javax.swing.JLabel();
+    DiagramScrollPane = new javax.swing.JScrollPane();
     DiagramMenuBar = new javax.swing.JMenuBar();
     DiagramFileMenu = new javax.swing.JMenu();
     DiagramSaveItem = new javax.swing.JMenuItem();
@@ -78,9 +120,21 @@ public class DiagramDialog extends javax.swing.JDialog
     setName("Diagram"); // NOI18N
     setUndecorated(true);
 
-    AddClassBtn.setText("Class");
+    SaveLabel.setLabelFor(DiagramScrollPane);
+    SaveLabel.setText("SaveMsg");
+    SaveLabel.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+    SaveLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+    SaveLabel.setMinimumSize(new java.awt.Dimension(2000000, 14));
+    SaveLabel.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
 
-    DiagramScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "DiagramTitle", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.ABOVE_TOP, new java.awt.Font("Verdana", 0, 24), java.awt.Color.blue)); // NOI18N
+    AddClassBtn.setText("Class");
+    AddClassBtn.addMouseListener(new java.awt.event.MouseAdapter()
+    {
+      public void mouseClicked(java.awt.event.MouseEvent evt)
+      {
+        AddClassBtnMouseClicked(evt);
+      }
+    });
 
     AddAssociationBtn.setText("Association");
     AddAssociationBtn.setMaximumSize(new java.awt.Dimension(57, 23));
@@ -98,12 +152,7 @@ public class DiagramDialog extends javax.swing.JDialog
     AddSelectBtn.setMaximumSize(new java.awt.Dimension(57, 23));
     AddSelectBtn.setMinimumSize(new java.awt.Dimension(57, 23));
 
-    SaveLabel.setLabelFor(DiagramScrollPane);
-    SaveLabel.setText("SaveMsg");
-    SaveLabel.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-    SaveLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-    SaveLabel.setMinimumSize(new java.awt.Dimension(2000000, 14));
-    SaveLabel.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+    DiagramScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "DiagramTitle", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.ABOVE_TOP, new java.awt.Font("Verdana", 0, 24), java.awt.Color.blue)); // NOI18N
 
     DiagramFileMenu.setText("File");
 
@@ -137,14 +186,14 @@ public class DiagramDialog extends javax.swing.JDialog
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(AddAssociationBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(AddClassBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(AddAggregationBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(AddInterfaceBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(AddSelectBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(DiagramScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 580, Short.MAX_VALUE))
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+          .addComponent(AddSelectBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(AddInterfaceBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(AddAggregationBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+          .addComponent(AddAssociationBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(AddClassBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+        .addComponent(DiagramScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 553, Short.MAX_VALUE))
       .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(layout.createSequentialGroup()
           .addContainerGap()
@@ -155,20 +204,20 @@ public class DiagramDialog extends javax.swing.JDialog
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(layout.createSequentialGroup()
         .addGap(32, 32, 32)
-        .addComponent(AddClassBtn)
+        .addComponent(AddClassBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-        .addComponent(AddAssociationBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addComponent(AddAssociationBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-        .addComponent(AddAggregationBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addComponent(AddAggregationBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-        .addComponent(AddInterfaceBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addComponent(AddInterfaceBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-        .addComponent(AddSelectBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addGap(32, 220, Short.MAX_VALUE))
+        .addComponent(AddSelectBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addContainerGap(103, Short.MAX_VALUE))
       .addComponent(DiagramScrollPane)
       .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-          .addContainerGap(386, Short.MAX_VALUE)
+          .addContainerGap(459, Short.MAX_VALUE)
           .addComponent(SaveLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addContainerGap()))
     );
@@ -181,9 +230,9 @@ public class DiagramDialog extends javax.swing.JDialog
     boolean saved = diag_controller.saveDiagram();
     String saveMsg;
     if(saved)
-      saveMsg = "Successfully saved ";
+      saveMsg = "Successfully saved diagram: ";
     else
-      saveMsg = "Failed to save ";
+      saveMsg = "FAILED TO SAVE DIAGRAM: ";
     saveMsg += diag_controller.getOpenDiagramName();
     SaveLabel.setText(saveMsg);
     SaveLabel.setVisible(true);
@@ -196,6 +245,16 @@ public class DiagramDialog extends javax.swing.JDialog
   {//GEN-HEADEREND:event_DiagramCloseItemActionPerformed
     close();
   }//GEN-LAST:event_DiagramCloseItemActionPerformed
+
+  int x = 0;
+  int y = 0;
+  private void AddClassBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_AddClassBtnMouseClicked
+  {//GEN-HEADEREND:event_AddClassBtnMouseClicked
+    diag_controller.addClass(x, y);
+    x += 100;
+    y += 100;
+    diag_panel.repaint();
+  }//GEN-LAST:event_AddClassBtnMouseClicked
 
   public void open(String diagram)
   {

@@ -59,16 +59,16 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="AddAssociationBtn" max="32767" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                  <Component id="AddSelectBtn" alignment="0" max="32767" attributes="0"/>
+                  <Component id="AddInterfaceBtn" alignment="0" max="32767" attributes="0"/>
+                  <Component id="AddAggregationBtn" alignment="0" pref="114" max="32767" attributes="0"/>
+                  <Component id="AddAssociationBtn" alignment="0" max="32767" attributes="0"/>
                   <Component id="AddClassBtn" max="32767" attributes="0"/>
-                  <Component id="AddAggregationBtn" max="32767" attributes="0"/>
-                  <Component id="AddInterfaceBtn" max="32767" attributes="0"/>
-                  <Component id="AddSelectBtn" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="DiagramScrollPane" pref="580" max="32767" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="DiagramScrollPane" pref="553" max="32767" attributes="0"/>
           </Group>
           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
@@ -83,21 +83,21 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
-              <Component id="AddClassBtn" min="-2" max="-2" attributes="0"/>
+              <Component id="AddClassBtn" min="-2" pref="61" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-              <Component id="AddAssociationBtn" min="-2" max="-2" attributes="0"/>
+              <Component id="AddAssociationBtn" min="-2" pref="61" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-              <Component id="AddAggregationBtn" min="-2" max="-2" attributes="0"/>
-              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-              <Component id="AddInterfaceBtn" min="-2" max="-2" attributes="0"/>
-              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-              <Component id="AddSelectBtn" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="32" pref="220" max="32767" attributes="0"/>
+              <Component id="AddAggregationBtn" min="-2" pref="61" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="AddInterfaceBtn" min="-2" pref="61" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="AddSelectBtn" min="-2" pref="61" max="-2" attributes="0"/>
+              <EmptySpace pref="103" max="32767" attributes="0"/>
           </Group>
           <Component id="DiagramScrollPane" alignment="0" max="32767" attributes="0"/>
           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="386" max="32767" attributes="0"/>
+                  <EmptySpace pref="459" max="32767" attributes="0"/>
                   <Component id="SaveLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -106,25 +106,28 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
+    <Component class="javax.swing.JLabel" name="SaveLabel">
+      <Properties>
+        <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+          <ComponentRef name="DiagramScrollPane"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="SaveMsg"/>
+        <Property name="verticalAlignment" type="int" value="3"/>
+        <Property name="horizontalTextPosition" type="int" value="2"/>
+        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[2000000, 14]"/>
+        </Property>
+        <Property name="verticalTextPosition" type="int" value="3"/>
+      </Properties>
+    </Component>
     <Component class="javax.swing.JButton" name="AddClassBtn">
       <Properties>
         <Property name="text" type="java.lang.String" value="Class"/>
       </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="AddClassBtnMouseClicked"/>
+      </Events>
     </Component>
-    <Container class="javax.swing.JScrollPane" name="DiagramScrollPane">
-      <Properties>
-        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder justification="2" position="1" title="DiagramTitle">
-              <Font PropertyName="font" name="Verdana" size="24" style="0"/>
-              <Color PropertyName="color" blue="ff" green="0" id="blue" palette="1" red="0" type="palette"/>
-            </TitledBorder>
-          </Border>
-        </Property>
-      </Properties>
-
-      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-    </Container>
     <Component class="javax.swing.JButton" name="AddAssociationBtn">
       <Properties>
         <Property name="text" type="java.lang.String" value="Association"/>
@@ -169,19 +172,19 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="SaveLabel">
+    <Container class="javax.swing.JScrollPane" name="DiagramScrollPane">
       <Properties>
-        <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
-          <ComponentRef name="DiagramScrollPane"/>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+            <TitledBorder justification="2" position="1" title="DiagramTitle">
+              <Font PropertyName="font" name="Verdana" size="24" style="0"/>
+              <Color PropertyName="color" blue="ff" green="0" id="blue" palette="1" red="0" type="palette"/>
+            </TitledBorder>
+          </Border>
         </Property>
-        <Property name="text" type="java.lang.String" value="SaveMsg"/>
-        <Property name="verticalAlignment" type="int" value="3"/>
-        <Property name="horizontalTextPosition" type="int" value="2"/>
-        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[2000000, 14]"/>
-        </Property>
-        <Property name="verticalTextPosition" type="int" value="3"/>
       </Properties>
-    </Component>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+    </Container>
   </SubComponents>
 </Form>
