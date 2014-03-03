@@ -27,6 +27,7 @@ public class ConfigurationManager
   
   public static final String WORKSPACE_PATH = "WORKSPACE_PATH";
   public static final String NUM_UNDO       = "NUM_UNDO";
+  public static final String SAVE_TIMEOUT   = "SAVE_TIMEOUT";
   
   private final ArrayList<ConfigurationItem> config_items = new ArrayList<>();
   
@@ -59,9 +60,10 @@ public class ConfigurationManager
   
   private ConfigurationManager() throws IOException
   {
-    // Initialize all configuration items
+    // Initialize defaults for configuration items
     config_items.add(new ConfigurationItem(WORKSPACE_PATH, "."));
     config_items.add(new ConfigurationItem(NUM_UNDO, "10"));
+    config_items.add(new ConfigurationItem(SAVE_TIMEOUT, "5000"));
     
     File configFile = new File(".\\" + CFG_FILENAME);
     if(configFile.exists())
