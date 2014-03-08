@@ -55,7 +55,16 @@ public class Attribute
     protection_level = p;
   }
   
-  public String getStringRepresentation()
+  public String getString()
+  {
+    String str = protection_level.toString();
+    str += " " + type;
+    str += " " + name;
+    
+    return str;
+  }
+  
+  public String getPersistentRepresentation()
   {
     String rep = "<protection>" + protection_level.name();
     rep += "</protection>";
@@ -64,7 +73,7 @@ public class Attribute
     return rep;
   }
   
-  public static Attribute fromStringRepresentation(String s)
+  public static Attribute fromPersistentRepresentation(String s)
   {
     Protection p;
     String t, n;
