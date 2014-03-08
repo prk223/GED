@@ -46,7 +46,7 @@ public class Diagram implements DiagramElement
     
     try (PrintWriter outFile = new PrintWriter(filePath))
     {
-      String diagramString = getStringRepresentation();
+      String diagramString = getPersistentRepresentation();
       outFile.println(diagramString);
       outFile.close();
       success = true;
@@ -133,7 +133,7 @@ public class Diagram implements DiagramElement
   }
   
   @Override
-  public String getStringRepresentation()
+  public String getPersistentRepresentation()
   {
     String rep = "<diagram>" + name + "</diagram>\n";
     Iterator<DiagramElement> it = elements.iterator();
@@ -142,14 +142,14 @@ public class Diagram implements DiagramElement
       DiagramElement e = it.next();
       String type = e.getElementType();
       rep += "<element:" + type + ">";
-      rep += e.getStringRepresentation();
+      rep += e.getPersistentRepresentation();
       rep += "</element:" + type + ">\n";
     }
     
     return rep;
   }
   
-  public static Diagram fromStringRepresentation(String s)
+  public static Diagram fromStringRepresentation(String s) throws IOException
   {
     Diagram d;
     
@@ -171,7 +171,7 @@ public class Diagram implements DiagramElement
         switch(type)
         {
           case "Class":
-            DiagramElement e = ClassElement.fromStringRepresentation(strArr[i]);
+            DiagramElement e = ClassElement.fromPersistentRepresentation(strArr[i]);
             d.addElement(e);
             break;
           default:
@@ -181,6 +181,18 @@ public class Diagram implements DiagramElement
     }
     
     return d;
+  }
+  
+  @Override
+  public double getDistanceFrom(int x, int y)
+  {
+    System.out.println("Diagram does not support getDistanceFrom");
+    return -10000000;
+  }
+  
+  public ArrayList<DiagramElement> getElements()
+  {
+    return elements;
   }
   
 }
