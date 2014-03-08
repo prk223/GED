@@ -24,6 +24,8 @@ public interface DiagramElement
   
   public String getElementType();
 
-  public String getStringRepresentation();
+  public String getPersistentRepresentation();
+  
+  public double getDistanceFrom(int x, int y);
   
 }
