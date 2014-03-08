@@ -108,8 +108,10 @@ public class ProjectManager
     cfg_mgr.setConfigValue(varWsPath, directoryPath);
   }
   
-  public void createProject(String projName, String projDesc)
+  public boolean createProject(String projName, String projDesc)
   {
+    boolean projectCreated = false;
+    
     String workspacePath = cfg_mgr.getConfigValue(varWsPath);
     String fileName = projName + PROJ_EXTENSION;
     String filePath = workspacePath + "\\" + fileName;
@@ -118,11 +120,14 @@ public class ProjectManager
       outFile.println(projName);
       outFile.println(projDesc);
       outFile.close();
+      projectCreated = true;
     }
     catch(FileNotFoundException ex)
     {
       System.err.println("ERROR:File failed to open:" + filePath);
     }
+    
+    return projectCreated;
   }
   
   public void closeProject()
@@ -225,8 +230,10 @@ public class ProjectManager
     return projectList;
   }
   
-  public void deleteProject(String projectName) throws IOException
+  public boolean deleteProject(String projectName) throws IOException
   {
+    boolean ret = true;
+    
     String workspacePath = cfg_mgr.getConfigValue(varWsPath);
     String path = workspacePath + "\\" + projectName + PROJ_EXTENSION;
     
@@ -239,7 +246,9 @@ public class ProjectManager
     
     File projFile = new File(path);
     if(!projFile.delete())
-      System.out.println("Unable to delete project:" + projectName);
+      ret = false;
+    
+    return ret;
   }
   
   public ArrayList<Diagram> getDiagrams()
