@@ -78,7 +78,30 @@ public class Operation
     parameters.add(param);
   }
   
-  public String getStringRepresentation()
+  public String getString()
+  {
+    String str = protection_level.toString();
+    str += " " + return_type;
+    str += " " + name + "(";
+    
+    boolean first = true;
+    Iterator<Parameter> it = parameters.iterator();
+    while(it.hasNext())
+    {
+      Parameter p = it.next();
+      if(first)
+        first = false;
+      else
+        str += ", ";
+      str += p.getString();
+    }
+    
+    str += ")";
+    
+    return str;
+  }
+  
+  public String getPersistentRepresentation()
   {
     String rep = "<protection>" + protection_level.name() + "</protection>\n";
     rep += "<returnType>" + return_type + "</returnType>\n";
@@ -88,13 +111,13 @@ public class Operation
     while(it.hasNext())
     {
       Parameter p = it.next();
-      rep += "<parameter>" + p.getStringRepresentation() + "</parameter>\n";
+      rep += "<parameter>" + p.getPersistentRepresentation() + "</parameter>\n";
     }
     
     return rep;
   }
   
-  public static Operation fromStringRepresentation(String s)
+  public static Operation fromPersistentRepresentation(String s)
   {
     Protection p;
     String r;
@@ -110,7 +133,7 @@ public class Operation
     {
       if(pieces[i].contains("<parameter>"))
       {
-        Parameter param = Parameter.fromStringRepresentation(pieces[i]);
+        Parameter param = Parameter.fromPersistentRepresentation(pieces[i]);
         params.add(param);
       }
     }
