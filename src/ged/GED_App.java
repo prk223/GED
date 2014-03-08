@@ -6,6 +6,8 @@
 
 package ged;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.SwingConstants;
@@ -13,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.File;
 import javax.swing.JFileChooser;
+import javax.swing.Timer;
 
 /**
  *
@@ -20,33 +23,47 @@ import javax.swing.JFileChooser;
  */
 public class GED_App extends javax.swing.JFrame
 {
-    private final int PROJECT_COLUMN = 0;
-    private final int DESCRIPTION_COLUMN = 1;
+  private final int PROJECT_COLUMN = 0;
+  private final int DESCRIPTION_COLUMN = 1;
     
     
-    ProjectManager project_mgr;
-    ConfigurationManager config_mgr;
-    DiagramDialog diagram_dlg;
+  ProjectManager project_mgr;
+  ConfigurationManager config_mgr;
+  DiagramDialog diagram_dlg;
+  private Timer msg_timer;
 
-    /**
-     * Creates new form GED_App
+  /**
+   * Creates new form GED_App
    * @throws java.io.IOException
-     */
-    public GED_App() throws IOException
-    {
-      project_mgr = ProjectManager.getInstance();
-      config_mgr = ConfigurationManager.getInstance();
-      initComponents();
-      NewProjectDlg.setVisible(false);
-      ConfirmDeleteProjectDlg.setVisible(false);
-      NewDiagramDlg.setVisible(false);
-      DiagramSelectDialog.setVisible(false);
-      
-      // Delete diagram is not a requirement, hide the button for it
-      DeleteDiagramBtn.setVisible(false);
-      
-      diagram_dlg = new DiagramDialog(this, true);
-    }
+   */
+  public GED_App() throws IOException
+  {
+    project_mgr = ProjectManager.getInstance();
+    config_mgr = ConfigurationManager.getInstance();
+    initComponents();
+    NewProjectDlg.setVisible(false);
+    ConfirmDeleteProjectDlg.setVisible(false);
+    NewDiagramDlg.setVisible(false);
+    DiagramSelectDialog.setVisible(false);
+    
+    // Delete diagram is not a requirement, hide the button for it
+    DeleteDiagramBtn.setVisible(false);
+    
+    diagram_dlg = new DiagramDialog(this, true);
+    
+    // Set up a timer to make create and delete messages time out
+    ActionLabel.setVisible(false);
+    int msgTimeoutMs = Integer.parseInt(
+            config_mgr.getConfigValue(ConfigurationManager.MSG_TIMEOUT));
+    msg_timer = new Timer(msgTimeoutMs, new ActionListener(){
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        ActionLabel.setVisible(false);
+        msg_timer.stop();
+      }
+    });
+  }
     
     public static GED_App ged;
     
@@ -63,7 +80,7 @@ public class GED_App extends javax.swing.JFrame
 
     WorkspaceChooser = new javax.swing.JFileChooser();
     NewProjectDlg = new javax.swing.JDialog();
-    NewProjOkBtn = new javax.swing.JButton();
+    NewProjCreateBtn = new javax.swing.JButton();
     NewProjCancelBtn = new javax.swing.JButton();
     jLabel1 = new javax.swing.JLabel();
     jLabel2 = new javax.swing.JLabel();
@@ -81,8 +98,11 @@ public class GED_App extends javax.swing.JFrame
     DeleteDiagramBtn = new javax.swing.JButton();
     ProjNameLabel = new javax.swing.JLabel();
     CloseProjectBtn = new javax.swing.JButton();
+    DiagramSelectMenuBar = new javax.swing.JMenuBar();
+    DiagramSelectFileMenu = new javax.swing.JMenu();
+    DiagramSelectExitMenuItem = new javax.swing.JMenuItem();
     NewDiagramDlg = new javax.swing.JDialog();
-    NewDiagOkBtn = new javax.swing.JButton();
+    NewDiagCreateBtn = new javax.swing.JButton();
     NewDiagCancelBtn = new javax.swing.JButton();
     DiagNameLabel = new javax.swing.JLabel();
     NewDiagNameText = new javax.swing.JTextField();
@@ -97,6 +117,7 @@ public class GED_App extends javax.swing.JFrame
     OpenProjectBtn = new javax.swing.JButton();
     SelectWorkspaceBtn = new javax.swing.JButton();
     DeleteProjectBtn = new javax.swing.JButton();
+    ActionLabel = new javax.swing.JLabel();
     MainMenuBar = new javax.swing.JMenuBar();
     MainMenuFile = new javax.swing.JMenu();
     MainMenuExit = new javax.swing.JMenuItem();
@@ -108,12 +129,12 @@ public class GED_App extends javax.swing.JFrame
       NewProjectDlg.setMinimumSize(new java.awt.Dimension(400, 200));
       NewProjectDlg.setModal(true);
 
-      NewProjOkBtn.setText("OK");
-      NewProjOkBtn.addMouseListener(new java.awt.event.MouseAdapter()
+      NewProjCreateBtn.setText("Create");
+      NewProjCreateBtn.addMouseListener(new java.awt.event.MouseAdapter()
       {
         public void mouseClicked(java.awt.event.MouseEvent evt)
         {
-          NewProjOkBtnMouseClicked(evt);
+          NewProjCreateBtnMouseClicked(evt);
         }
       });
 
@@ -138,10 +159,10 @@ public class GED_App extends javax.swing.JFrame
           .addContainerGap()
           .addGroup(NewProjectDlgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, NewProjectDlgLayout.createSequentialGroup()
-              .addGap(0, 262, Short.MAX_VALUE)
+              .addGap(0, 244, Short.MAX_VALUE)
               .addComponent(NewProjCancelBtn)
               .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-              .addComponent(NewProjOkBtn))
+              .addComponent(NewProjCreateBtn))
             .addGroup(NewProjectDlgLayout.createSequentialGroup()
               .addComponent(jLabel2)
               .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -165,7 +186,7 @@ public class GED_App extends javax.swing.JFrame
             .addComponent(NewProjDescText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
           .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
           .addGroup(NewProjectDlgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-            .addComponent(NewProjOkBtn)
+            .addComponent(NewProjCreateBtn)
             .addComponent(NewProjCancelBtn))
           .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
       );
@@ -295,6 +316,22 @@ public class GED_App extends javax.swing.JFrame
         }
       });
 
+      DiagramSelectFileMenu.setText("File");
+
+      DiagramSelectExitMenuItem.setText("Exit");
+      DiagramSelectExitMenuItem.addActionListener(new java.awt.event.ActionListener()
+      {
+        public void actionPerformed(java.awt.event.ActionEvent evt)
+        {
+          DiagramSelectExitMenuItemActionPerformed(evt);
+        }
+      });
+      DiagramSelectFileMenu.add(DiagramSelectExitMenuItem);
+
+      DiagramSelectMenuBar.add(DiagramSelectFileMenu);
+
+      DiagramSelectDialog.setJMenuBar(DiagramSelectMenuBar);
+
       javax.swing.GroupLayout DiagramSelectDialogLayout = new javax.swing.GroupLayout(DiagramSelectDialog.getContentPane());
       DiagramSelectDialog.getContentPane().setLayout(DiagramSelectDialogLayout);
       DiagramSelectDialogLayout.setHorizontalGroup(
@@ -330,7 +367,7 @@ public class GED_App extends javax.swing.JFrame
           .addGroup(DiagramSelectDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
             .addComponent(OpenDiagramBtn)
             .addComponent(DeleteDiagramBtn))
-          .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
+          .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(CloseProjectBtn)
           .addContainerGap())
       );
@@ -338,12 +375,12 @@ public class GED_App extends javax.swing.JFrame
       NewDiagramDlg.setMinimumSize(new java.awt.Dimension(400, 200));
       NewDiagramDlg.setModal(true);
 
-      NewDiagOkBtn.setText("OK");
-      NewDiagOkBtn.addMouseListener(new java.awt.event.MouseAdapter()
+      NewDiagCreateBtn.setText("Create");
+      NewDiagCreateBtn.addMouseListener(new java.awt.event.MouseAdapter()
       {
         public void mouseClicked(java.awt.event.MouseEvent evt)
         {
-          NewDiagOkBtnMouseClicked(evt);
+          NewDiagCreateBtnMouseClicked(evt);
         }
       });
 
@@ -366,10 +403,10 @@ public class GED_App extends javax.swing.JFrame
           .addContainerGap()
           .addGroup(NewDiagramDlgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, NewDiagramDlgLayout.createSequentialGroup()
-              .addGap(0, 262, Short.MAX_VALUE)
+              .addGap(0, 244, Short.MAX_VALUE)
               .addComponent(NewDiagCancelBtn)
               .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-              .addComponent(NewDiagOkBtn))
+              .addComponent(NewDiagCreateBtn))
             .addGroup(NewDiagramDlgLayout.createSequentialGroup()
               .addComponent(DiagNameLabel)
               .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -385,7 +422,7 @@ public class GED_App extends javax.swing.JFrame
             .addComponent(NewDiagNameText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
           .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
           .addGroup(NewDiagramDlgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-            .addComponent(NewDiagOkBtn)
+            .addComponent(NewDiagCreateBtn)
             .addComponent(NewDiagCancelBtn))
           .addContainerGap())
       );
@@ -522,6 +559,12 @@ public class GED_App extends javax.swing.JFrame
         }
       });
 
+      ActionLabel.setText("Delete or Create Project");
+      ActionLabel.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+      ActionLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+      ActionLabel.setMinimumSize(new java.awt.Dimension(2000000, 14));
+      ActionLabel.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+
       javax.swing.GroupLayout ProjectSelectDialogLayout = new javax.swing.GroupLayout(ProjectSelectDialog);
       ProjectSelectDialog.setLayout(ProjectSelectDialogLayout);
       ProjectSelectDialogLayout.setHorizontalGroup(
@@ -541,6 +584,11 @@ public class GED_App extends javax.swing.JFrame
                 .addComponent(SelectWorkspaceBtn))
               .addGap(0, 0, Short.MAX_VALUE)))
           .addContainerGap())
+        .addGroup(ProjectSelectDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addGroup(ProjectSelectDialogLayout.createSequentialGroup()
+            .addContainerGap()
+            .addComponent(ActionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addContainerGap(227, Short.MAX_VALUE)))
       );
       ProjectSelectDialogLayout.setVerticalGroup(
         ProjectSelectDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -555,6 +603,11 @@ public class GED_App extends javax.swing.JFrame
             .addComponent(OpenProjectBtn)
             .addComponent(DeleteProjectBtn))
           .addContainerGap())
+        .addGroup(ProjectSelectDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ProjectSelectDialogLayout.createSequentialGroup()
+            .addContainerGap(345, Short.MAX_VALUE)
+            .addComponent(ActionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addContainerGap()))
       );
 
       MainMenuFile.setText("File");
@@ -620,15 +673,26 @@ public class GED_App extends javax.swing.JFrame
     NewProjectDlg.setVisible(false);
   }//GEN-LAST:event_NewProjCancelBtnMouseClicked
 
-  private void NewProjOkBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_NewProjOkBtnMouseClicked
-  {//GEN-HEADEREND:event_NewProjOkBtnMouseClicked
+  private void NewProjCreateBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_NewProjCreateBtnMouseClicked
+  {//GEN-HEADEREND:event_NewProjCreateBtnMouseClicked
     NewProjectDlg.setVisible(false);
     String name = NewProjNameText.getText();
     String desc = NewProjDescText.getText();
-    project_mgr.createProject(name, desc);
+    boolean created = project_mgr.createProject(name, desc);
     NewProjNameText.setText("");
     NewProjDescText.setText("");
-  }//GEN-LAST:event_NewProjOkBtnMouseClicked
+    
+    String msg = name;
+    if(created)
+      msg += " created";
+    else
+      msg += " creation failed!";
+    
+    ActionLabel.setText(msg);
+    ActionLabel.setVisible(true);
+    msg_timer.stop();
+    msg_timer.start();
+  }//GEN-LAST:event_NewProjCreateBtnMouseClicked
 
   private void DeleteProjectBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_DeleteProjectBtnMouseClicked
   {//GEN-HEADEREND:event_DeleteProjectBtnMouseClicked
@@ -647,14 +711,17 @@ public class GED_App extends javax.swing.JFrame
 
   private void ConfDeleteProjBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_ConfDeleteProjBtnMouseClicked
   {//GEN-HEADEREND:event_ConfDeleteProjBtnMouseClicked
+    String projName = "";
+    boolean deleted = false;
+    
     int rowNum = ExistingProjectsTable.getSelectedRow();
     if(rowNum >= 0)
     {
-      String projName = (String) ExistingProjectsTable.getModel().getValueAt(
+      projName = (String) ExistingProjectsTable.getModel().getValueAt(
               rowNum, PROJECT_COLUMN);
       try
       {
-        project_mgr.deleteProject(projName);
+        deleted = project_mgr.deleteProject(projName);
       }
       catch (IOException ex)
       {
@@ -663,6 +730,17 @@ public class GED_App extends javax.swing.JFrame
     }
     ConfirmDeleteProjectDlg.setVisible(false);
     updateProjectTable();
+    
+    String msg = projName;
+    if(deleted)
+      msg += " deleted";
+    else
+      msg += " failed to delete!";
+    
+    ActionLabel.setText(msg);
+    ActionLabel.setVisible(true);
+    msg_timer.stop();
+    msg_timer.start();
   }//GEN-LAST:event_ConfDeleteProjBtnMouseClicked
 
   private void ConfDeleteProjCancelBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_ConfDeleteProjCancelBtnMouseClicked
@@ -728,13 +806,11 @@ public class GED_App extends javax.swing.JFrame
 
   private void CloseProjectBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_CloseProjectBtnMouseClicked
   {//GEN-HEADEREND:event_CloseProjectBtnMouseClicked
-    project_mgr.closeProject();
-    DiagramSelectDialog.setVisible(false);
-    ProjectSelectDialog.setVisible(true);
+    closeProject();
   }//GEN-LAST:event_CloseProjectBtnMouseClicked
 
-  private void NewDiagOkBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_NewDiagOkBtnMouseClicked
-  {//GEN-HEADEREND:event_NewDiagOkBtnMouseClicked
+  private void NewDiagCreateBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_NewDiagCreateBtnMouseClicked
+  {//GEN-HEADEREND:event_NewDiagCreateBtnMouseClicked
     NewDiagramDlg.setVisible(false);
     try
     {
@@ -746,7 +822,7 @@ public class GED_App extends javax.swing.JFrame
       Logger.getLogger(GED_App.class.getName()).log(Level.SEVERE, null, ex);
     }
     NewDiagNameText.setText("");
-  }//GEN-LAST:event_NewDiagOkBtnMouseClicked
+  }//GEN-LAST:event_NewDiagCreateBtnMouseClicked
 
   private void NewDiagCancelBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_NewDiagCancelBtnMouseClicked
   {//GEN-HEADEREND:event_NewDiagCancelBtnMouseClicked
@@ -777,6 +853,18 @@ public class GED_App extends javax.swing.JFrame
     exit();
   }//GEN-LAST:event_MainMenuExitActionPerformed
 
+  private void DiagramSelectExitMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_DiagramSelectExitMenuItemActionPerformed
+  {//GEN-HEADEREND:event_DiagramSelectExitMenuItemActionPerformed
+    closeProject();
+  }//GEN-LAST:event_DiagramSelectExitMenuItemActionPerformed
+
+  private void closeProject()
+  {
+    project_mgr.closeProject();
+    DiagramSelectDialog.setVisible(false);
+    ProjectSelectDialog.setVisible(true);
+  }
+  
   private void exit()
   {
     try
@@ -858,6 +946,7 @@ public class GED_App extends javax.swing.JFrame
     }
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JLabel ActionLabel;
   private javax.swing.JButton CloseProjectBtn;
   private javax.swing.JButton ConfDeleteDiagBtn;
   private javax.swing.JButton ConfDeleteDiagCancelBtn;
@@ -873,19 +962,22 @@ public class GED_App extends javax.swing.JFrame
   private javax.swing.JButton DeleteProjectBtn;
   private javax.swing.JLabel DiagNameLabel;
   private javax.swing.JDialog DiagramSelectDialog;
+  private javax.swing.JMenuItem DiagramSelectExitMenuItem;
+  private javax.swing.JMenu DiagramSelectFileMenu;
+  private javax.swing.JMenuBar DiagramSelectMenuBar;
   private javax.swing.JTable ExistingDiagramsTable;
   private javax.swing.JTable ExistingProjectsTable;
   private javax.swing.JMenuBar MainMenuBar;
   private javax.swing.JMenuItem MainMenuExit;
   private javax.swing.JMenu MainMenuFile;
   private javax.swing.JButton NewDiagCancelBtn;
+  private javax.swing.JButton NewDiagCreateBtn;
   private javax.swing.JTextField NewDiagNameText;
-  private javax.swing.JButton NewDiagOkBtn;
   private javax.swing.JDialog NewDiagramDlg;
   private javax.swing.JButton NewProjCancelBtn;
+  private javax.swing.JButton NewProjCreateBtn;
   private javax.swing.JTextField NewProjDescText;
   private javax.swing.JTextField NewProjNameText;
-  private javax.swing.JButton NewProjOkBtn;
   private javax.swing.JDialog NewProjectDlg;
   private javax.swing.JButton OpenDiagramBtn;
   private javax.swing.JButton OpenProjectBtn;

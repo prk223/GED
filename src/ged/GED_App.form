@@ -26,10 +26,10 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace min="0" pref="262" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="244" max="32767" attributes="0"/>
                           <Component id="NewProjCancelBtn" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="NewProjOkBtn" min="-2" max="-2" attributes="0"/>
+                          <Component id="NewProjCreateBtn" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
                           <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
@@ -61,7 +61,7 @@
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="NewProjOkBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="NewProjCreateBtn" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="NewProjCancelBtn" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
@@ -70,12 +70,12 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JButton" name="NewProjOkBtn">
+        <Component class="javax.swing.JButton" name="NewProjCreateBtn">
           <Properties>
-            <Property name="text" type="java.lang.String" value="OK"/>
+            <Property name="text" type="java.lang.String" value="Create"/>
           </Properties>
           <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="NewProjOkBtnMouseClicked"/>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="NewProjCreateBtnMouseClicked"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="NewProjCancelBtn">
@@ -213,7 +213,7 @@
                       <Component id="OpenDiagramBtn" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="DeleteDiagramBtn" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="22" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Component id="CloseProjectBtn" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -292,6 +292,25 @@
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="CloseProjectBtnMouseClicked"/>
           </Events>
         </Component>
+        <Menu class="javax.swing.JMenuBar" name="DiagramSelectMenuBar">
+          <SubComponents>
+            <Menu class="javax.swing.JMenu" name="DiagramSelectFileMenu">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="File"/>
+              </Properties>
+              <SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="DiagramSelectExitMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Exit"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="DiagramSelectExitMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+              </SubComponents>
+            </Menu>
+          </SubComponents>
+        </Menu>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JDialog" name="NewDiagramDlg">
@@ -309,10 +328,10 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace min="0" pref="262" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="244" max="32767" attributes="0"/>
                           <Component id="NewDiagCancelBtn" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="NewDiagOkBtn" min="-2" max="-2" attributes="0"/>
+                          <Component id="NewDiagCreateBtn" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="DiagNameLabel" min="-2" max="-2" attributes="0"/>
@@ -334,7 +353,7 @@
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="NewDiagOkBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="NewDiagCreateBtn" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="NewDiagCancelBtn" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -343,12 +362,12 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JButton" name="NewDiagOkBtn">
+        <Component class="javax.swing.JButton" name="NewDiagCreateBtn">
           <Properties>
-            <Property name="text" type="java.lang.String" value="OK"/>
+            <Property name="text" type="java.lang.String" value="Create"/>
           </Properties>
           <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="NewDiagOkBtnMouseClicked"/>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="NewDiagCreateBtnMouseClicked"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="NewDiagCancelBtn">
@@ -521,6 +540,13 @@
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
+              <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="ActionLabel" min="-2" pref="247" max="-2" attributes="0"/>
+                      <EmptySpace pref="227" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
@@ -537,6 +563,13 @@
                       <Component id="DeleteProjectBtn" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
+              </Group>
+              <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
+                      <EmptySpace pref="345" max="32767" attributes="0"/>
+                      <Component id="ActionLabel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
               </Group>
           </Group>
         </DimensionLayout>
@@ -609,6 +642,17 @@
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="DeleteProjectBtnMouseClicked"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="ActionLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Delete or Create Project"/>
+            <Property name="verticalAlignment" type="int" value="3"/>
+            <Property name="horizontalTextPosition" type="int" value="2"/>
+            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[2000000, 14]"/>
+            </Property>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>
