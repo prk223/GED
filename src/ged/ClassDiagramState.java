@@ -6,6 +6,7 @@
 
 package ged;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -88,8 +89,16 @@ public class ClassDiagramState implements DiagramState
   @Override
   public void draw(Graphics g)
   {
+    // Change the color for the class that is being placed
+    Color oldColor = g.getColor();
+    Color newColor = new Color(255, 0, 0);
+    g.setColor(newColor);
+
     if(mouse_on_diagram)
       class_element.draw(g);
+
+    // Replace the color
+    g.setColor(oldColor);
   }
   
   @Override
