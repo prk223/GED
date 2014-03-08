@@ -103,7 +103,12 @@ public class DiagramController
     return diagName;
   }
   
-  public void addClass(int x, int y)
+  public Diagram getOpenDiagram()
+  {
+    return cur_diagram;
+  }
+  
+  public void addClass(int x, int y) throws IOException
   {
     if(cur_diagram != null)
     {
