@@ -43,14 +43,19 @@ public class Parameter
     type = t;
   }
   
-  public String getStringRepresentation()
+  public String getString()
+  {
+    return type + " " + name;
+  }
+  
+  public String getPersistentRepresentation()
   {
     String rep = "<type>" + type + "</type>\n";
     rep += "<name>" + name + "</name>\n";
     return rep;
   }
   
-  public static Parameter fromStringRepresentation(String s)
+  public static Parameter fromPersistentRepresentation(String s)
   {
     String t, n;
     
