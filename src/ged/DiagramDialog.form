@@ -62,9 +62,7 @@
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" max="-2" attributes="0">
                   <Component id="AddSelectBtn" alignment="0" max="32767" attributes="0"/>
-                  <Component id="AddInterfaceBtn" alignment="0" max="32767" attributes="0"/>
-                  <Component id="AddAggregationBtn" alignment="0" pref="114" max="32767" attributes="0"/>
-                  <Component id="AddAssociationBtn" alignment="0" max="32767" attributes="0"/>
+                  <Component id="AddRelationshipBtn" alignment="0" pref="114" max="32767" attributes="0"/>
                   <Component id="AddClassBtn" max="32767" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -85,14 +83,10 @@
               <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
               <Component id="AddClassBtn" min="-2" pref="61" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-              <Component id="AddAssociationBtn" min="-2" pref="61" max="-2" attributes="0"/>
-              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-              <Component id="AddAggregationBtn" min="-2" pref="61" max="-2" attributes="0"/>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="AddInterfaceBtn" min="-2" pref="61" max="-2" attributes="0"/>
+              <Component id="AddRelationshipBtn" min="-2" pref="61" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="AddSelectBtn" min="-2" pref="61" max="-2" attributes="0"/>
-              <EmptySpace pref="103" max="32767" attributes="0"/>
+              <EmptySpace pref="247" max="32767" attributes="0"/>
           </Group>
           <Component id="DiagramScrollPane" alignment="0" max="32767" attributes="0"/>
           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
@@ -128,31 +122,9 @@
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="AddClassBtnMouseClicked"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="AddAssociationBtn">
+    <Component class="javax.swing.JButton" name="AddRelationshipBtn">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Association"/>
-        <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[57, 23]"/>
-        </Property>
-        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[57, 23]"/>
-        </Property>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JButton" name="AddAggregationBtn">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Aggregation"/>
-        <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[57, 23]"/>
-        </Property>
-        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[57, 23]"/>
-        </Property>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JButton" name="AddInterfaceBtn">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Interface"/>
+        <Property name="text" type="java.lang.String" value="Relationship"/>
         <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[57, 23]"/>
         </Property>
@@ -171,6 +143,9 @@
           <Dimension value="[57, 23]"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="AddSelectBtnMouseClicked"/>
+      </Events>
     </Component>
     <Container class="javax.swing.JScrollPane" name="DiagramScrollPane">
       <Properties>
