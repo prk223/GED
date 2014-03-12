@@ -28,4 +28,10 @@ public interface DiagramElement
   
   public double getDistanceFrom(int x, int y);
   
+  public void displayEditGui();
+  
+  public int getMaxX();
+  
+  public int getMaxY();
+  
 }
