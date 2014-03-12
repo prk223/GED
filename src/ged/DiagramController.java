@@ -6,6 +6,7 @@
 
 package ged;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.io.File;
 import java.io.IOException;
@@ -123,6 +124,19 @@ public class DiagramController
     {
       cur_diagram.draw(g);
     }
+  }
+  
+  public Dimension getDiagramDimension()
+  {
+    Dimension d = new Dimension(25000, 25000);
+    if(cur_diagram != null)
+    {
+      int x = cur_diagram.getMaxX();
+      int y = cur_diagram.getMaxY();
+      d.setSize(new Dimension(x, y));
+    }
+    
+    return d;
   }
   
 }
