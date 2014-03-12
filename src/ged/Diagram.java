@@ -24,15 +24,21 @@ import java.util.Iterator;
  */
 public class Diagram implements DiagramElement
 {
+  private final ConfigurationManager cfg_mgr;
   private final String name;
   private final ArrayList<DiagramElement> elements;
   private Point location;
+  private int diag_buffer_size;
   
-  public Diagram(String diagName)
+  public Diagram(String diagName) throws IOException
   {
     location = new Point(0, 0);
     name = diagName;
     elements = new ArrayList<>();
+    
+    cfg_mgr = ConfigurationManager.getInstance();
+    diag_buffer_size = Integer.parseInt(
+            cfg_mgr.getConfigValue(ConfigurationManager.DIAGRAM_BFR_SIZE));
   }
   
   public String getName()
@@ -105,7 +111,6 @@ public class Diagram implements DiagramElement
   @Override
   public void draw(Graphics g)
   {
-    // TODO set bounds of draw space, only draw what's needed
     Iterator<DiagramElement> it = elements.iterator();
     while(it.hasNext())
     {
@@ -156,22 +161,24 @@ public class Diagram implements DiagramElement
     String n = getValueFromTag(s, "diagram");
     d = new Diagram(n);
     
-    String[] strArr = s.split("\n");
+    String startTag = "<element:";
+    String endTag = "</element:";
+    String[] strArr = s.split(startTag);
     for(int i = 0; i < strArr.length; i++)
     {
-      String startTag = "<element:";
-      if(strArr[i].contains(startTag))
+      if(strArr[i].contains(endTag))
       {
+        strArr[i] = startTag + strArr[i];
         String type = "ERROR";
         int typeStart = strArr[i].indexOf(startTag) + startTag.length();
         int typeEnd = strArr[i].indexOf(">", typeStart);
         if(typeEnd > typeStart)
           type = strArr[i].substring(typeStart, typeEnd);
-        String elementString = getValueFromTag(strArr[i], "element:" + type);
         switch(type)
         {
           case "Class":
-            DiagramElement e = ClassElement.fromPersistentRepresentation(strArr[i]);
+            DiagramElement e = ClassElement.
+                    fromPersistentRepresentation(strArr[i]);
             d.addElement(e);
             break;
           default:
@@ -193,6 +200,50 @@ public class Diagram implements DiagramElement
   public ArrayList<DiagramElement> getElements()
   {
     return elements;
+  }
+  
+  @Override
+  public void displayEditGui()
+  {
+    // Nothing to do here
+  }
+  
+  @Override
+  public int getMaxX()
+  {
+    int maxX = 0;
+    
+    Iterator<DiagramElement> itEl = elements.iterator();
+    while(itEl.hasNext())
+    {
+      DiagramElement e = itEl.next();
+      if(e.getMaxX() > maxX)
+        maxX = e.getMaxX();
+    }
+    
+    // Add buffer to diagram around what's already drawn
+    maxX += diag_buffer_size;
+    
+    return maxX;
+  }
+  
+  @Override
+  public int getMaxY()
+  {
+    int maxY = 0;
+    
+    Iterator<DiagramElement> itEl = elements.iterator();
+    while(itEl.hasNext())
+    {
+      DiagramElement e = itEl.next();
+      if(e.getMaxY() > maxY)
+        maxY = e.getMaxY();
+    }
+    
+    // Add buffer to diagram around what's already drawn
+    maxY += diag_buffer_size;
+    
+    return maxY;
   }
   
 }
