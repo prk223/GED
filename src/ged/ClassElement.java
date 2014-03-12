@@ -7,6 +7,7 @@
 package ged;
 
 import static ged.Util.getValueFromTag;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.io.IOException;
@@ -25,6 +26,11 @@ public class ClassElement implements DiagramElement
   private final ArrayList<Attribute> attributes;
   private final ArrayList<Operation> operations;
   private Point location;
+  private EditClassDialog edit_class_dlg;
+  private int width, height;
+  private final int min_width, min_height;
+  private final int buffer;
+  
   
   public ClassElement(String n, int x, int y) throws IOException
   {
@@ -34,6 +40,13 @@ public class ClassElement implements DiagramElement
     name = n;
     attributes = new ArrayList<>();
     operations = new ArrayList<>();
+    edit_class_dlg = new EditClassDialog(null, true);
+    min_height = Integer.parseInt(
+            cfg_mgr.getConfigValue(ConfigurationManager.MIN_CLASS_HEIGHT));
+    min_width = Integer.parseInt(
+            cfg_mgr.getConfigValue(ConfigurationManager.MIN_CLASS_WIDTH));
+    buffer = Integer.parseInt(
+            cfg_mgr.getConfigValue(ConfigurationManager.LINE_BFR_SIZE));
   }
   
   public String getName()
@@ -67,6 +80,41 @@ public class ClassElement implements DiagramElement
     attributes.add(a);
   }
   
+  public void insertAttribute(Attribute a, int index)
+  {
+    attributes.add(index, a);
+  }
+  
+  public void deleteAttribute(Attribute delA)
+  {
+    String aString = delA.getString();
+    Iterator<Attribute> itAttr = attributes.iterator();
+    while(itAttr.hasNext())
+    {
+      Attribute attr = itAttr.next();
+      if(attr.getString().equals(aString))
+      {
+        itAttr.remove();
+        break;
+      }
+    }
+  }
+  
+  public void deleteOperation(Operation delO)
+  {
+    String oString = delO.getString();
+    Iterator<Operation> itOp = operations.iterator();
+    while(itOp.hasNext())
+    {
+      Operation op = itOp.next();
+      if(op.getString().equals(oString))
+      {
+        itOp.remove();
+        break;
+      }
+    }
+  }
+  
   public void addOperation(String n, String ret, Protection p, 
           ArrayList<Parameter> args)
   {
@@ -84,49 +132,52 @@ public class ClassElement implements DiagramElement
   {
     int x = location.x;
     int y = location.y;
-    int width = getWidth();
-    int height = getHeight();
-    int charHeight = Integer.parseInt(
-            cfg_mgr.getConfigValue(ConfigurationManager.CHAR_HEIGHT));
+    setWidth(g);
+    setHeight(g);
+    
+    FontMetrics metrics = g.getFontMetrics();
+    int charHeight = metrics.getHeight();
+    
+    int boxHeight = height;
     
     // Draw outline of entire class
-    g.drawRect(x, y, width, height);
+    g.drawRect(x, y, width, boxHeight);
     
     // Draw name and line after
-    g.drawString(name, x+1, y+1);
-    height = charHeight + 1;
-    g.drawRect(x, y, width, height);
+    boxHeight = charHeight + buffer;
+    g.drawString(name, x + buffer, y + boxHeight);
+    boxHeight += buffer;
+    g.drawRect(x, y, width, boxHeight);
     
     // Draw attributes and line after
     Iterator<Attribute> itAttr = attributes.iterator();
     while(itAttr.hasNext())
     {
+      boxHeight += charHeight + buffer;
       Attribute a = itAttr.next();
-      g.drawString(a.getString(), x+1, height+1);
-      height += charHeight;
+      g.drawString(a.getString(), x + buffer, y + boxHeight);
     }
-    g.drawRect(x, y, width, height);
+    boxHeight += buffer;
+    g.drawRect(x, y, width, boxHeight);
     
     // Draw operations
     Iterator<Operation> itOp = operations.iterator();
     while(itOp.hasNext())
     {
+      boxHeight += charHeight + buffer;
       Operation o = itOp.next();
-      g.drawString(o.getString(), x+1, height+1);
-      height += charHeight;
+      g.drawString(o.getString(), x + buffer, y + boxHeight);
     }
   }
   
-  public int getWidth()
+  public void setWidth(Graphics g)
   {
-    int minWidth = Integer.parseInt(
-            cfg_mgr.getConfigValue(ConfigurationManager.MIN_CLASS_WIDTH));
-    int charWidth = Integer.parseInt(
-            cfg_mgr.getConfigValue(ConfigurationManager.CHAR_WIDTH));
+    FontMetrics metrics = g.getFontMetrics();
+    
+    width = min_width; // reset width and grow as needed
     
     // Find longest string to determine width needed
-    int width = minWidth;
-    int lineWidth = name.length() * charWidth;
+    int lineWidth = buffer + metrics.stringWidth(name) + buffer;
     if(lineWidth > width)
       width = lineWidth;
     
@@ -134,7 +185,7 @@ public class ClassElement implements DiagramElement
     while(itAttr.hasNext())
     {
       Attribute a = itAttr.next();
-      lineWidth = a.getString().length() * charWidth;
+      lineWidth = buffer + metrics.stringWidth(a.getString()) + buffer;
       if(lineWidth > width)
         width = lineWidth;
     }
@@ -143,34 +194,28 @@ public class ClassElement implements DiagramElement
     while(itOp.hasNext())
     {
       Operation o = itOp.next();
-      lineWidth = o.getString().length() * charWidth;
+      lineWidth = buffer + metrics.stringWidth(o.getString()) + buffer;
       if(lineWidth > width)
         width = lineWidth;
     }
-    
-    return width;
   }
   
-  public int getHeight()
+  public void setHeight(Graphics g)
   {
-    int minHeight = Integer.parseInt(
-            cfg_mgr.getConfigValue(ConfigurationManager.MIN_CLASS_HEIGHT));
-    int charHeight = Integer.parseInt(
-            cfg_mgr.getConfigValue(ConfigurationManager.CHAR_HEIGHT));
+    FontMetrics metrics = g.getFontMetrics();
+    int charHeight = metrics.getHeight() + 2;
     
     // Find longest string to determine height needed
-    int height = charHeight; // Move past name portion
+    height = buffer + charHeight + buffer; // Move past name portion
     
     // Move past all attribute lines
-    height += attributes.size() * charHeight;
+    height += attributes.size() *(charHeight + buffer);
     
     // Move past all operation lines
-    height += operations.size() * charHeight;
+    height += operations.size() * (charHeight + buffer);
     
-    if(height < minHeight)
-      height = minHeight;
-    
-    return height;
+    if(height < min_height)
+      height = min_height;
   }
   
   
@@ -204,14 +249,14 @@ public class ClassElement implements DiagramElement
     while(attrIt.hasNext())
     {
       Attribute a = attrIt.next();
-      rep += "<attribute>" + a.getPersistentRepresentation() + "</attribute>\n";
+      rep += "<attribute>" + a.getPersistentRepresentation() + "</attribute>";
     }
     
     Iterator<Operation> opIt = operations.iterator();
     while(opIt.hasNext())
     {
       Operation o = opIt.next();
-      rep += "<operation>" + o.getPersistentRepresentation() + "</operation>\n";
+      rep += "<operation>" + o.getPersistentRepresentation() + "</operation>";
     }
     
     return rep;
@@ -236,17 +281,23 @@ public class ClassElement implements DiagramElement
     
     e = new ClassElement(n, x, y);
     
-    String[] strArr = s.split("\n");
-    for(int i = 0; i < strArr.length; i++)
+    String[] attr_pieces = s.split("<attribute>");
+    for(int i = 0; i < attr_pieces.length; i++)
     {
-      if(strArr[i].contains("<attribute>"))
+      if(attr_pieces[i].contains("</attribute>"))
       {
-        Attribute a = Attribute.fromPersistentRepresentation(strArr[i]);
+        attr_pieces[i] = "<attribute>" + attr_pieces[i];
+        Attribute a = Attribute.fromPersistentRepresentation(attr_pieces[i]);
         e.addAttribute(a);
       }
-      else if(strArr[i].contains("<operation>"))
+    }
+    String[] op_pieces = s.split("<operation>");
+    for(int i = 0; i < op_pieces.length; i++)
+    {
+      if(op_pieces[i].contains("</operation>"))
       {
-        Operation o = Operation.fromPersistentRepresentation(strArr[i]);
+        op_pieces[i] = "<operation>" + op_pieces[i];
+        Operation o = Operation.fromPersistentRepresentation(op_pieces[i]);
         e.addOperation(o);
       }
     }
@@ -259,8 +310,6 @@ public class ClassElement implements DiagramElement
   {
     int myX = location.x;
     int myY = location.y;
-    int height = getHeight();
-    int width  = getWidth();
     double distance;
     
     if(x < myX) // left of me
@@ -308,5 +357,23 @@ public class ClassElement implements DiagramElement
     }
     
     return distance;
+  }
+  
+  @Override
+  public void displayEditGui()
+  {
+    edit_class_dlg.open(this);
+  }
+  
+  @Override
+  public int getMaxX()
+  {
+    return location.x + width;
+  }
+  
+  @Override
+  public int getMaxY()
+  {
+    return location.y + height;
   }
 }
