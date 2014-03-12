@@ -50,8 +50,8 @@ public class Parameter
   
   public String getPersistentRepresentation()
   {
-    String rep = "<type>" + type + "</type>\n";
-    rep += "<name>" + name + "</name>\n";
+    String rep = "<type>" + type + "</type>";
+    rep += "<name>" + name + "</name>";
     return rep;
   }
   
