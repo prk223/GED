@@ -14,6 +14,7 @@ import static ged.Util.getValueFromTag;
  */
 public class Attribute
 {
+  private boolean is_static;
   private Protection protection_level;
   private String type;
   private String name;
@@ -23,6 +24,7 @@ public class Attribute
     name = n;
     type = t;
     protection_level = p;
+    is_static = false;
   }
   
   public String getName()
@@ -40,6 +42,11 @@ public class Attribute
     return protection_level;
   }
   
+  public boolean getStatic()
+  {
+    return is_static;
+  }
+  
   public void setName(String n)
   {
     name = n;
@@ -55,9 +62,17 @@ public class Attribute
     protection_level = p;
   }
   
+  public void setStatic(boolean stc)
+  {
+    is_static = stc;
+  }
+  
   public String getString()
   {
-    String str = protection_level.toString();
+    String str = "";
+    if(is_static)
+      str = "static ";
+    str += protection_level.toString().toLowerCase();
     str += " " + type;
     str += " " + name;
     
@@ -66,7 +81,11 @@ public class Attribute
   
   public String getPersistentRepresentation()
   {
-    String rep = "<protection>" + protection_level.name();
+    String rep = "<static>";
+    if(is_static) rep += "1";
+    else rep += "0";
+    rep += "</static>";
+    rep += "<protection>" + protection_level.name();
     rep += "</protection>";
     rep += "<type>" + type + "</type>";
     rep += "<name>" + name + "</name>";
@@ -78,11 +97,18 @@ public class Attribute
     Protection p;
     String t, n;
     
+    boolean stc = false;
+    String stc_str = getValueFromTag(s, "static");
+    if(stc_str.equals("1"))
+      stc = true;
     p = Protection.valueOf(getValueFromTag(s, "protection"));
     t = getValueFromTag(s, "type");
     n = getValueFromTag(s, "name");
     
-    return new Attribute(p, t, n);
+    Attribute a = new Attribute(p, t, n);
+    a.setStatic(stc);
+    
+    return a;
   }
   
 }
