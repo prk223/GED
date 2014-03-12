@@ -41,24 +41,7 @@ public class SelectDiagramState implements DiagramState
   @Override
   public void mouseClicked(MouseEvent evt)
   {
-    selected_element = null; // Clear any previous selection
-    Diagram diag = diag_controller.getOpenDiagram();
-    double minDistance = Double.parseDouble(
-            cfg_mgr.getConfigValue(ConfigurationManager.SELECT_DISTANCE));
-    Iterator<DiagramElement> it = diag.getElements().iterator();
-    while(it.hasNext())
-    {
-      DiagramElement e = it.next();
-      double distance = e.getDistanceFrom(evt.getX(), evt.getY());
-      if(distance < minDistance)
-      {
-        minDistance = distance;
-        selected_element = e;
-        drag_offset_x = selected_element.getLocation().x - evt.getX();
-        drag_offset_y = selected_element.getLocation().y - evt.getY();
-      }
-    }
-    
+    selectNearestElement(evt.getX(), evt.getY());
     mouse_pressed = false;
   }
   
@@ -66,6 +49,11 @@ public class SelectDiagramState implements DiagramState
   public void mouseDoubleClicked(MouseEvent evt)
   {
     mouse_pressed = false;
+    selectNearestElement(evt.getX(), evt.getY());
+    if(selected_element != null)
+    {
+      selected_element.displayEditGui();
+    }
   }
   
   @Override
@@ -111,7 +99,7 @@ public class SelectDiagramState implements DiagramState
   @Override
   public void mousePressed(MouseEvent evt)
   {
-    mouseClicked(evt);
+    selectNearestElement(evt.getX(), evt.getY());
     mouse_pressed = true;
     if(selected_element != null)
     {
@@ -146,6 +134,27 @@ public class SelectDiagramState implements DiagramState
     mouse_pressed = false;
     drag_offset_x = 0;
     drag_offset_y = 0;
+  }
+  
+  private void selectNearestElement(int x, int y)
+  {
+    selected_element = null; // Clear any previous selection
+    Diagram diag = diag_controller.getOpenDiagram();
+    double minDistance = Double.parseDouble(
+            cfg_mgr.getConfigValue(ConfigurationManager.SELECT_DISTANCE));
+    Iterator<DiagramElement> it = diag.getElements().iterator();
+    while(it.hasNext())
+    {
+      DiagramElement e = it.next();
+      double distance = e.getDistanceFrom(x, y);
+      if(distance < minDistance)
+      {
+        minDistance = distance;
+        selected_element = e;
+        drag_offset_x = selected_element.getLocation().x - x;
+        drag_offset_y = selected_element.getLocation().y - y;
+      }
+    }
   }
   
 }
