@@ -16,6 +16,7 @@ import java.util.Iterator;
  */
 public class Operation
 {
+  private boolean is_static;
   private Protection protection_level;
   private String return_type;
   private String name;
@@ -27,6 +28,7 @@ public class Operation
     return_type = ret;
     protection_level = p;
     parameters = new ArrayList<>();
+    is_static = false;
   }
   
   public Operation(Protection p, String ret, String n,
@@ -36,6 +38,7 @@ public class Operation
     return_type = ret;
     protection_level = p;
     parameters = args;
+    is_static = false;
   }
   
   public String getName()
@@ -51,6 +54,11 @@ public class Operation
   public Protection getProtectionLevel()
   {
     return protection_level;
+  }
+  
+  public boolean getStatic()
+  {
+    return is_static;
   }
   
   public ArrayList<Parameter> getParameters()
@@ -73,14 +81,37 @@ public class Operation
     protection_level = p;
   }
   
+  public void setStatic(boolean stc)
+  {
+    is_static = stc;
+  }
+  
   public void addParameter(Parameter param)
   {
     parameters.add(param);
   }
   
+  public void deleteParameter(Parameter delParam)
+  {
+    String pString = delParam.getString();
+    Iterator<Parameter> itPrm = parameters.iterator();
+    while(itPrm.hasNext())
+    {
+      Parameter param = itPrm.next();
+      if(param.getString().equals(pString))
+      {
+        itPrm.remove();
+        break;
+      }
+    }
+  }
+  
   public String getString()
   {
-    String str = protection_level.toString();
+    String str = "";
+    if(is_static)
+      str += "static ";
+    str += protection_level.toString().toLowerCase();
     str += " " + return_type;
     str += " " + name + "(";
     
@@ -103,15 +134,21 @@ public class Operation
   
   public String getPersistentRepresentation()
   {
-    String rep = "<protection>" + protection_level.name() + "</protection>\n";
-    rep += "<returnType>" + return_type + "</returnType>\n";
-    rep += "<name>" + name + "</name>\n";
+    String rep = "<static>";
+    if(is_static)
+      rep += "1";
+    else
+      rep += "0";
+    rep += "</static>";
+    rep += "<protection>" + protection_level.name() + "</protection>";
+    rep += "<returnType>" + return_type + "</returnType>";
+    rep += "<name>" + name + "</name>";
     
     Iterator<Parameter> it = parameters.iterator();
     while(it.hasNext())
     {
       Parameter p = it.next();
-      rep += "<parameter>" + p.getPersistentRepresentation() + "</parameter>\n";
+      rep += "<parameter>" + p.getPersistentRepresentation() + "</parameter>";
     }
     
     return rep;
@@ -124,21 +161,28 @@ public class Operation
     String n;
     ArrayList<Parameter> params = new ArrayList<>();
     
+    boolean stc = false;
+    String stcStr = getValueFromTag(s, "static");
+    if(stcStr.equals("1"))
+      stc = true;
     p = Protection.valueOf(getValueFromTag(s, "protection"));
     r = getValueFromTag(s, "returnType");
     n = getValueFromTag(s, "name");
     
-    String[] pieces = s.split("\n");
+    String[] pieces = s.split("<parameter>");
     for(int i = 0; i < pieces.length; i++)
     {
-      if(pieces[i].contains("<parameter>"))
+      if(pieces[i].contains("</parameter>"))
       {
+        pieces[i] = "<parameter>" + pieces[i];
         Parameter param = Parameter.fromPersistentRepresentation(pieces[i]);
         params.add(param);
       }
     }
     
-    return new Operation(p, r, n, params);
+    Operation o = new Operation(p, r, n, params);
+    o.setStatic(stc);
+    return o;
   }
   
 }
