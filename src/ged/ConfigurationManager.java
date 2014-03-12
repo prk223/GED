@@ -30,9 +30,9 @@ public class ConfigurationManager
   public static final String MSG_TIMEOUT      = "MSG_TIMEOUT";
   public static final String MIN_CLASS_WIDTH  = "MIN_CLASS_WIDTH";
   public static final String MIN_CLASS_HEIGHT = "MIN_CLASS_HEIGHT";
-  public static final String CHAR_WIDTH       = "CHAR_WIDTH";
-  public static final String CHAR_HEIGHT      = "CHAR_HEIGHT";
   public static final String SELECT_DISTANCE  = "SELECT_DISTANCE";
+  public static final String LINE_BFR_SIZE    = "LINE_BUFFER_SIZE";
+  public static final String DIAGRAM_BFR_SIZE = "DIAGRAM_BUFFER_SIZE";
   
   private final ArrayList<ConfigurationItem> config_items = new ArrayList<>();
   
@@ -71,9 +71,9 @@ public class ConfigurationManager
     config_items.add(new ConfigurationItem(MSG_TIMEOUT, "5000"));
     config_items.add(new ConfigurationItem(MIN_CLASS_WIDTH, "150"));
     config_items.add(new ConfigurationItem(MIN_CLASS_HEIGHT, "200"));
-    config_items.add(new ConfigurationItem(CHAR_WIDTH, "20"));
-    config_items.add(new ConfigurationItem(CHAR_HEIGHT, "30"));
     config_items.add(new ConfigurationItem(SELECT_DISTANCE, "10"));
+    config_items.add(new ConfigurationItem(LINE_BFR_SIZE, "4"));
+    config_items.add(new ConfigurationItem(DIAGRAM_BFR_SIZE, "200"));
     
     File configFile = new File(".\\" + CFG_FILENAME);
     if(configFile.exists())
