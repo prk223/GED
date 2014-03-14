@@ -37,9 +37,6 @@ public class DiagramDialog extends javax.swing.JDialog
   private final SelectDiagramState select_state;
   private final ClassDiagramState class_state;
   private final ArrayList<DiagramState> states;
-  private boolean mouse_pressed;
-  private int mouse_ref_x;
-  private int mouse_ref_y;
   
   
   // Class to handle drawing the diagram
@@ -51,9 +48,6 @@ public class DiagramDialog extends javax.swing.JDialog
     {
       setBorder(BorderFactory.createLineBorder(Color.black));
       diagram_size = new Dimension(25000, 25000);
-      mouse_pressed = false;
-      mouse_ref_x = DiagramScrollPane.getX();
-      mouse_ref_y = DiagramScrollPane.getY();
     }
     
     @Override
@@ -117,7 +111,7 @@ public class DiagramDialog extends javax.swing.JDialog
       }
     });
     
-    select_state = new SelectDiagramState();
+    select_state = new SelectDiagramState(DiagramScrollPane.getViewport());
     class_state  = new ClassDiagramState();
     state = select_state;
     states = new ArrayList<>();
@@ -139,8 +133,6 @@ public class DiagramDialog extends javax.swing.JDialog
           DiagPanelMouseDoubleClicked(evt);
         else
           DiagPanelMouseClicked(evt);
-        
-        mouse_pressed = false;
       }
       @Override
       public void mouseEntered(java.awt.event.MouseEvent evt)
@@ -156,15 +148,11 @@ public class DiagramDialog extends javax.swing.JDialog
       public void mousePressed(MouseEvent evt)
       {
         DiagPanelMousePressed(evt);
-        mouse_pressed = true;
-        mouse_ref_x = evt.getX();
-        mouse_ref_y = evt.getY();
       }
       @Override
       public void mouseReleased(MouseEvent evt)
       {
         DiagPanelMouseReleased(evt);
-        mouse_pressed = false;
       }
     });
     diag_panel.addMouseMotionListener(new java.awt.event.MouseAdapter()
@@ -173,31 +161,11 @@ public class DiagramDialog extends javax.swing.JDialog
       public void mouseMoved(MouseEvent evt)
       {
         DiagPanelMouseMoved(evt);
-        if(mouse_pressed && state == select_state)
-        {
-          int deltaX = evt.getX() - mouse_ref_x;
-          int deltaY = evt.getY() - mouse_ref_y;
-          int diagX = DiagramScrollPane.getX();
-          int diagY = DiagramScrollPane.getY();
-          DiagramScrollPane.setLocation(diagX + deltaX, diagY + deltaY);
-          mouse_ref_x = evt.getX();
-          mouse_ref_y = evt.getY();
-        }
       }
       @Override
       public void mouseDragged(java.awt.event.MouseEvent evt)
       {
         DiagPanelMouseDragged(evt);
-        if(mouse_pressed && state == select_state)
-        {
-          int deltaX = evt.getX() - mouse_ref_x;
-          int deltaY = evt.getY() - mouse_ref_y;
-          int diagX = DiagramScrollPane.getX();
-          int diagY = DiagramScrollPane.getY();
-          DiagramScrollPane.setLocation(diagX + deltaX, diagY + deltaY);
-          mouse_ref_x = evt.getX();
-          mouse_ref_y = evt.getY();
-        }
       }
     });
   }
