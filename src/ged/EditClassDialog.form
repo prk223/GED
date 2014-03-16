@@ -487,16 +487,11 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="1" attributes="0">
-              <Group type="103" groupAlignment="1" attributes="0">
+          <Group type="102" attributes="0">
+              <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="1" attributes="0">
-                              <Component id="ClassAttributeDeleteBtn" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="ClassAttributeAddBtn" min="-2" max="-2" attributes="0"/>
-                          </Group>
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="ClassOperationDeleteBtn" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
@@ -507,14 +502,24 @@
                   </Group>
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="EditClassLabel" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Component id="ClassInterfaceCheckbox" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          </Group>
+                          <Component id="EditClassLabel" alignment="1" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="ClassNameLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="ClassNameTextField" max="32767" attributes="0"/>
                           </Group>
                           <Component id="ClassOperationScrollPane" alignment="1" pref="603" max="32767" attributes="0"/>
+                          <Group type="102" alignment="1" attributes="0">
+                              <EmptySpace min="-2" pref="377" max="-2" attributes="0"/>
+                              <Component id="ClassAttributeDeleteBtn" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="ClassAttributeAddBtn" min="-2" max="-2" attributes="0"/>
+                          </Group>
                           <Component id="ClassAttributeScrollPane" alignment="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
@@ -533,21 +538,23 @@
                   <Component id="ClassNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="ClassNameTextField" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="ClassAttributeScrollPane" pref="93" max="32767" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="ClassInterfaceCheckbox" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="ClassAttributeScrollPane" pref="86" max="32767" attributes="0"/>
+              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="ClassAttributeAddBtn" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="ClassAttributeDeleteBtn" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="ClassOperationScrollPane" pref="93" max="32767" attributes="0"/>
+              <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+              <Component id="ClassOperationScrollPane" pref="86" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="ClassOperationAddBtn" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="ClassOperationDeleteBtn" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="separate" pref="44" max="32767" attributes="0"/>
+              <EmptySpace type="separate" pref="37" max="32767" attributes="0"/>
               <Component id="EditClassOkBtn" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -685,6 +692,11 @@
       <Events>
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="EditClassOkBtnMouseClicked"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="ClassInterfaceCheckbox">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Interface"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>

@@ -28,7 +28,7 @@ public class Diagram implements DiagramElement
   private final String name;
   private final ArrayList<DiagramElement> elements;
   private Point location;
-  private int diag_buffer_size;
+  private final int diag_buffer_size;
   
   public Diagram(String diagName) throws IOException
   {

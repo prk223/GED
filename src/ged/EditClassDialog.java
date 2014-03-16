@@ -109,14 +109,20 @@ public class EditClassDialog extends javax.swing.JDialog
   
   public void updateTables()
   {
-    ClassNameTextField.setText(editing_element.getName());
-      
     clearTable(attribute_table);
     clearTable(operation_table);
     clearTable(parameter_table);
     
     if(editing_element != null)
     {
+      ClassNameTextField.setText(editing_element.getName());
+
+      if(editing_element.getInterface())
+        ClassInterfaceCheckbox.setSelected(true);
+      else
+        ClassInterfaceCheckbox.setSelected(false);
+
+
       Iterator<Attribute> itAttr = editing_element.getAttributes().iterator();
       while(itAttr.hasNext())
       {
@@ -130,15 +136,15 @@ public class EditClassDialog extends javax.swing.JDialog
         Operation o = itOp.next();
         operation_table.addRow(new String[]{o.getString()});
       }
-    }
-    
-    if(editing_operation != null)
-    {
-      Iterator<Parameter> itPrm = editing_operation.getParameters().iterator();
-      while(itPrm.hasNext())
+
+      if(editing_operation != null)
       {
-        Parameter p = itPrm.next();
-        parameter_table.addRow(new String[]{p.getString()});
+        Iterator<Parameter> itPrm = editing_operation.getParameters().iterator();
+        while(itPrm.hasNext())
+        {
+          Parameter p = itPrm.next();
+          parameter_table.addRow(new String[]{p.getString()});
+        }
       }
     }
   }
@@ -208,6 +214,7 @@ public class EditClassDialog extends javax.swing.JDialog
     ClassOperationAddBtn = new javax.swing.JButton();
     ClassOperationDeleteBtn = new javax.swing.JButton();
     EditClassOkBtn = new javax.swing.JButton();
+    ClassInterfaceCheckbox = new javax.swing.JCheckBox();
 
     AttributeDlg.setMinimumSize(new java.awt.Dimension(623, 411));
     AttributeDlg.setModal(true);
@@ -656,19 +663,17 @@ public class EditClassDialog extends javax.swing.JDialog
       }
     });
 
+    ClassInterfaceCheckbox.setText("Interface");
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-          .addGroup(layout.createSequentialGroup()
+      .addGroup(layout.createSequentialGroup()
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
             .addGap(0, 0, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-              .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(ClassAttributeDeleteBtn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ClassAttributeAddBtn))
               .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(ClassOperationDeleteBtn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -676,14 +681,22 @@ public class EditClassDialog extends javax.swing.JDialog
               .addComponent(EditClassOkBtn, javax.swing.GroupLayout.Alignment.TRAILING)))
           .addGroup(layout.createSequentialGroup()
             .addContainerGap()
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-              .addComponent(EditClassLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addGroup(layout.createSequentialGroup()
+                .addComponent(ClassInterfaceCheckbox)
+                .addGap(0, 0, Short.MAX_VALUE))
+              .addComponent(EditClassLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addGroup(layout.createSequentialGroup()
                 .addComponent(ClassNameLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ClassNameTextField))
-              .addComponent(ClassOperationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 603, Short.MAX_VALUE)
-              .addComponent(ClassAttributeScrollPane, javax.swing.GroupLayout.Alignment.LEADING))))
+              .addComponent(ClassOperationScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 603, Short.MAX_VALUE)
+              .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(377, 377, 377)
+                .addComponent(ClassAttributeDeleteBtn)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ClassAttributeAddBtn))
+              .addComponent(ClassAttributeScrollPane))))
         .addContainerGap())
     );
     layout.setVerticalGroup(
@@ -695,19 +708,21 @@ public class EditClassDialog extends javax.swing.JDialog
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(ClassNameLabel)
           .addComponent(ClassNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(ClassAttributeScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+        .addComponent(ClassInterfaceCheckbox)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+        .addComponent(ClassAttributeScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
+        .addGap(1, 1, 1)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(ClassAttributeAddBtn)
           .addComponent(ClassAttributeDeleteBtn))
-        .addGap(18, 18, 18)
-        .addComponent(ClassOperationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
+        .addGap(13, 13, 13)
+        .addComponent(ClassOperationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(ClassOperationAddBtn)
           .addComponent(ClassOperationDeleteBtn))
-        .addGap(18, 44, Short.MAX_VALUE)
+        .addGap(18, 37, Short.MAX_VALUE)
         .addComponent(EditClassOkBtn)
         .addContainerGap())
     );
@@ -717,6 +732,10 @@ public class EditClassDialog extends javax.swing.JDialog
 
   private void EditClassOkBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_EditClassOkBtnMouseClicked
   {//GEN-HEADEREND:event_EditClassOkBtnMouseClicked
+    if(editing_element != null)
+    {
+      editing_element.setInterface(ClassInterfaceCheckbox.isSelected());
+    }
     setVisible(false);
   }//GEN-LAST:event_EditClassOkBtnMouseClicked
 
@@ -1013,6 +1032,7 @@ public class EditClassDialog extends javax.swing.JDialog
   private javax.swing.JTable ClassAttributeTable;
   private javax.swing.JTextField ClassAttributeTypeField;
   private javax.swing.JLabel ClassAttributeTypeLabel;
+  private javax.swing.JCheckBox ClassInterfaceCheckbox;
   private javax.swing.JLabel ClassNameLabel;
   private javax.swing.JTextField ClassNameTextField;
   private javax.swing.JButton ClassOperationAddBtn;

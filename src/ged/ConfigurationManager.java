@@ -22,7 +22,6 @@ public class ConfigurationManager
 {
   private static final String CFG_FILENAME = ".gedcfg";
   private static ConfigurationManager instance = null;
-  private static boolean config_open = false;
   
   
   public static final String WORKSPACE_PATH   = "WORKSPACE_PATH";
@@ -80,8 +79,6 @@ public class ConfigurationManager
     {
       parseConfigFile(configFile);
     }
-    
-    config_open = true;
   }
   
   private void parseConfigFile(File cfgFile) throws IOException

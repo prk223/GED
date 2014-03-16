@@ -22,11 +22,12 @@ public class ClassElement implements DiagramElement
 {
   private final ConfigurationManager cfg_mgr;
   
+  private boolean is_interface;
   private String name;
   private final ArrayList<Attribute> attributes;
   private final ArrayList<Operation> operations;
   private Point location;
-  private EditClassDialog edit_class_dlg;
+  private final EditClassDialog edit_class_dlg;
   private int width, height;
   private final int min_width, min_height;
   private final int buffer;
@@ -37,6 +38,7 @@ public class ClassElement implements DiagramElement
     cfg_mgr = ConfigurationManager.getInstance();
     
     location = new Point(x, y);
+    is_interface = false;
     name = n;
     attributes = new ArrayList<>();
     operations = new ArrayList<>();
@@ -47,6 +49,11 @@ public class ClassElement implements DiagramElement
             cfg_mgr.getConfigValue(ConfigurationManager.MIN_CLASS_WIDTH));
     buffer = Integer.parseInt(
             cfg_mgr.getConfigValue(ConfigurationManager.LINE_BFR_SIZE));
+  }
+  
+  public boolean getInterface()
+  {
+    return is_interface;
   }
   
   public String getName()
@@ -62,6 +69,11 @@ public class ClassElement implements DiagramElement
   public ArrayList<Operation> getOperations()
   {
     return operations;
+  }
+  
+  public void setInterface(boolean iface)
+  {
+    is_interface = iface;
   }
   
   public void setName(String n)
@@ -143,8 +155,16 @@ public class ClassElement implements DiagramElement
     // Draw outline of entire class
     g.drawRect(x, y, width, boxHeight);
     
+    boxHeight = 0;
+    // Draw interface tag if applicable
+    if(is_interface)
+    {
+      boxHeight += charHeight + buffer;
+      g.drawString("<< Interface >>", x + buffer, y + boxHeight);
+    }
+    
     // Draw name and line after
-    boxHeight = charHeight + buffer;
+    boxHeight += charHeight + buffer;
     g.drawString(name, x + buffer, y + boxHeight);
     boxHeight += buffer;
     g.drawRect(x, y, width, boxHeight);
@@ -205,8 +225,13 @@ public class ClassElement implements DiagramElement
     FontMetrics metrics = g.getFontMetrics();
     int charHeight = metrics.getHeight() + 2;
     
-    // Find longest string to determine height needed
-    height = buffer + charHeight + buffer; // Move past name portion
+    height = 0;
+    
+    if(is_interface)
+      height += charHeight + buffer;
+    
+    // Height of name portion
+    height += buffer + charHeight + buffer;
     
     // Move past all attribute lines
     height += attributes.size() *(charHeight + buffer);
@@ -242,8 +267,16 @@ public class ClassElement implements DiagramElement
   {
     String rep = "<location>";
     rep += Integer.toString(location.x) + "," + Integer.toString(location.y);
-    rep += "</location>\n";
-    rep += "<name>" + name + "</name>\n";
+    rep += "</location>";
+    
+    rep += "<interface>";
+    if(is_interface)
+      rep += "1";
+    else
+      rep += "0";
+    rep += "</interface>";
+    
+    rep += "<name>" + name + "</name>";
     
     Iterator<Attribute> attrIt = attributes.iterator();
     while(attrIt.hasNext())
@@ -280,6 +313,12 @@ public class ClassElement implements DiagramElement
     n = getValueFromTag(s, "name");
     
     e = new ClassElement(n, x, y);
+    
+    String ifaceStr = getValueFromTag(s, "interface");
+    if(ifaceStr.equals("1"))
+      e.setInterface(true);
+    else
+      e.setInterface(false);
     
     String[] attr_pieces = s.split("<attribute>");
     for(int i = 0; i < attr_pieces.length; i++)
