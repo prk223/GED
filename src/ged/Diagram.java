@@ -29,6 +29,8 @@ public class Diagram implements DiagramElement
   private final ArrayList<DiagramElement> elements;
   private Point location;
   private final int diag_buffer_size;
+  private int unique_id;
+  private int last_unique_id;
   
   public Diagram(String diagName) throws IOException
   {
@@ -39,6 +41,9 @@ public class Diagram implements DiagramElement
     cfg_mgr = ConfigurationManager.getInstance();
     diag_buffer_size = Integer.parseInt(
             cfg_mgr.getConfigValue(ConfigurationManager.DIAGRAM_BFR_SIZE));
+    
+    unique_id = 0;
+    last_unique_id = 0;
   }
   
   public String getName()
@@ -102,6 +107,7 @@ public class Diagram implements DiagramElement
   public void addElement(DiagramElement e)
   {
     elements.add(e);
+    ensureUniqueId(e);
   }
   
   /**
@@ -174,15 +180,22 @@ public class Diagram implements DiagramElement
         int typeEnd = strArr[i].indexOf(">", typeStart);
         if(typeEnd > typeStart)
           type = strArr[i].substring(typeStart, typeEnd);
+        DiagramElement e = null;
         switch(type)
         {
           case "Class":
-            DiagramElement e = ClassElement.
+            e = ClassElement.
                     fromPersistentRepresentation(strArr[i]);
-            d.addElement(e);
+            break;
+          case "Relationship":
+            e = Relationship.fromPersistentRepresentation(strArr[i]);
             break;
           default:
-            System.err.println("ERR:Unknown element:" + type);
+            System.err.println("ERROR:Diagram:Unknown element:" + type);
+        }
+        if(e != null)
+        {
+          d.addElement(e);
         }
       }
     }
@@ -244,6 +257,45 @@ public class Diagram implements DiagramElement
     maxY += diag_buffer_size;
     
     return maxY;
+  }
+  
+  @Override
+  public void setUniqueId(int id)
+  {
+    unique_id = 0; // Always 0 for diagrams
+  }
+  
+  @Override
+  public int getUniqueId()
+  {
+    return unique_id;
+  }
+  
+  public void ensureUniqueId(DiagramElement e)
+  {
+    if(e.getUniqueId() == 0) // Not assigned before
+    {
+      last_unique_id++;
+      e.setUniqueId(last_unique_id);
+    }
+    else // Check ID is unique in diagram
+    {
+      Iterator<DiagramElement> eIt = elements.iterator();
+      while(eIt.hasNext())
+      {
+        DiagramElement element = eIt.next();
+        if(element != e && element.getUniqueId() == e.getUniqueId())
+        {
+          String warnMsg = "WARNING:Diagram: Found 2 elements with the same ID:";
+          warnMsg += e.getUniqueId();
+          System.out.println(warnMsg);
+          last_unique_id++;
+          e.setUniqueId(last_unique_id);
+        }
+      }
+    }
+    if(e.getUniqueId() > last_unique_id)
+      last_unique_id = e.getUniqueId();
   }
   
 }
