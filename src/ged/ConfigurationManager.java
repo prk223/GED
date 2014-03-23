@@ -32,6 +32,7 @@ public class ConfigurationManager
   public static final String SELECT_DISTANCE  = "SELECT_DISTANCE";
   public static final String LINE_BFR_SIZE    = "LINE_BUFFER_SIZE";
   public static final String DIAGRAM_BFR_SIZE = "DIAGRAM_BUFFER_SIZE";
+  public static final String DFLT_RLTNSHP_LEN = "DFLT_RLTNSHP_LEN";
   
   private final ArrayList<ConfigurationItem> config_items = new ArrayList<>();
   
@@ -72,7 +73,8 @@ public class ConfigurationManager
     config_items.add(new ConfigurationItem(MIN_CLASS_HEIGHT, "200"));
     config_items.add(new ConfigurationItem(SELECT_DISTANCE, "10"));
     config_items.add(new ConfigurationItem(LINE_BFR_SIZE, "4"));
-    config_items.add(new ConfigurationItem(DIAGRAM_BFR_SIZE, "200"));
+    config_items.add(new ConfigurationItem(DIAGRAM_BFR_SIZE, "1500"));
+    config_items.add(new ConfigurationItem(DFLT_RLTNSHP_LEN, "100"));
     
     File configFile = new File(".\\" + CFG_FILENAME);
     if(configFile.exists())
