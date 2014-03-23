@@ -19,7 +19,7 @@ import javax.swing.JViewport;
  *
  * @author Comp
  */
-public class SelectDiagramState implements DiagramState
+public class SelectDiagramState extends DiagramState
 {
   private final DiagramController diag_controller;
   private final ConfigurationManager cfg_mgr;
@@ -30,10 +30,10 @@ public class SelectDiagramState implements DiagramState
   private int drag_offset_y;
   private int diag_ref_x; // reference for dragging diagram
   private int diag_ref_y;
-  private final JViewport view_port;
   
   public SelectDiagramState(JViewport v) throws IOException
   {
+    super(v);
     diag_controller = DiagramController.getInstance();
     cfg_mgr = ConfigurationManager.getInstance();
     selected_element = null;
@@ -41,18 +41,10 @@ public class SelectDiagramState implements DiagramState
     mouse_pressed = false;
     drag_offset_x = 0;
     drag_offset_y = 0;
-    view_port = v;
   }
   
   @Override
-  public void mouseClicked(MouseEvent evt)
-  {
-    selectNearestElement(evt.getX(), evt.getY());
-    mouse_pressed = false;
-  }
-  
-  @Override
-  public void mouseDoubleClicked(MouseEvent evt)
+  public DiagramState mouseDoubleClicked(MouseEvent evt)
   {
     mouse_pressed = false;
     selectNearestElement(evt.getX(), evt.getY());
@@ -60,23 +52,19 @@ public class SelectDiagramState implements DiagramState
     {
       selected_element.displayEditGui();
     }
+    mouse_on_diagram = true;
+    return next_state;
   }
   
   @Override
-  public void mouseMoved(MouseEvent evt)
+  public DiagramState mouseMoved(MouseEvent evt)
   {
-    if(mouse_on_diagram && selected_element != null
-            && mouse_pressed)
-    {
-      Point p = selected_element.getLocation();
-      p.x = evt.getX() + drag_offset_x;
-      p.y = evt.getY() + drag_offset_y;
-      selected_element.setLocation(p);
-    }
+    mouse_on_diagram = true;
+    return next_state;
   }
   
   @Override
-  public void draw(Graphics g)
+  public DiagramState draw(Graphics g)
   {
     if(selected_element != null && mouse_on_diagram)
     {
@@ -86,24 +74,27 @@ public class SelectDiagramState implements DiagramState
       selected_element.draw(g);
       g.setColor(oldColor);
     }
+    return next_state;
   }
   
   @Override
-  public void mouseEntered(MouseEvent evt)
+  public DiagramState mouseEntered(MouseEvent evt)
   {
     mouse_on_diagram = true;
     mouse_pressed = false;
+    return next_state;
   }
   
   @Override
-  public void mouseExited(MouseEvent evt)
+  public DiagramState mouseExited(MouseEvent evt)
   {
     mouse_on_diagram = false;
     mouse_pressed = false;
+    return next_state;
   }
   
   @Override
-  public void mousePressed(MouseEvent evt)
+  public DiagramState mousePressed(MouseEvent evt)
   {
     selectNearestElement(evt.getX(), evt.getY());
     mouse_pressed = true;
@@ -114,25 +105,29 @@ public class SelectDiagramState implements DiagramState
     }
     diag_ref_x = evt.getX();
     diag_ref_y = evt.getY();
+    mouse_on_diagram = true;
+    return next_state;
   }
   
   @Override
-  public void mouseReleased(MouseEvent evt)
+  public DiagramState mouseReleased(MouseEvent evt)
   {
     mouse_pressed = false;
+    mouse_on_diagram = true;
+    return next_state;
   }
   
   @Override
-  public void mouseDragged(MouseEvent evt)
+  public DiagramState mouseDragged(MouseEvent evt)
   {
-    if(mouse_on_diagram && selected_element != null)
+    if(selected_element != null)
     {
       Point p = selected_element.getLocation();
       p.x = evt.getX() + drag_offset_x;
       p.y = evt.getY() + drag_offset_y;
       selected_element.setLocation(p);
     }
-    else if(mouse_on_diagram) // no selected element
+    else // no selected element
     {
       Component view = view_port.getView();
       
@@ -161,16 +156,8 @@ public class SelectDiagramState implements DiagramState
       diag_ref_x = evt.getX() - deltaX;
       diag_ref_y = evt.getY() - deltaY;
     }
-  }
-  
-  @Override
-  public void reset()
-  {
-    selected_element = null;
-    mouse_on_diagram = false;
-    mouse_pressed = false;
-    drag_offset_x = 0;
-    drag_offset_y = 0;
+    mouse_on_diagram = true;
+    return next_state;
   }
   
   private void selectNearestElement(int x, int y)
