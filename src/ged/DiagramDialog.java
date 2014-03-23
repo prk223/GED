@@ -14,8 +14,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
@@ -34,9 +32,6 @@ public class DiagramDialog extends javax.swing.JDialog
   private Timer save_timer;
   private DiagramPanel diag_panel;
   private DiagramState state;
-  private final SelectDiagramState select_state;
-  private final ClassDiagramState class_state;
-  private final ArrayList<DiagramState> states;
   
   
   // Class to handle drawing the diagram
@@ -71,7 +66,7 @@ public class DiagramDialog extends javax.swing.JDialog
       diag_controller.draw(g);
       
       // Draw anything state specific
-      state.draw(g);
+      state = state.draw(g);
     }
   }
 
@@ -111,12 +106,7 @@ public class DiagramDialog extends javax.swing.JDialog
       }
     });
     
-    select_state = new SelectDiagramState(DiagramScrollPane.getViewport());
-    class_state  = new ClassDiagramState();
-    state = select_state;
-    states = new ArrayList<>();
-    states.add(select_state);
-    states.add(class_state);
+    state = new SelectDiagramState(DiagramScrollPane.getViewport());
   }
   
   private void initDrawspaceComponents()
@@ -131,8 +121,6 @@ public class DiagramDialog extends javax.swing.JDialog
       {
         if(evt.getClickCount() > 1)
           DiagPanelMouseDoubleClicked(evt);
-        else
-          DiagPanelMouseClicked(evt);
       }
       @Override
       public void mouseEntered(java.awt.event.MouseEvent evt)
@@ -170,57 +158,45 @@ public class DiagramDialog extends javax.swing.JDialog
     });
   }
   
-  private void DiagPanelMouseClicked(MouseEvent evt)
-  {
-    state.mouseClicked(evt);
-    if(state != select_state)
-    {
-      state = select_state;
-      state.reset();
-    }
-    state.mouseEntered(evt);
-    diag_panel.repaint();
-  }
-  
   private void DiagPanelMouseDoubleClicked(MouseEvent evt)
   {
-    state.mouseDoubleClicked(evt);
+    state = state.mouseDoubleClicked(evt);
     diag_panel.repaint();
   }
   
   private void DiagPanelMouseMoved(MouseEvent evt)
   {
-    state.mouseMoved(evt);
+    state = state.mouseMoved(evt);
     diag_panel.repaint();
   }
   
   private void DiagPanelMouseEntered(MouseEvent evt)
   {
-    state.mouseEntered(evt);
+    state = state.mouseEntered(evt);
     diag_panel.repaint();
   }
   
   private void DiagPanelMouseExited(MouseEvent evt)
   {
-    state.mouseExited(evt);
+    state = state.mouseExited(evt);
     diag_panel.repaint();
   }
   
   private void DiagPanelMouseDragged(MouseEvent evt)
   {
-    state.mouseDragged(evt);
+    state = state.mouseDragged(evt);
     diag_panel.repaint();
   }
   
   private void DiagPanelMousePressed(MouseEvent evt)
   {
-    state.mousePressed(evt);
+    state = state.mousePressed(evt);
     diag_panel.repaint();
   }
   
   private void DiagPanelMouseReleased(MouseEvent evt)
   {
-    state.mouseReleased(evt);
+    state = state.mouseReleased(evt);
     diag_panel.repaint();
   }
 
@@ -237,7 +213,7 @@ public class DiagramDialog extends javax.swing.JDialog
     SaveLabel = new javax.swing.JLabel();
     AddClassBtn = new javax.swing.JButton();
     AddRelationshipBtn = new javax.swing.JButton();
-    AddSelectBtn = new javax.swing.JButton();
+    SelectBtn = new javax.swing.JButton();
     DiagramScrollPane = new javax.swing.JScrollPane();
     DiagramMenuBar = new javax.swing.JMenuBar();
     DiagramFileMenu = new javax.swing.JMenu();
@@ -268,15 +244,22 @@ public class DiagramDialog extends javax.swing.JDialog
     AddRelationshipBtn.setText("Relationship");
     AddRelationshipBtn.setMaximumSize(new java.awt.Dimension(57, 23));
     AddRelationshipBtn.setMinimumSize(new java.awt.Dimension(57, 23));
-
-    AddSelectBtn.setText("Select");
-    AddSelectBtn.setMaximumSize(new java.awt.Dimension(57, 23));
-    AddSelectBtn.setMinimumSize(new java.awt.Dimension(57, 23));
-    AddSelectBtn.addMouseListener(new java.awt.event.MouseAdapter()
+    AddRelationshipBtn.addMouseListener(new java.awt.event.MouseAdapter()
     {
       public void mouseClicked(java.awt.event.MouseEvent evt)
       {
-        AddSelectBtnMouseClicked(evt);
+        AddRelationshipBtnMouseClicked(evt);
+      }
+    });
+
+    SelectBtn.setText("Select");
+    SelectBtn.setMaximumSize(new java.awt.Dimension(57, 23));
+    SelectBtn.setMinimumSize(new java.awt.Dimension(57, 23));
+    SelectBtn.addMouseListener(new java.awt.event.MouseAdapter()
+    {
+      public void mouseClicked(java.awt.event.MouseEvent evt)
+      {
+        SelectBtnMouseClicked(evt);
       }
     });
 
@@ -315,7 +298,7 @@ public class DiagramDialog extends javax.swing.JDialog
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-          .addComponent(AddSelectBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(SelectBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(AddRelationshipBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
           .addComponent(AddClassBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -334,7 +317,7 @@ public class DiagramDialog extends javax.swing.JDialog
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addComponent(AddRelationshipBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-        .addComponent(AddSelectBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addComponent(SelectBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addContainerGap(247, Short.MAX_VALUE))
       .addComponent(DiagramScrollPane)
       .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -365,26 +348,56 @@ public class DiagramDialog extends javax.swing.JDialog
 
   private void DiagramCloseItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_DiagramCloseItemActionPerformed
   {//GEN-HEADEREND:event_DiagramCloseItemActionPerformed
-    close();
+    try
+    {
+      close();
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
+    }
   }//GEN-LAST:event_DiagramCloseItemActionPerformed
 
   int x = 0;
   int y = 0;
   private void AddClassBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_AddClassBtnMouseClicked
   {//GEN-HEADEREND:event_AddClassBtnMouseClicked
-    state = class_state;
-    state.reset();
-    state.mouseExited(evt);
+    try
+    {
+      state = state.addClassBtnClicked(evt);
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
+    }
     diag_panel.repaint();
   }//GEN-LAST:event_AddClassBtnMouseClicked
 
-  private void AddSelectBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_AddSelectBtnMouseClicked
-  {//GEN-HEADEREND:event_AddSelectBtnMouseClicked
-    state = select_state;
-    state.reset();
-    state.mouseExited(evt);
+  private void SelectBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_SelectBtnMouseClicked
+  {//GEN-HEADEREND:event_SelectBtnMouseClicked
+    try
+    {
+      state = state.selectBtnClicked(evt);
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
+    }
     diag_panel.repaint();
-  }//GEN-LAST:event_AddSelectBtnMouseClicked
+  }//GEN-LAST:event_SelectBtnMouseClicked
+
+  private void AddRelationshipBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_AddRelationshipBtnMouseClicked
+  {//GEN-HEADEREND:event_AddRelationshipBtnMouseClicked
+    try
+    {
+      state = state.addRelationshipBtnClicked(evt);
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    diag_panel.repaint();
+  }//GEN-LAST:event_AddRelationshipBtnMouseClicked
 
   public void open(String diagram)
   {
@@ -397,15 +410,10 @@ public class DiagramDialog extends javax.swing.JDialog
     }
   }
   
-  public void close()
+  public void close() throws IOException
   {
     diag_controller.closeDiagram();
-    Iterator<DiagramState> it = states.iterator();
-    while(it.hasNext())
-    {
-      DiagramState ds = it.next();
-      ds.reset();
-    }
+    state = new SelectDiagramState(DiagramScrollPane.getViewport());
     setVisible(false);
   }
   /**
@@ -477,12 +485,12 @@ public class DiagramDialog extends javax.swing.JDialog
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton AddClassBtn;
   private javax.swing.JButton AddRelationshipBtn;
-  private javax.swing.JButton AddSelectBtn;
   private javax.swing.JMenuItem DiagramCloseItem;
   private javax.swing.JMenu DiagramFileMenu;
   private javax.swing.JMenuBar DiagramMenuBar;
   private javax.swing.JMenuItem DiagramSaveItem;
   private javax.swing.JScrollPane DiagramScrollPane;
   private javax.swing.JLabel SaveLabel;
+  private javax.swing.JButton SelectBtn;
   // End of variables declaration//GEN-END:variables
 }

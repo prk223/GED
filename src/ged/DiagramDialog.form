@@ -61,7 +61,7 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                  <Component id="AddSelectBtn" alignment="0" max="32767" attributes="0"/>
+                  <Component id="SelectBtn" alignment="0" max="32767" attributes="0"/>
                   <Component id="AddRelationshipBtn" alignment="0" pref="114" max="32767" attributes="0"/>
                   <Component id="AddClassBtn" max="32767" attributes="0"/>
               </Group>
@@ -85,7 +85,7 @@
               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
               <Component id="AddRelationshipBtn" min="-2" pref="61" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="AddSelectBtn" min="-2" pref="61" max="-2" attributes="0"/>
+              <Component id="SelectBtn" min="-2" pref="61" max="-2" attributes="0"/>
               <EmptySpace pref="247" max="32767" attributes="0"/>
           </Group>
           <Component id="DiagramScrollPane" alignment="0" max="32767" attributes="0"/>
@@ -132,8 +132,11 @@
           <Dimension value="[57, 23]"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="AddRelationshipBtnMouseClicked"/>
+      </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="AddSelectBtn">
+    <Component class="javax.swing.JButton" name="SelectBtn">
       <Properties>
         <Property name="text" type="java.lang.String" value="Select"/>
         <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -144,7 +147,7 @@
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="AddSelectBtnMouseClicked"/>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="SelectBtnMouseClicked"/>
       </Events>
     </Component>
     <Container class="javax.swing.JScrollPane" name="DiagramScrollPane">
