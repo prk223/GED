@@ -24,8 +24,6 @@ public class SelectDiagramState extends DiagramState
   private final DiagramController diag_controller;
   private final ConfigurationManager cfg_mgr;
   private DiagramElement selected_element;
-  private boolean mouse_on_diagram;
-  private boolean mouse_pressed;
   private int drag_offset_x; // offset from element loc to spot clicked
   private int drag_offset_y;
   private int diag_ref_x; // reference for dragging diagram
@@ -37,8 +35,6 @@ public class SelectDiagramState extends DiagramState
     diag_controller = DiagramController.getInstance();
     cfg_mgr = ConfigurationManager.getInstance();
     selected_element = null;
-    mouse_on_diagram = false;
-    mouse_pressed = false;
     drag_offset_x = 0;
     drag_offset_y = 0;
   }
@@ -46,27 +42,18 @@ public class SelectDiagramState extends DiagramState
   @Override
   public DiagramState mouseDoubleClicked(MouseEvent evt)
   {
-    mouse_pressed = false;
     selectNearestElement(evt.getX(), evt.getY());
     if(selected_element != null)
     {
       selected_element.displayEditGui();
     }
-    mouse_on_diagram = true;
-    return next_state;
-  }
-  
-  @Override
-  public DiagramState mouseMoved(MouseEvent evt)
-  {
-    mouse_on_diagram = true;
     return next_state;
   }
   
   @Override
   public DiagramState draw(Graphics g)
   {
-    if(selected_element != null && mouse_on_diagram)
+    if(selected_element != null)
     {
       Color oldColor = g.getColor();
       Color newColor = new Color(0, 0, 255);
@@ -78,26 +65,9 @@ public class SelectDiagramState extends DiagramState
   }
   
   @Override
-  public DiagramState mouseEntered(MouseEvent evt)
-  {
-    mouse_on_diagram = true;
-    mouse_pressed = false;
-    return next_state;
-  }
-  
-  @Override
-  public DiagramState mouseExited(MouseEvent evt)
-  {
-    mouse_on_diagram = false;
-    mouse_pressed = false;
-    return next_state;
-  }
-  
-  @Override
   public DiagramState mousePressed(MouseEvent evt)
   {
     selectNearestElement(evt.getX(), evt.getY());
-    mouse_pressed = true;
     if(selected_element != null)
     {
       drag_offset_x = selected_element.getLocation().x - evt.getX();
@@ -105,15 +75,6 @@ public class SelectDiagramState extends DiagramState
     }
     diag_ref_x = evt.getX();
     diag_ref_y = evt.getY();
-    mouse_on_diagram = true;
-    return next_state;
-  }
-  
-  @Override
-  public DiagramState mouseReleased(MouseEvent evt)
-  {
-    mouse_pressed = false;
-    mouse_on_diagram = true;
     return next_state;
   }
   
@@ -156,7 +117,6 @@ public class SelectDiagramState extends DiagramState
       diag_ref_x = evt.getX() - deltaX;
       diag_ref_y = evt.getY() - deltaY;
     }
-    mouse_on_diagram = true;
     return next_state;
   }
   
