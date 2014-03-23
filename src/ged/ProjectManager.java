@@ -188,6 +188,7 @@ public class ProjectManager
     if(cur_project != null)
     {
       cur_project.deleteDiagram(diagName);
+      diag_controller.deleteDiagram(diagName);
       saveProject();
     }
   }
