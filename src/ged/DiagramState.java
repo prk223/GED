@@ -8,30 +8,82 @@ package ged;
 
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import javax.swing.JViewport;
 
 /**
  *
  * @author Comp
  */
-public interface DiagramState
+public class DiagramState
 {
-  public void mouseClicked(MouseEvent evt);
+  protected final JViewport view_port;
+  protected DiagramState next_state;
   
-  public void mouseDoubleClicked(MouseEvent evt);
+  @SuppressWarnings("LeakingThisInConstructor")
+  public DiagramState(JViewport v)
+  {
+    view_port = v;
+    next_state = this;
+  }
   
-  public void mouseDragged(MouseEvent evt);
+  public DiagramState mouseDoubleClicked(MouseEvent evt)
+  {
+    return next_state;
+  }
   
-  public void mouseMoved(MouseEvent evt);
+  public DiagramState mouseDragged(MouseEvent evt)
+  {
+    return next_state;
+  }
   
-  public void mouseEntered(MouseEvent evt);
+  public DiagramState mouseMoved(MouseEvent evt)
+  {
+    return next_state;
+  }
   
-  public void mouseExited(MouseEvent evt);
+  public DiagramState mouseEntered(MouseEvent evt)
+  {
+    return next_state;
+  }
   
-  public void mousePressed(MouseEvent evt);
+  public DiagramState mouseExited(MouseEvent evt)
+  {
+    return next_state;
+  }
   
-  public void mouseReleased(MouseEvent evt);
+  public DiagramState mousePressed(MouseEvent evt)
+  {
+    return next_state;
+  }
   
-  public void draw(Graphics g);
+  public DiagramState mouseReleased(MouseEvent evt)
+  {
+    return next_state;
+  }
   
-  public void reset();
+  public DiagramState addClassBtnClicked(MouseEvent evt) throws IOException
+  {
+    ClassElement e = new ClassElement("", 0, 0);
+    next_state = new AddElementDiagramState(view_port, e);
+    return next_state;
+  }
+  
+  public DiagramState addRelationshipBtnClicked(MouseEvent evt) throws IOException
+  {
+    Relationship r = new Relationship(RelationshipType.INHERITANCE, 0, 0);
+    next_state = new AddElementDiagramState(view_port, r);
+    return next_state;
+  }
+  
+  public DiagramState selectBtnClicked(MouseEvent evt) throws IOException
+  {
+    next_state = new SelectDiagramState(view_port);
+    return next_state;
+  }
+  
+  public DiagramState draw(Graphics g)
+  {
+    return next_state;
+  }
 }
