@@ -34,4 +34,8 @@ public interface DiagramElement
   
   public int getMaxY();
   
+  public void setUniqueId(int id);
+  
+  public int getUniqueId();
+  
 }
