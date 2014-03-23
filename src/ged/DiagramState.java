@@ -82,8 +82,7 @@ public class DiagramState
     return next_state;
   }
   
-  public DiagramState draw(Graphics g)
+  public void draw(Graphics g)
   {
-    return next_state;
   }
 }

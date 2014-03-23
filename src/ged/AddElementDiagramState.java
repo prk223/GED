@@ -11,8 +11,6 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JViewport;
 
 /**
@@ -78,7 +76,7 @@ public class AddElementDiagramState extends DiagramState
   }
   
   @Override
-  public DiagramState draw(Graphics g)
+  public void draw(Graphics g)
   {
     // Change the color for the class that is being placed
     Color oldColor = g.getColor();
@@ -90,7 +88,5 @@ public class AddElementDiagramState extends DiagramState
 
     // Replace the color
     g.setColor(oldColor);
-    
-    return next_state;
   }
 }

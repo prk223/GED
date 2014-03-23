@@ -66,7 +66,7 @@ public class DiagramDialog extends javax.swing.JDialog
       diag_controller.draw(g);
       
       // Draw anything state specific
-      state = state.draw(g);
+      state.draw(g);
     }
   }
 

@@ -51,7 +51,7 @@ public class SelectDiagramState extends DiagramState
   }
   
   @Override
-  public DiagramState draw(Graphics g)
+  public void draw(Graphics g)
   {
     if(selected_element != null)
     {
@@ -61,7 +61,6 @@ public class SelectDiagramState extends DiagramState
       selected_element.draw(g);
       g.setColor(oldColor);
     }
-    return next_state;
   }
   
   @Override
