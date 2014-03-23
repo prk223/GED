@@ -46,9 +46,6 @@ public class GED_App extends javax.swing.JFrame
     NewDiagramDlg.setVisible(false);
     DiagramSelectDialog.setVisible(false);
     
-    // Delete diagram is not a requirement, hide the button for it
-    DeleteDiagramBtn.setVisible(false);
-    
     diagram_dlg = new DiagramDialog(this, true);
     
     // Set up a timer to make create and delete messages time out
@@ -318,7 +315,7 @@ public class GED_App extends javax.swing.JFrame
 
       DiagramSelectFileMenu.setText("File");
 
-      DiagramSelectExitMenuItem.setText("Exit");
+      DiagramSelectExitMenuItem.setText("Close Project");
       DiagramSelectExitMenuItem.addActionListener(new java.awt.event.ActionListener()
       {
         public void actionPerformed(java.awt.event.ActionEvent evt)
