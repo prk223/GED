@@ -31,6 +31,7 @@ public class ClassElement implements DiagramElement
   private int width, height;
   private final int min_width, min_height;
   private final int buffer;
+  private int unique_id;
   
   
   public ClassElement(String n, int x, int y) throws IOException
@@ -49,6 +50,8 @@ public class ClassElement implements DiagramElement
             cfg_mgr.getConfigValue(ConfigurationManager.MIN_CLASS_WIDTH));
     buffer = Integer.parseInt(
             cfg_mgr.getConfigValue(ConfigurationManager.LINE_BFR_SIZE));
+    
+    unique_id = 0;
   }
   
   public boolean getInterface()
@@ -247,7 +250,7 @@ public class ClassElement implements DiagramElement
   @Override
   public Point getLocation()
   {
-    return location;
+    return new Point(location.x, location.y);
   }
   
   @Override
@@ -265,7 +268,9 @@ public class ClassElement implements DiagramElement
   @Override
   public String getPersistentRepresentation()
   {
-    String rep = "<location>";
+    String rep = "<uniqueID>" + unique_id + "</uniqueID>";
+    
+    rep += "<location>";
     rep += Integer.toString(location.x) + "," + Integer.toString(location.y);
     rep += "</location>";
     
@@ -313,6 +318,9 @@ public class ClassElement implements DiagramElement
     n = getValueFromTag(s, "name");
     
     e = new ClassElement(n, x, y);
+    
+    int uid = Integer.parseInt(getValueFromTag(s, "uniqueID"));
+    e.setUniqueId(uid);
     
     String ifaceStr = getValueFromTag(s, "interface");
     if(ifaceStr.equals("1"))
@@ -414,5 +422,17 @@ public class ClassElement implements DiagramElement
   public int getMaxY()
   {
     return location.y + height;
+  }
+  
+  @Override
+  public void setUniqueId(int id)
+  {
+    unique_id = id;
+  }
+  
+  @Override
+  public int getUniqueId()
+  {
+    return unique_id;
   }
 }
