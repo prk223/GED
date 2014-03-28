@@ -435,4 +435,10 @@ public class ClassElement implements DiagramElement
   {
     return unique_id;
   }
+  
+  @Override
+  public void setNearElement(DiagramElement e)
+  {
+    // Nothing to do
+  }
 }
