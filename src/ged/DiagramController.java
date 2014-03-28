@@ -10,6 +10,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  *
@@ -154,6 +156,37 @@ public class DiagramController
     }
     
     return d;
+  }
+  
+  public ArrayList<DiagramElement> getDiagramElements()
+  {
+    ArrayList<DiagramElement> elements = new ArrayList<>();
+    if(cur_diagram != null)
+      elements = cur_diagram.getElements();
+    
+    return elements;
+  }
+  
+  public DiagramElement getUniqueElement(int uniqueId)
+  {
+    DiagramElement e = null;
+    
+    if(cur_diagram != null)
+    {
+      ArrayList<DiagramElement> elements = cur_diagram.getElements();
+      Iterator<DiagramElement> itEl = elements.iterator();
+      while(itEl.hasNext())
+      {
+        DiagramElement element = itEl.next();
+        if(element.getUniqueId() == uniqueId)
+        {
+          e = element;
+          break;
+        }
+      }
+    }
+    
+    return e;
   }
   
 }
