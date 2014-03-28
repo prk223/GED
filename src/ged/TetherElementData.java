@@ -12,7 +12,7 @@ import java.awt.Point;
  *
  * @author Comp
  */
-class TetherElementData
+public class TetherElementData
 {
   private DiagramElement element;
   private float percent_down;
