@@ -298,4 +298,10 @@ public class Diagram implements DiagramElement
       last_unique_id = e.getUniqueId();
   }
   
+  @Override
+  public void setNearElement(DiagramElement e)
+  {
+    // Nothing to do
+  }
+  
 }
