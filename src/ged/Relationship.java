@@ -20,8 +20,12 @@ import java.util.Iterator;
 public class Relationship implements DiagramElement
 {
   private final ConfigurationManager cfg_mgr;
+  private final DiagramController diag_controller;
   
-  // Use unique IDs to identify who we're connected to
+  private TetherElementData source_tether;
+  private TetherElementData destination_tether;
+  private TetherElementData association_tether;
+  
   private int source_class_uid;
   private int destination_class_uid;
   private int association_class_uid;
@@ -32,7 +36,8 @@ public class Relationship implements DiagramElement
   private String destination_multiplicity;
   
   private final Point source_location;
-  private Point destination_location;
+  private final Point destination_location;
+  private final Point association_location;
   private final ArrayList<Point> vertices;
   
   // Point selected for setting new location
@@ -46,6 +51,7 @@ public class Relationship implements DiagramElement
   public Relationship(RelationshipType t, int x, int y) throws IOException
   {
     cfg_mgr = ConfigurationManager.getInstance();
+    diag_controller = DiagramController.getInstance();
     int lineLength = Integer.parseInt(cfg_mgr.
             getConfigValue(ConfigurationManager.DFLT_RLTNSHP_LEN));
     max_select_distance = Integer.parseInt(cfg_mgr.
@@ -53,6 +59,7 @@ public class Relationship implements DiagramElement
     
     source_location = new Point(x, y);
     destination_location = new Point(x + lineLength, y);
+    association_location = new Point(0, 0);
     vertices = new ArrayList<>();
     
     selected_point = null;
@@ -62,6 +69,9 @@ public class Relationship implements DiagramElement
     
     type = t;
     
+    source_tether = null;
+    destination_tether = null;
+    association_tether = null;
     source_class_uid = 0;
     destination_class_uid = 0;
     association_class_uid = 0;
@@ -72,6 +82,8 @@ public class Relationship implements DiagramElement
   @Override
   public void draw(Graphics g)
   {
+    updateTethers();
+    
     Point curPoint = source_location;
     
     // Go through each vertex drawing a line to it
@@ -86,6 +98,58 @@ public class Relationship implements DiagramElement
     // Draw final line to destination
     g.drawLine(curPoint.x, curPoint.y, 
             destination_location.x, destination_location.y);
+  }
+  
+  private void updateTethers()
+  {
+    if((source_tether == null) && source_class_uid != 0)
+    {
+      DiagramElement e = diag_controller.getUniqueElement(source_class_uid);
+      if(e != null && "Class".equals(e.getElementType()))
+        source_tether = new TetherElementData((ClassElement)e, source_location);
+      else
+        System.out.println("WARN:Relationship:Attached UID was not a class!");
+      source_class_uid = 0;
+    }
+    if((destination_tether == null) && destination_class_uid != 0)
+    {
+      DiagramElement e = diag_controller.getUniqueElement(destination_class_uid);
+      if(e != null && "Class".equals(e.getElementType()))
+        destination_tether = 
+                new TetherElementData((ClassElement)e, destination_location);
+      else
+        System.out.println("WARN:Relationship:Attached UID was not a class!");
+      destination_class_uid = 0;
+    }
+    if((association_tether == null) && association_class_uid != 0)
+    {
+      DiagramElement e = diag_controller.getUniqueElement(association_class_uid);
+      if(e != null && "Class".equals(e.getElementType()))
+        association_tether = 
+                new TetherElementData((ClassElement)e, association_location);
+      else
+        System.out.println("WARN:Relationship:Attached UID was not a class!");
+      association_class_uid = 0;
+    }
+    
+    if(source_tether != null)
+    {
+      Point newLoc = source_tether.getPoint();
+      source_location.x = newLoc.x;
+      source_location.y = newLoc.y;
+    }
+    if(destination_tether != null)
+    {
+      Point newLoc = destination_tether.getPoint();
+      destination_location.x = newLoc.x;
+      destination_location.y = newLoc.y;
+    }
+    if(association_tether != null)
+    {
+      Point newLoc = association_tether.getPoint();
+      association_location.x = newLoc.x;
+      association_location.y = newLoc.y;
+    }
   }
   
   @Override
@@ -108,9 +172,20 @@ public class Relationship implements DiagramElement
     {
       selected_point.x = loc.x;
       selected_point.y = loc.y;
+      
+      if(selected_point == source_location)
+        source_tether = null;
+      else if(selected_point == destination_location)
+        destination_tether = null;
+      else if(selected_point == association_location)
+        association_tether = null;
     }
     else
     {
+      source_tether = null;
+      destination_tether = null;
+      association_tether = null;
+      
       int distX = loc.x - source_location.x;
       int distY = loc.y - source_location.y;
       
@@ -139,10 +214,21 @@ public class Relationship implements DiagramElement
   @Override
   public String getPersistentRepresentation()
   {
+    int source_uid = 0;
+    int dest_uid = 0;
+    int ass_uid = 0;
+    
+    if(source_tether != null)
+      source_uid = source_tether.getElementUniqueId();
+    if(destination_tether != null)
+      dest_uid = destination_tether.getElementUniqueId();
+    if(association_tether != null)
+      ass_uid = association_tether.getElementUniqueId();
+    
     String rep = "<uniqueID>" + unique_id + "</uniqueID>";
-    rep += "<sourceUID>" + source_class_uid + "</sourceUID>";
-    rep += "<destinationUID>" + destination_class_uid + "</destinationUID>";
-    rep += "<assUID>" + association_class_uid + "</assUID>";
+    rep += "<sourceUID>" + source_uid + "</sourceUID>";
+    rep += "<destinationUID>" + dest_uid + "</destinationUID>";
+    rep += "<assUID>" + ass_uid + "</assUID>";
     
     rep += "<type>" + type.name() + "</type>";
     
@@ -206,7 +292,22 @@ public class Relationship implements DiagramElement
       destPoint.x = Integer.parseInt(destLocArr[0]);
       destPoint.y = Integer.parseInt(destLocArr[1]);
     }
-    r.destination_location = destPoint;
+    r.destination_location.x = destPoint.x;
+    r.destination_location.y = destPoint.y;
+    
+    Point assPoint = new Point(0, 0);
+    String assLocStr = getValueFromTag(s, "associationLoc");
+    if(!"".equals(assLocStr))
+    {
+      String[] assLocArr = assLocStr.split(",");
+      if(assLocArr.length > 1)
+      {
+        assPoint.x = Integer.parseInt(assLocArr[0]);
+        assPoint.y = Integer.parseInt(assLocArr[1]);
+      }
+      r.association_location.x = destPoint.x;
+      r.association_location.y = destPoint.y;
+    }
     
     // Get all vertices
     String[] vert_pieces = s.split("<vertex>");
@@ -476,6 +577,23 @@ public class Relationship implements DiagramElement
   public RelationshipType getType()
   {
     return type;
+  }
+  
+  @Override
+  public void setNearElement(DiagramElement e)
+  {
+    if("Class".equals(e.getElementType()))
+      tetherToClass((ClassElement)e);
+  }
+  
+  public void tetherToClass(ClassElement e)
+  {
+    if(selected_point == source_location)
+      source_tether = new TetherElementData(e, source_location);
+    else if(selected_point == destination_location)
+      destination_tether = new TetherElementData(e, destination_location);
+    else if(selected_point == association_location)
+      association_tether = new TetherElementData(e, association_location);
   }
   
 }
