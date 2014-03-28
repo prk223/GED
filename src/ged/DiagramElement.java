@@ -38,4 +38,6 @@ public interface DiagramElement
   
   public int getUniqueId();
   
+  public void setNearElement(DiagramElement e);
+  
 }
