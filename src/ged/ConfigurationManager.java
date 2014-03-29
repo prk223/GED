@@ -73,12 +73,12 @@ public class ConfigurationManager
     config_items.add(new ConfigurationItem(MSG_TIMEOUT, "5000"));
     config_items.add(new ConfigurationItem(MIN_CLASS_WIDTH, "150"));
     config_items.add(new ConfigurationItem(MIN_CLASS_HEIGHT, "200"));
-    config_items.add(new ConfigurationItem(SELECT_DISTANCE, "10"));
+    config_items.add(new ConfigurationItem(SELECT_DISTANCE, "20"));
     config_items.add(new ConfigurationItem(LINE_BFR_SIZE, "4"));
     config_items.add(new ConfigurationItem(DIAGRAM_BFR_SIZE, "1500"));
-    config_items.add(new ConfigurationItem(DFLT_RLTNSHP_LEN, "100"));
+    config_items.add(new ConfigurationItem(DFLT_RLTNSHP_LEN, "200"));
     config_items.add(new ConfigurationItem(VERTEX_DIAMETER, "4"));
-    config_items.add(new ConfigurationItem(RLTN_SYM_SIZE, "10"));
+    config_items.add(new ConfigurationItem(RLTN_SYM_SIZE, "18"));
     
     File configFile = new File(".\\" + CFG_FILENAME);
     if(configFile.exists())
