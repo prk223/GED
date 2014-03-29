@@ -69,9 +69,9 @@ public class DiagramState
     return next_state;
   }
   
-  public DiagramState addRelationshipBtnClicked(MouseEvent evt) throws IOException
+  public DiagramState addInheritanceBtnClicked(MouseEvent evt) throws IOException
   {
-    Relationship r = new Relationship(RelationshipType.INHERITANCE, 0, 0);
+    InheritanceRelationship r = new InheritanceRelationship(0, 0);
     next_state = new AddElementDiagramState(view_port, r);
     return next_state;
   }

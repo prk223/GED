@@ -62,7 +62,7 @@
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" max="-2" attributes="0">
                   <Component id="SelectBtn" alignment="0" max="32767" attributes="0"/>
-                  <Component id="AddRelationshipBtn" alignment="0" pref="114" max="32767" attributes="0"/>
+                  <Component id="AddInheritanceRelationshipBtn" alignment="0" pref="114" max="32767" attributes="0"/>
                   <Component id="AddClassBtn" max="32767" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -83,7 +83,7 @@
               <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
               <Component id="AddClassBtn" min="-2" pref="61" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-              <Component id="AddRelationshipBtn" min="-2" pref="61" max="-2" attributes="0"/>
+              <Component id="AddInheritanceRelationshipBtn" min="-2" pref="61" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="SelectBtn" min="-2" pref="61" max="-2" attributes="0"/>
               <EmptySpace pref="247" max="32767" attributes="0"/>
@@ -122,9 +122,9 @@
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="AddClassBtnMouseClicked"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="AddRelationshipBtn">
+    <Component class="javax.swing.JButton" name="AddInheritanceRelationshipBtn">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Relationship"/>
+        <Property name="text" type="java.lang.String" value="Inheritance"/>
         <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[57, 23]"/>
         </Property>
@@ -133,7 +133,7 @@
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="AddRelationshipBtnMouseClicked"/>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="AddInheritanceRelationshipBtnMouseClicked"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="SelectBtn">

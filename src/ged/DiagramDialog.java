@@ -212,7 +212,7 @@ public class DiagramDialog extends javax.swing.JDialog
 
     SaveLabel = new javax.swing.JLabel();
     AddClassBtn = new javax.swing.JButton();
-    AddRelationshipBtn = new javax.swing.JButton();
+    AddInheritanceRelationshipBtn = new javax.swing.JButton();
     SelectBtn = new javax.swing.JButton();
     DiagramScrollPane = new javax.swing.JScrollPane();
     DiagramMenuBar = new javax.swing.JMenuBar();
@@ -241,14 +241,14 @@ public class DiagramDialog extends javax.swing.JDialog
       }
     });
 
-    AddRelationshipBtn.setText("Relationship");
-    AddRelationshipBtn.setMaximumSize(new java.awt.Dimension(57, 23));
-    AddRelationshipBtn.setMinimumSize(new java.awt.Dimension(57, 23));
-    AddRelationshipBtn.addMouseListener(new java.awt.event.MouseAdapter()
+    AddInheritanceRelationshipBtn.setText("Inheritance");
+    AddInheritanceRelationshipBtn.setMaximumSize(new java.awt.Dimension(57, 23));
+    AddInheritanceRelationshipBtn.setMinimumSize(new java.awt.Dimension(57, 23));
+    AddInheritanceRelationshipBtn.addMouseListener(new java.awt.event.MouseAdapter()
     {
       public void mouseClicked(java.awt.event.MouseEvent evt)
       {
-        AddRelationshipBtnMouseClicked(evt);
+        AddInheritanceRelationshipBtnMouseClicked(evt);
       }
     });
 
@@ -299,7 +299,7 @@ public class DiagramDialog extends javax.swing.JDialog
         .addContainerGap()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
           .addComponent(SelectBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(AddRelationshipBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+          .addComponent(AddInheritanceRelationshipBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
           .addComponent(AddClassBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addComponent(DiagramScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 553, Short.MAX_VALUE))
@@ -315,7 +315,7 @@ public class DiagramDialog extends javax.swing.JDialog
         .addGap(32, 32, 32)
         .addComponent(AddClassBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-        .addComponent(AddRelationshipBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addComponent(AddInheritanceRelationshipBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addComponent(SelectBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addContainerGap(247, Short.MAX_VALUE))
@@ -386,18 +386,18 @@ public class DiagramDialog extends javax.swing.JDialog
     diag_panel.repaint();
   }//GEN-LAST:event_SelectBtnMouseClicked
 
-  private void AddRelationshipBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_AddRelationshipBtnMouseClicked
-  {//GEN-HEADEREND:event_AddRelationshipBtnMouseClicked
+  private void AddInheritanceRelationshipBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_AddInheritanceRelationshipBtnMouseClicked
+  {//GEN-HEADEREND:event_AddInheritanceRelationshipBtnMouseClicked
     try
     {
-      state = state.addRelationshipBtnClicked(evt);
+      state = state.addInheritanceBtnClicked(evt);
     }
     catch (IOException ex)
     {
       Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
     }
     diag_panel.repaint();
-  }//GEN-LAST:event_AddRelationshipBtnMouseClicked
+  }//GEN-LAST:event_AddInheritanceRelationshipBtnMouseClicked
 
   public void open(String diagram)
   {
@@ -484,7 +484,7 @@ public class DiagramDialog extends javax.swing.JDialog
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton AddClassBtn;
-  private javax.swing.JButton AddRelationshipBtn;
+  private javax.swing.JButton AddInheritanceRelationshipBtn;
   private javax.swing.JMenuItem DiagramCloseItem;
   private javax.swing.JMenu DiagramFileMenu;
   private javax.swing.JMenuBar DiagramMenuBar;

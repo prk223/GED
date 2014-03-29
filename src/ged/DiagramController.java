@@ -120,11 +120,11 @@ public class DiagramController
     }
   }
   
-  public void addRelationship(int x, int y, RelationshipType type) throws IOException
+  public void addRelationship(int x, int y) throws IOException
   {
     if(cur_diagram != null)
     {
-      DiagramElement e = new Relationship(type, x, y);
+      DiagramElement e = new Relationship(x, y);
       cur_diagram.addElement(e);
     }
   }
