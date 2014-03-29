@@ -33,6 +33,8 @@ public class ConfigurationManager
   public static final String LINE_BFR_SIZE    = "LINE_BUFFER_SIZE";
   public static final String DIAGRAM_BFR_SIZE = "DIAGRAM_BUFFER_SIZE";
   public static final String DFLT_RLTNSHP_LEN = "DFLT_RLTNSHP_LEN";
+  public static final String VERTEX_DIAMETER  = "VERTEX_DIAMETER";
+  public static final String RLTN_SYM_SIZE    = "RLTN_SYM_SIZE";
   
   private final ArrayList<ConfigurationItem> config_items = new ArrayList<>();
   
@@ -75,6 +77,8 @@ public class ConfigurationManager
     config_items.add(new ConfigurationItem(LINE_BFR_SIZE, "4"));
     config_items.add(new ConfigurationItem(DIAGRAM_BFR_SIZE, "1500"));
     config_items.add(new ConfigurationItem(DFLT_RLTNSHP_LEN, "100"));
+    config_items.add(new ConfigurationItem(VERTEX_DIAMETER, "4"));
+    config_items.add(new ConfigurationItem(RLTN_SYM_SIZE, "10"));
     
     File configFile = new File(".\\" + CFG_FILENAME);
     if(configFile.exists())
