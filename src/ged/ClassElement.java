@@ -7,6 +7,7 @@
 package ged;
 
 import static ged.Util.getValueFromTag;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -147,6 +148,13 @@ public class ClassElement implements DiagramElement
   {
     int x = location.x;
     int y = location.y;
+    
+    Font oldFont = g.getFont();
+    Font newFont = oldFont;
+    if(is_interface)
+      newFont = oldFont.deriveFont(oldFont.getStyle() | Font.ITALIC);
+    g.setFont(newFont);
+    
     setWidth(g);
     setHeight(g);
     
@@ -191,6 +199,8 @@ public class ClassElement implements DiagramElement
       Operation o = itOp.next();
       g.drawString(o.getString(), x + buffer, y + boxHeight);
     }
+    
+    g.setFont(oldFont);
   }
   
   public void setWidth(Graphics g)
