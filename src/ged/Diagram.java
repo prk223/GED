@@ -193,6 +193,9 @@ public class Diagram implements DiagramElement
           case "Inheritance":
             e = InheritanceRelationship.fromPersistentRepresentation(strArr[i]);
             break;
+          case "Aggregation":
+            e = AggregationRelationship.fromPersistentRepresentation(strArr[i]);
+            break;
           default:
             System.err.println("ERROR:Diagram:Unknown element:" + type);
         }

@@ -212,9 +212,10 @@ public class DiagramDialog extends javax.swing.JDialog
 
     SaveLabel = new javax.swing.JLabel();
     AddClassBtn = new javax.swing.JButton();
-    AddInheritanceRelationshipBtn = new javax.swing.JButton();
+    AddInheritanceBtn = new javax.swing.JButton();
     SelectBtn = new javax.swing.JButton();
     DiagramScrollPane = new javax.swing.JScrollPane();
+    AddAggregationBtn = new javax.swing.JButton();
     DiagramMenuBar = new javax.swing.JMenuBar();
     DiagramFileMenu = new javax.swing.JMenu();
     DiagramSaveItem = new javax.swing.JMenuItem();
@@ -241,14 +242,14 @@ public class DiagramDialog extends javax.swing.JDialog
       }
     });
 
-    AddInheritanceRelationshipBtn.setText("Inheritance");
-    AddInheritanceRelationshipBtn.setMaximumSize(new java.awt.Dimension(57, 23));
-    AddInheritanceRelationshipBtn.setMinimumSize(new java.awt.Dimension(57, 23));
-    AddInheritanceRelationshipBtn.addMouseListener(new java.awt.event.MouseAdapter()
+    AddInheritanceBtn.setText("Inheritance");
+    AddInheritanceBtn.setMaximumSize(new java.awt.Dimension(57, 23));
+    AddInheritanceBtn.setMinimumSize(new java.awt.Dimension(57, 23));
+    AddInheritanceBtn.addMouseListener(new java.awt.event.MouseAdapter()
     {
       public void mouseClicked(java.awt.event.MouseEvent evt)
       {
-        AddInheritanceRelationshipBtnMouseClicked(evt);
+        AddInheritanceBtnMouseClicked(evt);
       }
     });
 
@@ -264,6 +265,17 @@ public class DiagramDialog extends javax.swing.JDialog
     });
 
     DiagramScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "DiagramTitle", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.ABOVE_TOP, new java.awt.Font("Verdana", 0, 24), java.awt.Color.blue)); // NOI18N
+
+    AddAggregationBtn.setText("Aggregation");
+    AddAggregationBtn.setMaximumSize(new java.awt.Dimension(57, 23));
+    AddAggregationBtn.setMinimumSize(new java.awt.Dimension(57, 23));
+    AddAggregationBtn.addMouseListener(new java.awt.event.MouseAdapter()
+    {
+      public void mouseClicked(java.awt.event.MouseEvent evt)
+      {
+        AddAggregationBtnMouseClicked(evt);
+      }
+    });
 
     DiagramFileMenu.setText("File");
 
@@ -299,8 +311,9 @@ public class DiagramDialog extends javax.swing.JDialog
         .addContainerGap()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
           .addComponent(SelectBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(AddInheritanceRelationshipBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
-          .addComponent(AddClassBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+          .addComponent(AddInheritanceBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+          .addComponent(AddClassBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(AddAggregationBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addComponent(DiagramScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 553, Short.MAX_VALUE))
       .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -315,10 +328,12 @@ public class DiagramDialog extends javax.swing.JDialog
         .addGap(32, 32, 32)
         .addComponent(AddClassBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-        .addComponent(AddInheritanceRelationshipBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addComponent(AddInheritanceBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+        .addComponent(AddAggregationBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addComponent(SelectBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addContainerGap(247, Short.MAX_VALUE))
+        .addContainerGap(175, Short.MAX_VALUE))
       .addComponent(DiagramScrollPane)
       .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -386,8 +401,8 @@ public class DiagramDialog extends javax.swing.JDialog
     diag_panel.repaint();
   }//GEN-LAST:event_SelectBtnMouseClicked
 
-  private void AddInheritanceRelationshipBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_AddInheritanceRelationshipBtnMouseClicked
-  {//GEN-HEADEREND:event_AddInheritanceRelationshipBtnMouseClicked
+  private void AddInheritanceBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_AddInheritanceBtnMouseClicked
+  {//GEN-HEADEREND:event_AddInheritanceBtnMouseClicked
     try
     {
       state = state.addInheritanceBtnClicked(evt);
@@ -397,7 +412,20 @@ public class DiagramDialog extends javax.swing.JDialog
       Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
     }
     diag_panel.repaint();
-  }//GEN-LAST:event_AddInheritanceRelationshipBtnMouseClicked
+  }//GEN-LAST:event_AddInheritanceBtnMouseClicked
+
+  private void AddAggregationBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_AddAggregationBtnMouseClicked
+  {//GEN-HEADEREND:event_AddAggregationBtnMouseClicked
+    try
+    {
+      state = state.addAggregationBtnClicked(evt);
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    diag_panel.repaint();
+  }//GEN-LAST:event_AddAggregationBtnMouseClicked
 
   public void open(String diagram)
   {
@@ -483,8 +511,9 @@ public class DiagramDialog extends javax.swing.JDialog
   }
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JButton AddAggregationBtn;
   private javax.swing.JButton AddClassBtn;
-  private javax.swing.JButton AddInheritanceRelationshipBtn;
+  private javax.swing.JButton AddInheritanceBtn;
   private javax.swing.JMenuItem DiagramCloseItem;
   private javax.swing.JMenu DiagramFileMenu;
   private javax.swing.JMenuBar DiagramMenuBar;
