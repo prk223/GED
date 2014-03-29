@@ -7,6 +7,7 @@
 package ged;
 
 import java.awt.Point;
+import java.io.IOException;
 
 /**
  *
@@ -14,7 +15,7 @@ import java.awt.Point;
  */
 public class TetherElementData
 {
-  private DiagramElement element;
+  private final DiagramElement element;
   private float percent_down;
   private float percent_right;
   int elemX; // cache element's location
@@ -23,10 +24,11 @@ public class TetherElementData
   int elemHeight;
   Point calculated_point; // Cache point instead of calculating always
 
-  public TetherElementData(DiagramElement e, Point p)
+  public TetherElementData(DiagramElement e, Point p) throws IOException
   {
     if(e == null || p == null)
     {
+      element = new ClassElement("ERROR", 0, 0);
       System.err.println("ERR:TetherElementData NULL in constructor!");
     }
     else
@@ -55,16 +57,15 @@ public class TetherElementData
     return p;
   }
 
-  public void changePoint(DiagramElement e, Point p)
+  public void changePoint(Point p)
   {
-    element = e;
-    calculatePercentages(e.getLocation(), p);
+    calculatePercentages(element.getLocation(), p);
     calculatePoint();
   }
 
-  public int getElementUniqueId()
+  public DiagramElement getElement()
   {
-    return element.getUniqueId();
+    return element;
   }
 
   private void calculatePercentages(Point elemLoc, Point p)
