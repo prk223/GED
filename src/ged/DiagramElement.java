@@ -40,4 +40,6 @@ public interface DiagramElement
   
   public void setNearElement(DiagramElement e);
   
+  public boolean isRelationship();
+  
 }
