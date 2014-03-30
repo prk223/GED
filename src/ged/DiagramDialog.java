@@ -119,28 +119,41 @@ public class DiagramDialog extends javax.swing.JDialog
       @Override
       public void mouseClicked(MouseEvent evt)
       {
-        if(evt.getClickCount() > 1)
+        if((evt.getClickCount() > 1) && (evt.getButton() == MouseEvent.BUTTON1))
           DiagPanelMouseDoubleClicked(evt);
       }
       @Override
       public void mouseEntered(java.awt.event.MouseEvent evt)
       {
-        DiagPanelMouseEntered(evt);
+        if(evt.getButton() == MouseEvent.BUTTON1)
+          DiagPanelMouseEntered(evt);
       }
       @Override
       public void mouseExited(java.awt.event.MouseEvent evt)
       {
-        DiagPanelMouseExited(evt);
+        if(evt.getButton() == MouseEvent.BUTTON1)
+          DiagPanelMouseExited(evt);
       }
       @Override
       public void mousePressed(MouseEvent evt)
       {
-        DiagPanelMousePressed(evt);
+        try
+        {
+          if(evt.getButton() == MouseEvent.BUTTON1)
+            DiagPanelMousePressed(evt);
+          else if(evt.getButton() == MouseEvent.BUTTON3)
+            DiagPanelRightMousePressed(evt);
+        }
+        catch (IOException ex)
+        {
+          Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
+        }
       }
       @Override
       public void mouseReleased(MouseEvent evt)
       {
-        DiagPanelMouseReleased(evt);
+        if(evt.getButton() == MouseEvent.BUTTON1)
+          DiagPanelMouseReleased(evt);
       }
     });
     diag_panel.addMouseMotionListener(new java.awt.event.MouseAdapter()
@@ -197,6 +210,12 @@ public class DiagramDialog extends javax.swing.JDialog
   private void DiagPanelMouseReleased(MouseEvent evt)
   {
     state = state.mouseReleased(evt);
+    diag_panel.repaint();
+  }
+  
+  private void DiagPanelRightMousePressed(MouseEvent evt) throws IOException
+  {
+    state = state.mouseRightClicked(evt);
     diag_panel.repaint();
   }
 

@@ -33,6 +33,8 @@ public class ElementSelectedState extends SelectDiagramState
       System.err.println("ElSelState:selected_element cannot be null!");
     drag_offset_x = selected_element.getLocation().x - evt.getX();
     drag_offset_y = selected_element.getLocation().y - evt.getY();
+    if(evt.getButton() == MouseEvent.BUTTON1)
+      left_mouse_down = true;
   }
   
   @Override
@@ -48,17 +50,21 @@ public class ElementSelectedState extends SelectDiagramState
   @Override
   public DiagramState mousePressed(MouseEvent evt)
   {
-    try
+    if(evt.getButton() == MouseEvent.BUTTON1)
     {
-      DiagramElement e = getNearestElement(null, evt.getX(), evt.getY());
-      if(e != null)
-        next_state = new ElementSelectedState(view_port, e, evt);
-      else
-        next_state = new SelectDiagramState(view_port, evt);
-    }
-    catch (IOException ex)
-    {
-      Logger.getLogger(SelectDiagramState.class.getName()).log(Level.SEVERE, null, ex);
+      left_mouse_down = true;
+      try
+      {
+        DiagramElement e = getNearestElement(null, evt.getX(), evt.getY());
+        if(e != null)
+          next_state = new ElementSelectedState(view_port, e, evt);
+        else
+          next_state = new SelectDiagramState(view_port, evt);
+      }
+      catch (IOException ex)
+      {
+        Logger.getLogger(SelectDiagramState.class.getName()).log(Level.SEVERE, null, ex);
+      }
     }
     
     return next_state;
@@ -67,10 +73,13 @@ public class ElementSelectedState extends SelectDiagramState
   @Override
   public DiagramState mouseDragged(MouseEvent evt)
   {
-    Point p = selected_element.getLocation();
-    p.x = evt.getX() + drag_offset_x;
-    p.y = evt.getY() + drag_offset_y;
-    selected_element.setLocation(p);
+    if(left_mouse_down)
+    {
+      Point p = selected_element.getLocation();
+      p.x = evt.getX() + drag_offset_x;
+      p.y = evt.getY() + drag_offset_y;
+      selected_element.setLocation(p);
+    }
       
     return next_state;
   }
@@ -78,10 +87,14 @@ public class ElementSelectedState extends SelectDiagramState
   @Override
   public DiagramState mouseReleased(MouseEvent evt)
   {
-    DiagramElement e = getNearestElement(selected_element, 
-            evt.getX(), evt.getY());
-    if(e != null)
-      selected_element.setNearElement(e);
+    if(left_mouse_down)
+    {
+      DiagramElement e = getNearestElement(selected_element, 
+              evt.getX(), evt.getY());
+      if(e != null)
+        selected_element.setNearElement(e);
+      left_mouse_down = false;
+    }
     
     return next_state;
   }

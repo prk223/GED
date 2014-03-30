@@ -92,4 +92,9 @@ public class DiagramState
   public void draw(Graphics g)
   {
   }
+  
+  public DiagramState mouseRightClicked(MouseEvent evt) throws IOException
+  {
+    return next_state;
+  }
 }

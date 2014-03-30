@@ -26,6 +26,7 @@ public class SelectDiagramState extends DiagramState
   private int diag_ref_x; // reference for dragging diagram
   private int diag_ref_y;
   private final double select_distance;
+  protected boolean left_mouse_down;
   
   public SelectDiagramState(JViewport v) throws IOException
   {
@@ -34,6 +35,7 @@ public class SelectDiagramState extends DiagramState
     cfg_mgr = ConfigurationManager.getInstance();
     select_distance = Double.parseDouble(
             cfg_mgr.getConfigValue(ConfigurationManager.SELECT_DISTANCE));
+    left_mouse_down = false;
   }
   
   public SelectDiagramState(JViewport v, MouseEvent evt) throws IOException
@@ -45,6 +47,7 @@ public class SelectDiagramState extends DiagramState
             cfg_mgr.getConfigValue(ConfigurationManager.SELECT_DISTANCE));
     diag_ref_x = evt.getX();
     diag_ref_y = evt.getY();
+    left_mouse_down = false;
   }
   
   @Override
@@ -60,18 +63,36 @@ public class SelectDiagramState extends DiagramState
   @Override
   public DiagramState mousePressed(MouseEvent evt)
   {
-    try
+    if(evt.getButton() == MouseEvent.BUTTON1)
     {
-      DiagramElement e = getNearestElement(null, evt.getX(), evt.getY());
-      if(e != null)
-        next_state = new ElementSelectedState(view_port, e, evt);
+      try
+      {
+        DiagramElement e = getNearestElement(null, evt.getX(), evt.getY());
+        if(e != null)
+        {
+          if(e.isRelationship())
+            next_state = new RelationshipSelectedState(view_port, (Relationship)e, evt);
+          else
+            next_state = new ElementSelectedState(view_port, e, evt);
+        }
+      }
+      catch (IOException ex)
+      {
+        Logger.getLogger(SelectDiagramState.class.getName()).log(Level.SEVERE, null, ex);
+      }
+      diag_ref_x = evt.getX();
+      diag_ref_y = evt.getY();
+      left_mouse_down = true;
     }
-    catch (IOException ex)
-    {
-      Logger.getLogger(SelectDiagramState.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    diag_ref_x = evt.getX();
-    diag_ref_y = evt.getY();
+    
+    return next_state;
+  }
+  
+  @Override
+  public DiagramState mouseReleased(MouseEvent evt)
+  {
+    if(evt.getButton() == MouseEvent.BUTTON1)
+      left_mouse_down = false;
     
     return next_state;
   }
@@ -79,32 +100,35 @@ public class SelectDiagramState extends DiagramState
   @Override
   public DiagramState mouseDragged(MouseEvent evt)
   {
-    Component view = view_port.getView();
+    if(left_mouse_down)
+    {
+      Component view = view_port.getView();
 
-    int deltaX = evt.getX() - diag_ref_x;
-    int deltaY = evt.getY() - diag_ref_y;
+      int deltaX = evt.getX() - diag_ref_x;
+      int deltaY = evt.getY() - diag_ref_y;
 
-    Point viewPoint = view_port.getViewPosition();
+      Point viewPoint = view_port.getViewPosition();
 
-    int viewX = viewPoint.x - deltaX;
-    int viewY = viewPoint.y - deltaY;
+      int viewX = viewPoint.x - deltaX;
+      int viewY = viewPoint.y - deltaY;
 
-    int maxX = view.getWidth() - view_port.getWidth();
-    int maxY = view.getHeight() - view_port.getHeight();
+      int maxX = view.getWidth() - view_port.getWidth();
+      int maxY = view.getHeight() - view_port.getHeight();
 
-    if(viewX > maxX)
-      viewX = maxX;
-    if(viewY > maxY)
-      viewY = maxY;
-    if(viewX < 0)
-      viewX = 0;
-    if(viewY < 0)
-      viewY = 0;
-    viewPoint = new Point(viewX, viewY);
-    view_port.setViewPosition(viewPoint);
+      if(viewX > maxX)
+        viewX = maxX;
+      if(viewY > maxY)
+        viewY = maxY;
+      if(viewX < 0)
+        viewX = 0;
+      if(viewY < 0)
+        viewY = 0;
+      viewPoint = new Point(viewX, viewY);
+      view_port.setViewPosition(viewPoint);
 
-    diag_ref_x = evt.getX() - deltaX;
-    diag_ref_y = evt.getY() - deltaY;
+      diag_ref_x = evt.getX() - deltaX;
+      diag_ref_y = evt.getY() - deltaY;
+    }
       
     return next_state;
   }
@@ -131,6 +155,19 @@ public class SelectDiagramState extends DiagramState
     }
     
     return nearestElem;
+  }
+  
+  @Override
+  public DiagramState mouseRightClicked(MouseEvent evt) throws IOException
+  {
+    DiagramElement e = getNearestElement(null, evt.getX(), evt.getY());
+    if(e != null)
+    {
+      if(e.isRelationship())
+          next_state = new RelationshipSelectedState(view_port, (Relationship)e, evt);
+    }
+    
+    return next_state;
   }
   
 }

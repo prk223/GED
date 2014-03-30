@@ -48,6 +48,7 @@ public class Relationship implements DiagramElement
   // dist from a point to count it as being selected
   private final double max_select_distance;
   private final int vertex_diameter;
+  private final double vertex_remove_distance;
   protected final int symbol_size;
   
   private int unique_id;
@@ -65,6 +66,8 @@ public class Relationship implements DiagramElement
             getConfigValue(ConfigurationManager.VERTEX_DIAMETER));
     symbol_size = Integer.parseInt(cfg_mgr.
             getConfigValue(ConfigurationManager.RLTN_SYM_SIZE));
+    vertex_remove_distance = Integer.parseInt(cfg_mgr.
+            getConfigValue(ConfigurationManager.VERTEX_RM_DIST));
     
     source_location = new Point(x, y);
     destination_location = new Point(x + lineLength, y);
@@ -227,6 +230,21 @@ public class Relationship implements DiagramElement
         destination_tether = null;
       else if(selected_point == association_location)
         association_tether = null;
+      
+      Iterator<Point> vertIt = vertices.iterator();
+      while(vertIt.hasNext())
+      {
+        Point vertex = vertIt.next();
+        if(selected_point != vertex)
+        {
+          double distance = getDistanceBetweenPoints(selected_point, vertex);
+          if(distance < vertex_remove_distance)
+          {
+            vertIt.remove();
+            break;
+          }
+        }
+      }
     }
     else
     {
@@ -362,13 +380,14 @@ public class Relationship implements DiagramElement
       if(vert_pieces[i].contains("</vertex>"))
       {
         vert_pieces[i] = "<vertex>" + vert_pieces[i];
+        vert_pieces[i] = getValueFromTag(vert_pieces[i], "vertex");
         Point vertex = new Point(0, 0);
-        String[] vertArr = destLocStr.split(",");
+        String[] vertArr = vert_pieces[i].split(",");
         if(vertArr.length > 1)
         {
           vertex.x = Integer.parseInt(vertArr[0]);
           vertex.y = Integer.parseInt(vertArr[1]);
-          r.addVertex(vertex);
+          r.vertices.add(vertex);
         }
       }
     }
@@ -615,9 +634,41 @@ public class Relationship implements DiagramElement
     return unique_id;
   }
   
-  private void addVertex(Point v)
+  public boolean addVertex(int x, int y)
   {
-    vertices.add(v);
+    double distance;
+    boolean foundVertexSpot = false;
+    
+    Point p = new Point(x, y);
+    Point curPoint = source_location;
+    
+    Iterator<Point> vertIt = vertices.iterator();
+    int index = 0;
+    while(vertIt.hasNext())
+    {
+      Point vertex = vertIt.next();
+      distance = pointDistFromLineSegment(p, curPoint, vertex);
+      if(distance < max_select_distance)
+      {
+        vertices.add(index, p);
+        foundVertexSpot = true;
+        break;
+      }
+      curPoint = (Point)vertex.clone();
+      index++;
+    }
+    
+    if(!foundVertexSpot)
+    {
+      distance = pointDistFromLineSegment(p, curPoint, destination_location);
+      if(distance < max_select_distance)
+      {
+        vertices.add(index, p);
+        foundVertexSpot = true;
+      }
+    }
+    
+    return foundVertexSpot;
   }
   
   @Override
@@ -683,6 +734,12 @@ public class Relationship implements DiagramElement
       toDestAngle = (3*Math.PI / 2) - Math.asin(Math.abs(delta.y) / hptns);
     
     return toDestAngle;
+  }
+  
+  @Override
+  public boolean isRelationship()
+  {
+    return true;
   }
   
 }
