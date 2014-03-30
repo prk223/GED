@@ -9,6 +9,7 @@ package ged;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -96,6 +97,14 @@ public class ElementSelectedState extends SelectDiagramState
       left_mouse_down = false;
     }
     
+    return next_state;
+  }
+  
+  @Override
+  public DiagramState delete() throws IOException
+  {
+    diag_controller.removeDiagramElement(selected_element);
+    next_state = new SelectDiagramState(view_port);
     return next_state;
   }
   

@@ -12,12 +12,17 @@ import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.border.TitledBorder;
 import javax.swing.Timer;
 
@@ -113,6 +118,8 @@ public class DiagramDialog extends javax.swing.JDialog
   {
     diag_panel = new DiagramPanel();
     DiagramScrollPane.setViewportView(diag_panel);
+    diag_panel.setFocusable(true);
+    diag_panel.requestFocusInWindow();
     
     diag_panel.addMouseListener(new java.awt.event.MouseAdapter()
     {
@@ -167,6 +174,32 @@ public class DiagramDialog extends javax.swing.JDialog
         DiagPanelMouseDragged(evt);
       }
     });
+    
+    diag_panel.getInputMap(JLabel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.
+            getKeyStroke(KeyEvent.VK_DELETE, 0), "DeleteKey");
+    diag_panel.getInputMap(JLabel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.
+            getKeyStroke(KeyEvent.VK_DECIMAL, 0), "DecimalKey");
+    diag_panel.getInputMap(JLabel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.
+            getKeyStroke(KeyEvent.VK_BACK_SPACE, 0), "BackSpaceKey");
+
+    Action deleteAction = new AbstractAction()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        try
+        {
+          DiagPanelDeleteKeyPressed();
+        }
+        catch (IOException ex)
+        {
+          Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+    };
+    diag_panel.getActionMap().put("DeleteKey", deleteAction);
+    diag_panel.getActionMap().put("DecimalKey", deleteAction);
+    diag_panel.getActionMap().put("BackSpaceKey", deleteAction);
   }
   
   private void DiagPanelMouseDoubleClicked(MouseEvent evt)
@@ -214,6 +247,12 @@ public class DiagramDialog extends javax.swing.JDialog
   private void DiagPanelRightMousePressed(MouseEvent evt) throws IOException
   {
     state = state.mouseRightClicked(evt);
+    diag_panel.repaint();
+  }
+  
+  private void DiagPanelDeleteKeyPressed() throws IOException
+  {
+    state = state.delete();
     diag_panel.repaint();
   }
 

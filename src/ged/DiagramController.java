@@ -137,6 +137,23 @@ public class DiagramController
     }
   }
   
+  public void removeDiagramElement(DiagramElement e)
+  {
+    if(cur_diagram != null)
+    {
+      Iterator<DiagramElement> elIt = cur_diagram.getElements().iterator();
+      while(elIt.hasNext())
+      {
+        DiagramElement element = elIt.next();
+        if(e == element)
+        {
+          elIt.remove();
+          break;
+        }
+      }
+    }
+  }
+  
   public void draw(Graphics g)
   {
     if(cur_diagram != null)

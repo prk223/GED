@@ -21,7 +21,7 @@ import javax.swing.JViewport;
  */
 public class SelectDiagramState extends DiagramState
 {
-  private final DiagramController diag_controller;
+  protected final DiagramController diag_controller;
   private final ConfigurationManager cfg_mgr;
   private int diag_ref_x; // reference for dragging diagram
   private int diag_ref_y;

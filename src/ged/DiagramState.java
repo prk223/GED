@@ -7,6 +7,7 @@
 package ged;
 
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import javax.swing.JViewport;
@@ -94,6 +95,11 @@ public class DiagramState
   }
   
   public DiagramState mouseRightClicked(MouseEvent evt) throws IOException
+  {
+    return next_state;
+  }
+  
+  public DiagramState delete() throws IOException
   {
     return next_state;
   }
