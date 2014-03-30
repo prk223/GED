@@ -310,4 +310,10 @@ public class Diagram implements DiagramElement
     // Nothing to do
   }
   
+  @Override
+  public boolean isRelationship()
+  {
+    return false;
+  }
+  
 }
