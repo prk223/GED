@@ -742,4 +742,15 @@ public class Relationship implements DiagramElement
     return true;
   }
   
+  @Override
+  public void alertDestroyedElement(DiagramElement e)
+  {
+    if((source_tether != null) && (source_tether.getElement() == e))
+      source_tether = null;
+    if((destination_tether != null) && (destination_tether.getElement() == e))
+      destination_tether = null;
+    if((association_tether != null) && (association_tether.getElement() == e))
+      association_tether = null;
+  }
+  
 }

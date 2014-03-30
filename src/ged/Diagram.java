@@ -316,4 +316,17 @@ public class Diagram implements DiagramElement
     return false;
   }
   
+  @Override
+  public void alertDestroyedElement(DiagramElement e)
+  {
+    // Remove from diagram
+    Iterator<DiagramElement> elIt = elements.iterator();
+    while(elIt.hasNext())
+    {
+      DiagramElement element = elIt.next();
+      if(e == element)
+        elIt.remove();
+    }
+  }
+  
 }

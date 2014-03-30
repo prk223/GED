@@ -42,4 +42,6 @@ public interface DiagramElement
   
   public boolean isRelationship();
   
+  public void alertDestroyedElement(DiagramElement e);
+  
 }

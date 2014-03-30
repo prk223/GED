@@ -141,15 +141,12 @@ public class DiagramController
   {
     if(cur_diagram != null)
     {
+      cur_diagram.alertDestroyedElement(e);
       Iterator<DiagramElement> elIt = cur_diagram.getElements().iterator();
       while(elIt.hasNext())
       {
         DiagramElement element = elIt.next();
-        if(e == element)
-        {
-          elIt.remove();
-          break;
-        }
+        element.alertDestroyedElement(e);
       }
     }
   }

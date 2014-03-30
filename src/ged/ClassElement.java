@@ -457,4 +457,10 @@ public class ClassElement implements DiagramElement
   {
     return false;
   }
+  
+  @Override
+  public void alertDestroyedElement(DiagramElement e)
+  {
+    // Don't care
+  }
 }
