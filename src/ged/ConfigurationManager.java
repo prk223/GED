@@ -35,6 +35,7 @@ public class ConfigurationManager
   public static final String DFLT_RLTNSHP_LEN = "DFLT_RLTNSHP_LEN";
   public static final String VERTEX_DIAMETER  = "VERTEX_DIAMETER";
   public static final String RLTN_SYM_SIZE    = "RLTN_SYM_SIZE";
+  public static final String VERTEX_RM_DIST   = "VERTEX_RM_DIST";
   
   private final ArrayList<ConfigurationItem> config_items = new ArrayList<>();
   
@@ -79,6 +80,7 @@ public class ConfigurationManager
     config_items.add(new ConfigurationItem(DFLT_RLTNSHP_LEN, "200"));
     config_items.add(new ConfigurationItem(VERTEX_DIAMETER, "4"));
     config_items.add(new ConfigurationItem(RLTN_SYM_SIZE, "18"));
+    config_items.add(new ConfigurationItem(VERTEX_RM_DIST, "10"));
     
     File configFile = new File(".\\" + CFG_FILENAME);
     if(configFile.exists())
