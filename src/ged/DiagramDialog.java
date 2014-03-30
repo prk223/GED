@@ -125,14 +125,12 @@ public class DiagramDialog extends javax.swing.JDialog
       @Override
       public void mouseEntered(java.awt.event.MouseEvent evt)
       {
-        if(evt.getButton() == MouseEvent.BUTTON1)
-          DiagPanelMouseEntered(evt);
+        DiagPanelMouseEntered(evt);
       }
       @Override
       public void mouseExited(java.awt.event.MouseEvent evt)
       {
-        if(evt.getButton() == MouseEvent.BUTTON1)
-          DiagPanelMouseExited(evt);
+        DiagPanelMouseExited(evt);
       }
       @Override
       public void mousePressed(MouseEvent evt)
