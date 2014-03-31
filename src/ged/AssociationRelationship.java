@@ -12,8 +12,6 @@ import java.awt.Point;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -29,6 +27,7 @@ public class AssociationRelationship extends Relationship
   private final Point association_class_location;
   private final Point association_relationship_location;
   private final ArrayList<Point> ass_vertices;
+  private double percent_length;
   
   public AssociationRelationship(int x, int y) throws IOException
   {
@@ -44,6 +43,8 @@ public class AssociationRelationship extends Relationship
     association_tether = null;
     association_class_uid = 0;
     ass_vertices = new ArrayList<>();
+    
+    percent_length = -1.0;
   }
   
   @Override
@@ -62,7 +63,7 @@ public class AssociationRelationship extends Relationship
     while(vertIt.hasNext())
     {
       Point vertex = vertIt.next();
-      drawLine(g, new Point(curPoint.x, curPoint.y),
+      drawDashedLine(g, new Point(curPoint.x, curPoint.y),
               new Point(vertex.x, vertex.y));
       int vertexX = vertex.x - (vertex_diameter/2);
       int vertexY = vertex.y - (vertex_diameter/2);
@@ -250,7 +251,18 @@ public class AssociationRelationship extends Relationship
   @Override
   protected void updateTethers() throws IOException
   {
+    boolean changedLocation = false;
+    Point source = new Point(source_location.x, source_location.y);
+    Point dest = new Point(destination_location.x, destination_location.y);
     super.updateTethers();
+    if((source.x != source_location.x)     || 
+        (source.y != source_location.y)    ||
+        (dest.x != destination_location.x) || 
+        (dest.y != destination_location.y))
+    {
+      changedLocation = true;
+    }
+    
     if((association_tether == null) && association_class_uid != 0)
     {
       DiagramElement e = diag_controller.getUniqueElement(association_class_uid);
@@ -266,9 +278,11 @@ public class AssociationRelationship extends Relationship
       Point newLoc = association_tether.getPoint();
       association_class_location.x = newLoc.x;
       association_class_location.y = newLoc.y;
+      changedLocation = true;
     }
     
-    snapToMainLine();
+    if(changedLocation)
+      snapToMainLine();
   }
   
   @Override
@@ -323,8 +337,36 @@ public class AssociationRelationship extends Relationship
   
   private void snapToMainLine()
   {
+    Point curPoint = source_location;
+    double distance;
+    double leastDistance = 10000000;
+    Point closestSeg1 = source_location;
+    Point closestSeg2 = destination_location;
+    Iterator<Point> vertIt = vertices.iterator();
+    while(vertIt.hasNext())
+    {
+      Point vertex = vertIt.next();
+      distance = pointDistFromLineSegment(association_relationship_location,
+              curPoint, vertex);
+      if(distance < leastDistance)
+      {
+        leastDistance = distance;
+        closestSeg1 = curPoint;
+        closestSeg2 = vertex;
+      }
+      curPoint = vertex;
+    }
+    
+    distance = pointDistFromLineSegment(association_relationship_location,
+            curPoint, destination_location);
+    if(distance < leastDistance)
+    {
+      closestSeg1 = curPoint;
+      closestSeg2 = destination_location;
+    }
+    
     Point closestPoint = getClosestPoint(association_relationship_location,
-            source_location, destination_location);
+            closestSeg1, closestSeg2);
     association_relationship_location.x = closestPoint.x;
     association_relationship_location.y = closestPoint.y;
   }

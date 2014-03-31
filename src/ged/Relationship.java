@@ -38,7 +38,7 @@ public class Relationship implements DiagramElement
   
   protected final Point source_location;
   protected final Point destination_location;
-  private final ArrayList<Point> vertices;
+  protected final ArrayList<Point> vertices;
   
   // Point selected for setting new location
   protected Point selected_point;
