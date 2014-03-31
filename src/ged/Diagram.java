@@ -196,6 +196,9 @@ public class Diagram implements DiagramElement
           case "Aggregation":
             e = AggregationRelationship.fromPersistentRepresentation(strArr[i]);
             break;
+          case "Association":
+            e = AssociationRelationship.fromPersistentRepresentation(strArr[i]);
+            break;
           default:
             System.err.println("ERROR:Diagram:Unknown element:" + type);
         }

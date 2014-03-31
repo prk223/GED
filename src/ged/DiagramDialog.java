@@ -272,6 +272,7 @@ public class DiagramDialog extends javax.swing.JDialog
     SelectBtn = new javax.swing.JButton();
     DiagramScrollPane = new javax.swing.JScrollPane();
     AddAggregationBtn = new javax.swing.JButton();
+    AddAssociationBtn = new javax.swing.JButton();
     DiagramMenuBar = new javax.swing.JMenuBar();
     DiagramFileMenu = new javax.swing.JMenu();
     DiagramSaveItem = new javax.swing.JMenuItem();
@@ -333,6 +334,17 @@ public class DiagramDialog extends javax.swing.JDialog
       }
     });
 
+    AddAssociationBtn.setText("Association");
+    AddAssociationBtn.setMaximumSize(new java.awt.Dimension(57, 23));
+    AddAssociationBtn.setMinimumSize(new java.awt.Dimension(57, 23));
+    AddAssociationBtn.addMouseListener(new java.awt.event.MouseAdapter()
+    {
+      public void mouseClicked(java.awt.event.MouseEvent evt)
+      {
+        AddAssociationBtnMouseClicked(evt);
+      }
+    });
+
     DiagramFileMenu.setText("File");
 
     DiagramSaveItem.setText("Save");
@@ -369,9 +381,10 @@ public class DiagramDialog extends javax.swing.JDialog
           .addComponent(SelectBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(AddInheritanceBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
           .addComponent(AddClassBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(AddAggregationBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-        .addComponent(DiagramScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 553, Short.MAX_VALUE))
+          .addComponent(AddAggregationBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+          .addComponent(AddAssociationBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(DiagramScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 557, Short.MAX_VALUE))
       .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(layout.createSequentialGroup()
           .addContainerGap()
@@ -388,8 +401,10 @@ public class DiagramDialog extends javax.swing.JDialog
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addComponent(AddAggregationBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+        .addComponent(AddAssociationBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addComponent(SelectBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addContainerGap(175, Short.MAX_VALUE))
+        .addContainerGap(103, Short.MAX_VALUE))
       .addComponent(DiagramScrollPane)
       .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -483,6 +498,19 @@ public class DiagramDialog extends javax.swing.JDialog
     diag_panel.repaint();
   }//GEN-LAST:event_AddAggregationBtnMouseClicked
 
+  private void AddAssociationBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_AddAssociationBtnMouseClicked
+  {//GEN-HEADEREND:event_AddAssociationBtnMouseClicked
+    try
+    {
+      state = state.addAssociationBtnClicked(evt);
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    diag_panel.repaint();
+  }//GEN-LAST:event_AddAssociationBtnMouseClicked
+
   public void open(String diagram)
   {
     boolean opened = diag_controller.openDiagram(diagram);
@@ -568,6 +596,7 @@ public class DiagramDialog extends javax.swing.JDialog
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton AddAggregationBtn;
+  private javax.swing.JButton AddAssociationBtn;
   private javax.swing.JButton AddClassBtn;
   private javax.swing.JButton AddInheritanceBtn;
   private javax.swing.JMenuItem DiagramCloseItem;

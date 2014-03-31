@@ -24,31 +24,28 @@ import java.util.logging.Logger;
  */
 public class Relationship implements DiagramElement
 {
-  private final ConfigurationManager cfg_mgr;
-  private final DiagramController diag_controller;
+  protected final ConfigurationManager cfg_mgr;
+  protected final DiagramController diag_controller;
   
-  protected TetherElementData source_tether;
-  protected TetherElementData destination_tether;
-  protected TetherElementData association_tether;
+  private TetherElementData source_tether;
+  private TetherElementData destination_tether;
   
   private int source_class_uid;
   private int destination_class_uid;
-  private int association_class_uid;
   
   private String source_multiplicity;
   private String destination_multiplicity;
   
   protected final Point source_location;
   protected final Point destination_location;
-  protected final Point association_location;
   private final ArrayList<Point> vertices;
   
   // Point selected for setting new location
-  private Point selected_point;
+  protected Point selected_point;
   // dist from a point to count it as being selected
-  private final double max_select_distance;
-  private final int vertex_diameter;
-  private final double vertex_remove_distance;
+  protected final double max_select_distance;
+  protected final int vertex_diameter;
+  protected final double vertex_remove_distance;
   protected final int symbol_size;
   
   private int unique_id;
@@ -71,7 +68,6 @@ public class Relationship implements DiagramElement
     
     source_location = new Point(x, y);
     destination_location = new Point(x + lineLength, y);
-    association_location = new Point(0, 0);
     vertices = new ArrayList<>();
     
     selected_point = null;
@@ -81,10 +77,8 @@ public class Relationship implements DiagramElement
     
     source_tether = null;
     destination_tether = null;
-    association_tether = null;
     source_class_uid = 0;
     destination_class_uid = 0;
-    association_class_uid = 0;
     
     unique_id = 0;
   }
@@ -130,20 +124,25 @@ public class Relationship implements DiagramElement
       e = (ClassElement)destination_tether.getElement();
     if(e != null && e.getInterface())
     {
-      Graphics2D g2 = (Graphics2D)g;
-      Stroke oldStroke = g2.getStroke();
-      BasicStroke dashed = new BasicStroke((float) 1.0,
-              BasicStroke.CAP_SQUARE, 
-              BasicStroke.JOIN_MITER,
-              (float)10.0, 
-              new float[]{9}, 
-              0);
-      g2.setStroke(dashed);
-      g2.drawLine(A.x, A.y, B.x, B.y);
-      g2.setStroke(oldStroke);
+      drawDashedLine(g, A, B);
     }
     else
       g.drawLine(A.x, A.y, B.x, B.y);
+  }
+  
+  protected void drawDashedLine(Graphics g, Point A, Point B)
+  {
+    Graphics2D g2 = (Graphics2D)g;
+    Stroke oldStroke = g2.getStroke();
+    BasicStroke dashed = new BasicStroke((float) 1.0,
+            BasicStroke.CAP_SQUARE, 
+            BasicStroke.JOIN_MITER,
+            (float)10.0, 
+            new float[]{9}, 
+            0);
+    g2.setStroke(dashed);
+    g2.drawLine(A.x, A.y, B.x, B.y);
+    g2.setStroke(oldStroke);
   }
   
   protected void drawEndpoints(Graphics g)
@@ -151,7 +150,7 @@ public class Relationship implements DiagramElement
     // subclasses overwite
   }
   
-  private void updateTethers() throws IOException
+  protected void updateTethers() throws IOException
   {
     if((source_tether == null) && source_class_uid != 0)
     {
@@ -172,16 +171,6 @@ public class Relationship implements DiagramElement
         System.out.println("WARN:Relationship:Attached UID was not a class!");
       destination_class_uid = 0;
     }
-    if((association_tether == null) && association_class_uid != 0)
-    {
-      DiagramElement e = diag_controller.getUniqueElement(association_class_uid);
-      if(e != null && "Class".equals(e.getElementType()))
-        association_tether = 
-                new TetherElementData((ClassElement)e, association_location);
-      else
-        System.out.println("WARN:Relationship:Attached UID was not a class!");
-      association_class_uid = 0;
-    }
     
     if(source_tether != null)
     {
@@ -194,12 +183,6 @@ public class Relationship implements DiagramElement
       Point newLoc = destination_tether.getPoint();
       destination_location.x = newLoc.x;
       destination_location.y = newLoc.y;
-    }
-    if(association_tether != null)
-    {
-      Point newLoc = association_tether.getPoint();
-      association_location.x = newLoc.x;
-      association_location.y = newLoc.y;
     }
   }
   
@@ -228,8 +211,6 @@ public class Relationship implements DiagramElement
         source_tether = null;
       else if(selected_point == destination_location)
         destination_tether = null;
-      else if(selected_point == association_location)
-        association_tether = null;
       
       Iterator<Point> vertIt = vertices.iterator();
       while(vertIt.hasNext())
@@ -250,7 +231,6 @@ public class Relationship implements DiagramElement
     {
       source_tether = null;
       destination_tether = null;
-      association_tether = null;
       
       int distX = loc.x - source_location.x;
       int distY = loc.y - source_location.y;
@@ -282,19 +262,15 @@ public class Relationship implements DiagramElement
   {
     int source_uid = 0;
     int dest_uid = 0;
-    int ass_uid = 0;
     
     if(source_tether != null)
       source_uid = source_tether.getElement().getUniqueId();
     if(destination_tether != null)
       dest_uid = destination_tether.getElement().getUniqueId();
-    if(association_tether != null)
-      ass_uid = association_tether.getElement().getUniqueId();
     
     String rep = "<uniqueID>" + unique_id + "</uniqueID>";
     rep += "<sourceUID>" + source_uid + "</sourceUID>";
     rep += "<destinationUID>" + dest_uid + "</destinationUID>";
-    rep += "<assUID>" + ass_uid + "</assUID>";
     
     rep += "<sourceMult>" + source_multiplicity + "</sourceMult>";
     rep += "<destinationMult>" + destination_multiplicity + 
@@ -338,8 +314,6 @@ public class Relationship implements DiagramElement
     r.source_class_uid = sourceUID;
     int destinationUID = Integer.parseInt(getValueFromTag(s, "destinationUID"));
     r.destination_class_uid = destinationUID;
-    int assUID = Integer.parseInt(getValueFromTag(s, "assUID"));
-    r.association_class_uid = assUID;
     
     
     String sourceMult = getValueFromTag(s, "sourceMult");
@@ -358,20 +332,6 @@ public class Relationship implements DiagramElement
     }
     r.destination_location.x = destPoint.x;
     r.destination_location.y = destPoint.y;
-    
-    Point assPoint = new Point(0, 0);
-    String assLocStr = getValueFromTag(s, "associationLoc");
-    if(!"".equals(assLocStr))
-    {
-      String[] assLocArr = assLocStr.split(",");
-      if(assLocArr.length > 1)
-      {
-        assPoint.x = Integer.parseInt(assLocArr[0]);
-        assPoint.y = Integer.parseInt(assLocArr[1]);
-      }
-      r.association_location.x = destPoint.x;
-      r.association_location.y = destPoint.y;
-    }
     
     // Get all vertices
     String[] vert_pieces = s.split("<vertex>");
@@ -434,7 +394,7 @@ public class Relationship implements DiagramElement
   }
   
   // Get distance from point C to line segment AB
-  private static double pointDistFromLineSegment(Point C, Point segA, Point segB)
+  protected static double pointDistFromLineSegment(Point C, Point segA, Point segB)
   {
     double distance;
     
@@ -493,7 +453,7 @@ public class Relationship implements DiagramElement
   }
   
   // Get closest point on line segment AB to point C
-  private static Point getClosestPoint(Point C, Point segA, Point segB)
+  protected static Point getClosestPoint(Point C, Point segA, Point segB)
   {
     double r_numerator = (C.x - segA.x)*(segB.x - segA.x) + 
                          (C.y - segA.y)*(segB.y - segA.y);
@@ -558,7 +518,7 @@ public class Relationship implements DiagramElement
     return new Point(x, y);
   }
   
-  private static Point getClosestEndpoint(Point C, Point segA, Point segB)
+  protected static Point getClosestEndpoint(Point C, Point segA, Point segB)
   {
     double distToA = getDistanceBetweenPoints(C, segA);
     double distToB = getDistanceBetweenPoints(C, segB);
@@ -570,7 +530,7 @@ public class Relationship implements DiagramElement
     return closestEndpoint;
   }
   
-  private static double getDistanceBetweenPoints(Point A, Point B)
+  protected static double getDistanceBetweenPoints(Point A, Point B)
   {
     double A_aSquared = (B.x - A.x) * (B.x - A.x);
     double A_bSquared = (B.y - A.y) * (B.y - A.y);
@@ -647,10 +607,11 @@ public class Relationship implements DiagramElement
     while(vertIt.hasNext())
     {
       Point vertex = vertIt.next();
-      distance = pointDistFromLineSegment(p, curPoint, vertex);
+      Point closestPoint = getClosestPoint(p, curPoint, vertex);
+      distance = getDistanceBetweenPoints(p, closestPoint);
       if(distance < max_select_distance)
       {
-        vertices.add(index, p);
+        vertices.add(index, closestPoint);
         foundVertexSpot = true;
         break;
       }
@@ -660,10 +621,11 @@ public class Relationship implements DiagramElement
     
     if(!foundVertexSpot)
     {
-      distance = pointDistFromLineSegment(p, curPoint, destination_location);
+      Point closestPoint = getClosestPoint(p, curPoint, destination_location);
+      distance = getDistanceBetweenPoints(p, closestPoint);
       if(distance < max_select_distance)
       {
-        vertices.add(index, p);
+        vertices.add(index, closestPoint);
         foundVertexSpot = true;
       }
     }
@@ -684,14 +646,12 @@ public class Relationship implements DiagramElement
     }
   }
   
-  private void tetherToClass(ClassElement e) throws IOException
+  protected void tetherToClass(ClassElement e) throws IOException
   {
     if(selected_point == source_location)
       source_tether = new TetherElementData(e, source_location);
     else if(selected_point == destination_location)
       destination_tether = new TetherElementData(e, destination_location);
-    else if(selected_point == association_location)
-      association_tether = new TetherElementData(e, association_location);
   }
   
   protected Point getLastVertex()
@@ -749,8 +709,6 @@ public class Relationship implements DiagramElement
       source_tether = null;
     if((destination_tether != null) && (destination_tether.getElement() == e))
       destination_tether = null;
-    if((association_tether != null) && (association_tether.getElement() == e))
-      association_tether = null;
   }
   
 }

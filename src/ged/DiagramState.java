@@ -84,6 +84,13 @@ public class DiagramState
     return next_state;
   }
   
+  public DiagramState addAssociationBtnClicked(MouseEvent evt) throws IOException
+  {
+    AssociationRelationship r = new AssociationRelationship(0,0);
+    next_state = new AddElementDiagramState(view_port, r);
+    return next_state;
+  }
+  
   public DiagramState selectBtnClicked(MouseEvent evt) throws IOException
   {
     next_state = new SelectDiagramState(view_port);
