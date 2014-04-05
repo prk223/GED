@@ -218,7 +218,6 @@ public class EditClassDialog extends javax.swing.JDialog
 
     AttributeDlg.setMinimumSize(new java.awt.Dimension(623, 411));
     AttributeDlg.setModal(true);
-    AttributeDlg.setPreferredSize(new java.awt.Dimension(623, 411));
 
     EditAttributeLabel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
     EditAttributeLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -308,7 +307,6 @@ public class EditClassDialog extends javax.swing.JDialog
 
     OperationDlg.setMinimumSize(new java.awt.Dimension(623, 500));
     OperationDlg.setModal(true);
-    OperationDlg.setPreferredSize(new java.awt.Dimension(623, 500));
 
     EditOperationLabel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
     EditOperationLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -664,6 +662,13 @@ public class EditClassDialog extends javax.swing.JDialog
     });
 
     ClassInterfaceCheckbox.setText("Interface");
+    ClassInterfaceCheckbox.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        ClassInterfaceCheckboxActionPerformed(evt);
+      }
+    });
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
@@ -732,10 +737,6 @@ public class EditClassDialog extends javax.swing.JDialog
 
   private void EditClassOkBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_EditClassOkBtnMouseClicked
   {//GEN-HEADEREND:event_EditClassOkBtnMouseClicked
-    if(editing_element != null)
-    {
-      editing_element.setInterface(ClassInterfaceCheckbox.isSelected());
-    }
     setVisible(false);
   }//GEN-LAST:event_EditClassOkBtnMouseClicked
 
@@ -969,6 +970,14 @@ public class EditClassDialog extends javax.swing.JDialog
       }
     }
   }//GEN-LAST:event_OperationParameterTableMouseClicked
+
+  private void ClassInterfaceCheckboxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ClassInterfaceCheckboxActionPerformed
+  {//GEN-HEADEREND:event_ClassInterfaceCheckboxActionPerformed
+    if(editing_element != null)
+    {
+      editing_element.setInterface(ClassInterfaceCheckbox.isSelected());
+    }
+  }//GEN-LAST:event_ClassInterfaceCheckboxActionPerformed
 
   /**
    * @param args the command line arguments
