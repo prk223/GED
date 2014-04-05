@@ -8,10 +8,12 @@ package ged;
 
 import static ged.Util.getValueFromTag;
 import java.awt.BasicStroke;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Stroke;
+import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -35,6 +37,10 @@ public class Relationship implements DiagramElement
   
   private String source_multiplicity;
   private String destination_multiplicity;
+  private int source_mult_len;
+  private double source_mult_angle;
+  private int destination_mult_len;
+  private double destination_mult_angle;
   
   protected final Point source_location;
   protected final Point destination_location;
@@ -49,6 +55,8 @@ public class Relationship implements DiagramElement
   protected final int symbol_size;
   
   private int unique_id;
+  
+  protected static EditRelationshipDialog edit_relationship_dlg;
   
   
   public Relationship(int x, int y) throws IOException
@@ -65,6 +73,14 @@ public class Relationship implements DiagramElement
             getConfigValue(ConfigurationManager.RLTN_SYM_SIZE));
     vertex_remove_distance = Integer.parseInt(cfg_mgr.
             getConfigValue(ConfigurationManager.VERTEX_RM_DIST));
+    source_mult_len = Integer.parseInt(cfg_mgr.
+            getConfigValue(ConfigurationManager.SRC_MULT_DFLT_LEN));
+    source_mult_angle = (Math.PI / 180.0) * Integer.parseInt(cfg_mgr.
+            getConfigValue(ConfigurationManager.SRC_MULT_DFLT_ANGL));
+    destination_mult_len = Integer.parseInt(cfg_mgr.
+            getConfigValue(ConfigurationManager.DEST_MULT_DFLT_LEN));
+    destination_mult_angle = (Math.PI / 180.0) * Integer.parseInt(cfg_mgr.
+            getConfigValue(ConfigurationManager.DEST_MULT_DFLT_ANGL));
     
     source_location = new Point(x, y);
     destination_location = new Point(x + lineLength, y);
@@ -115,6 +131,8 @@ public class Relationship implements DiagramElement
            new Point(destination_location.x, destination_location.y));
     
     drawEndpoints(g);
+    
+    drawMultiplicities(g);
   }
   
   protected void drawLine(Graphics g, Point A, Point B)
@@ -148,6 +166,77 @@ public class Relationship implements DiagramElement
   protected void drawEndpoints(Graphics g)
   {
     // subclasses overwite
+  }
+  
+    boolean right = false;
+  protected void drawMultiplicities(Graphics g)
+  {
+    Graphics2D g2 = (Graphics2D)g;
+    FontMetrics metrics = g2.getFontMetrics();
+    
+    double toSrcAngle = getAngleToSource();
+    double textSrcAngle = toSrcAngle + (Math.PI / 2);
+    int srcX;
+    int srcY;
+    if(textSrcAngle < (3*Math.PI / 2)) // toSource is right half of circle
+    {
+      int srcTextWidth = metrics.stringWidth(source_multiplicity);
+      textSrcAngle += Math.PI;
+      srcX = source_location.x +
+              (int)(-Math.cos(textSrcAngle)*srcTextWidth)+
+              (int)(-Math.sin(Math.PI - source_mult_angle - toSrcAngle)*
+                     source_mult_len);
+      srcY = source_location.y +
+              (int)(-Math.sin(textSrcAngle)*srcTextWidth)+
+              (int)(-Math.cos(Math.PI - source_mult_angle - toSrcAngle)*
+                     source_mult_len);
+    }
+    else // toSource is left half of circle
+    {
+      srcX = source_location.x +
+              (int)(Math.cos(toSrcAngle - source_mult_angle - (3*Math.PI/2))*
+                    source_mult_len);
+      srcY = source_location.y +
+              (int)(Math.sin(toSrcAngle - source_mult_angle - (3*Math.PI/2))*
+                    source_mult_len);
+    }
+    
+    
+    int charHeight = metrics.getHeight();
+    AffineTransform origTransform = g2.getTransform();
+    g2.rotate(textSrcAngle, srcX, srcY);
+    g2.drawString(source_multiplicity, srcX, srcY);
+    g2.setTransform(origTransform);
+    
+    double toDestAngle = getAngleToDestination();
+    int destX;
+    int destY;
+    double textDestAngle = toDestAngle - (Math.PI / 2);
+    if(textDestAngle > (Math.PI / 2)) // toDest is left half of circle
+    {
+      textDestAngle -= Math.PI;
+      destX = destination_location.x +
+              (int)(Math.cos(toDestAngle - destination_mult_angle - 
+                             (3*Math.PI/2))*destination_mult_len);
+      destY = destination_location.y +
+              (int)(Math.sin(toDestAngle - destination_mult_angle - 
+                             (3*Math.PI/2))*destination_mult_len);
+    }
+    else // toDest is right half of circle
+    {
+      int destTextWidth = metrics.stringWidth(destination_multiplicity);
+      destX = destination_location.x +
+              (int)(-Math.cos(textDestAngle)*destTextWidth) +
+              (int)(-Math.sin(Math.PI - destination_mult_angle - toDestAngle)*
+                              destination_mult_len);
+      destY = destination_location.y +
+              (int)(-Math.sin(textDestAngle)*destTextWidth) +
+              (int)(-Math.cos(Math.PI - destination_mult_angle - toDestAngle)*
+                              destination_mult_len);
+    }
+    g2.rotate(textDestAngle, destX, destY);
+    g2.drawString(destination_multiplicity, destX, destY);
+    g2.setTransform(origTransform);
   }
   
   protected void updateTethers() throws IOException
@@ -275,6 +364,13 @@ public class Relationship implements DiagramElement
     rep += "<sourceMult>" + source_multiplicity + "</sourceMult>";
     rep += "<destinationMult>" + destination_multiplicity + 
             "</destinationMult>";
+    
+    rep += "<sourceMultLength>" + source_mult_len + "</sourceMultLength>";
+    rep += "<sourceMultAngle>" + source_mult_angle + "</sourceMultAngle>";
+    rep += "<destinationMultLength>" + destination_mult_len + 
+            "</destinationMultLength>";
+    rep += "<destinationMultAngle>" + destination_mult_angle + 
+            "<destinationMultAngle>";
 
     rep += "<sourceLoc>" + source_location.x + "," + source_location.y +
             "</sourceLoc>";
@@ -321,6 +417,18 @@ public class Relationship implements DiagramElement
     String destMult = getValueFromTag(s, "destinationMult");
     r.destination_multiplicity = destMult;
     
+    String srcMultLen    = getValueFromTag(s, "sourceMultLength");
+    String srcMultAngle  = getValueFromTag(s, "sourceMultAngle");
+    String destMultLen   = getValueFromTag(s, "destinationMultLength");
+    String destMultAngle = getValueFromTag(s, "destinationMultAngle");
+    if(!srcMultLen.equals(""))
+      r.source_mult_len = Integer.parseInt(srcMultLen);
+    if(!srcMultAngle.equals(""))
+      r.source_mult_angle = Double.parseDouble(srcMultAngle);
+    if(!destMultLen.equals(""))
+      r.destination_mult_len = Integer.parseInt(destMultLen);
+    if(!destMultAngle.equals(""))
+      r.destination_mult_angle = Double.parseDouble(destMultAngle);
     
     Point destPoint = new Point(0, 0);
     String destLocStr = getValueFromTag(s, "destinationLoc");
@@ -541,7 +649,9 @@ public class Relationship implements DiagramElement
   @Override
   public void displayEditGui()
   {
-    // TODO fill in
+    edit_relationship_dlg = new EditRelationshipDialog(null, true);
+    edit_relationship_dlg.setVisible(false);
+    edit_relationship_dlg.open(this);
   }
   
   @Override
@@ -665,6 +775,21 @@ public class Relationship implements DiagramElement
     return lastPoint;
   }
   
+  protected Point getDeltaToSource()
+  {
+    Point secondPoint;
+    Iterator<Point> vertIt = vertices.iterator();
+    if(vertIt.hasNext())
+      secondPoint = vertIt.next();
+    else
+      secondPoint = destination_location;
+    
+    int x = source_location.x - secondPoint.x;
+    int y = source_location.y - secondPoint.y;
+    
+    return new Point(x, y);
+  }
+  
   protected Point getDeltaToDestination()
   {
     Point firstPoint = getLastVertex();
@@ -675,25 +800,37 @@ public class Relationship implements DiagramElement
     return new Point(x, y);
   }
   
-  protected double getAngleToDestination()
+  // Return angle between 0 and 2pi
+  protected double getAngle(Point delta)
   {
-    Point delta = getDeltaToDestination();
     double hptns = Math.sqrt((delta.x*delta.x) + 
             (delta.y*delta.y));
     
-    double toDestAngle;
+    double angle;
     if((delta.y == 0) && (delta.x == 0))            // Double point (bad)
-      toDestAngle = 0;
+      angle = 0;
     else if((delta.y <= 0) && (delta.x >= 0))       // Top right quadrant
-      toDestAngle = Math.asin(Math.abs(delta.x) / hptns);
+      angle = Math.asin(Math.abs(delta.x) / hptns);
     else if((delta.y <= 0) && (delta.x <= 0))       // Top left quadrant
-      toDestAngle = -Math.asin(Math.abs(delta.x) / hptns);// - (Math.PI / 2);
+      angle = (2*Math.PI) - Math.asin(Math.abs(delta.x) / hptns);
     else if((delta.y >= 0) && (delta.x >= 0))       // Bottom right quadrant
-      toDestAngle = Math.asin(Math.abs(delta.y) / hptns) + (Math.PI / 2);
+      angle = Math.asin(Math.abs(delta.y) / hptns) + (Math.PI / 2);
     else                                            // Bottom left quadrant
-      toDestAngle = (3*Math.PI / 2) - Math.asin(Math.abs(delta.y) / hptns);
+      angle = (3*Math.PI / 2) - Math.asin(Math.abs(delta.y) / hptns);
     
-    return toDestAngle;
+    return angle;
+  }
+  
+  protected double getAngleToSource()
+  {
+    Point delta = getDeltaToSource();
+    return getAngle(delta);
+  }
+  
+  protected double getAngleToDestination()
+  {
+    Point delta = getDeltaToDestination();
+    return getAngle(delta);
   }
   
   @Override
@@ -709,6 +846,26 @@ public class Relationship implements DiagramElement
       source_tether = null;
     if((destination_tether != null) && (destination_tether.getElement() == e))
       destination_tether = null;
+  }
+  
+  public String getSourceMultiplicity()
+  {
+    return source_multiplicity;
+  }
+  
+  public void setSourceMultiplicity(String mult)
+  {
+    source_multiplicity = mult;
+  }
+  
+  public String getDestinationMultiplicity()
+  {
+    return destination_multiplicity;
+  }
+  
+  public void setDestinationMultiplicity(String mult)
+  {
+    destination_multiplicity = mult;
   }
   
 }

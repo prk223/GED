@@ -24,18 +24,24 @@ public class ConfigurationManager
   private static ConfigurationManager instance = null;
   
   
-  public static final String WORKSPACE_PATH   = "WORKSPACE_PATH";
-  public static final String NUM_UNDO         = "NUM_UNDO";
-  public static final String MSG_TIMEOUT      = "MSG_TIMEOUT";
-  public static final String MIN_CLASS_WIDTH  = "MIN_CLASS_WIDTH";
-  public static final String MIN_CLASS_HEIGHT = "MIN_CLASS_HEIGHT";
-  public static final String SELECT_DISTANCE  = "SELECT_DISTANCE";
-  public static final String LINE_BFR_SIZE    = "LINE_BUFFER_SIZE";
-  public static final String DIAGRAM_BFR_SIZE = "DIAGRAM_BUFFER_SIZE";
-  public static final String DFLT_RLTNSHP_LEN = "DFLT_RLTNSHP_LEN";
-  public static final String VERTEX_DIAMETER  = "VERTEX_DIAMETER";
-  public static final String RLTN_SYM_SIZE    = "RLTN_SYM_SIZE";
-  public static final String VERTEX_RM_DIST   = "VERTEX_RM_DIST";
+  public static final String WORKSPACE_PATH        = "WORKSPACE_PATH";
+  public static final String NUM_UNDO              = "NUM_UNDO";
+  public static final String MSG_TIMEOUT           = "MSG_TIMEOUT";
+  public static final String MIN_CLASS_WIDTH       = "MIN_CLASS_WIDTH";
+  public static final String MIN_CLASS_HEIGHT      = "MIN_CLASS_HEIGHT";
+  public static final String SELECT_DISTANCE       = "SELECT_DISTANCE";
+  public static final String LINE_BFR_SIZE         = "LINE_BUFFER_SIZE";
+  public static final String DIAGRAM_BFR_SIZE      = "DIAGRAM_BUFFER_SIZE";
+  public static final String DFLT_RLTNSHP_LEN      = "DFLT_RLTNSHP_LEN";
+  public static final String VERTEX_DIAMETER       = "VERTEX_DIAMETER";
+  public static final String RLTN_SYM_SIZE         = "RLTN_SYM_SIZE";
+  public static final String VERTEX_RM_DIST        = "VERTEX_RM_DIST";
+  // Angles in degrees
+  public static final String SRC_MULT_DFLT_LEN     = "SRC_MULT_DFLT_LEN";
+  public static final String SRC_MULT_DFLT_ANGL    = "SRC_MULT_DFLT_ANGL";
+  public static final String DEST_MULT_DFLT_LEN    = "DEST_MULT_DFLT_LEN";
+  public static final String DEST_MULT_DFLT_ANGL   = "DEST_MULT_DFLT_ANGL";
+  public static final String RLTN_SNAP_DIST        = "RLTN_SNAP_DIST";
   
   private final ArrayList<ConfigurationItem> config_items = new ArrayList<>();
   
@@ -81,6 +87,11 @@ public class ConfigurationManager
     config_items.add(new ConfigurationItem(VERTEX_DIAMETER, "4"));
     config_items.add(new ConfigurationItem(RLTN_SYM_SIZE, "18"));
     config_items.add(new ConfigurationItem(VERTEX_RM_DIST, "10"));
+    config_items.add(new ConfigurationItem(SRC_MULT_DFLT_LEN, "20"));
+    config_items.add(new ConfigurationItem(SRC_MULT_DFLT_ANGL, "45"));
+    config_items.add(new ConfigurationItem(DEST_MULT_DFLT_LEN, "20"));
+    config_items.add(new ConfigurationItem(DEST_MULT_DFLT_ANGL, "45"));
+    config_items.add(new ConfigurationItem(RLTN_SNAP_DIST, "3"));
     
     File configFile = new File(".\\" + CFG_FILENAME);
     if(configFile.exists())
