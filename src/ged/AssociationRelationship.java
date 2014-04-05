@@ -27,13 +27,15 @@ public class AssociationRelationship extends Relationship
   private final Point association_class_location;
   private final Point association_relationship_location;
   private final ArrayList<Point> ass_vertices;
-  private double percent_length;
+  private final int min_snap_distance;
   
   public AssociationRelationship(int x, int y) throws IOException
   {
     super(x, y);
     int lineLength = Integer.parseInt(cfg_mgr.
             getConfigValue(ConfigurationManager.DFLT_RLTNSHP_LEN));
+    min_snap_distance = Integer.parseInt(cfg_mgr.
+            getConfigValue(ConfigurationManager.RLTN_SNAP_DIST));
     
     prev_last_vertex = new Point(0,0);
     prev_destination = new Point(0,0);
@@ -43,8 +45,6 @@ public class AssociationRelationship extends Relationship
     association_tether = null;
     association_class_uid = 0;
     ass_vertices = new ArrayList<>();
-    
-    percent_length = -1.0;
   }
   
   @Override
@@ -292,8 +292,6 @@ public class AssociationRelationship extends Relationship
     super.setLocation(loc);
     if(selected_point != null)
     {
-      if(selected_point == association_class_location)
-        association_tether = null;
       
       Iterator<Point> vertIt = ass_vertices.iterator();
       while(vertIt.hasNext())
@@ -309,6 +307,11 @@ public class AssociationRelationship extends Relationship
           }
         }
       }
+      
+      if(selected_point == association_class_location)
+        association_tether = null;
+      else
+        snapToMainLine();
     }
     else
     {
@@ -331,8 +334,6 @@ public class AssociationRelationship extends Relationship
       association_class_location.x += deltaX;
       association_class_location.y += deltaY;
     }
-    
-    snapToMainLine();
   }
   
   private void snapToMainLine()
@@ -365,10 +366,13 @@ public class AssociationRelationship extends Relationship
       closestSeg2 = destination_location;
     }
     
-    Point closestPoint = getClosestPoint(association_relationship_location,
-            closestSeg1, closestSeg2);
-    association_relationship_location.x = closestPoint.x;
-    association_relationship_location.y = closestPoint.y;
+    if(distance > min_snap_distance)
+    {
+      Point closestPoint = getClosestPoint(association_relationship_location,
+              closestSeg1, closestSeg2);
+      association_relationship_location.x = closestPoint.x;
+      association_relationship_location.y = closestPoint.y;
+    }
   }
   
   @Override
