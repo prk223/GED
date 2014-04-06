@@ -332,4 +332,23 @@ public class Diagram implements DiagramElement
     }
   }
   
+  @Override
+  public DiagramElement cloneElement() throws IOException
+  {
+    Diagram clonedDiagram = new Diagram(name);
+    clonedDiagram.location.x = location.x;
+    clonedDiagram.location.y = location.y;
+    clonedDiagram.unique_id = unique_id;
+    clonedDiagram.last_unique_id = last_unique_id;
+    
+    Iterator<DiagramElement> elIt = elements.iterator();
+    while(elIt.hasNext())
+    {
+      DiagramElement e = elIt.next();
+      clonedDiagram.elements.add(e.cloneElement());
+    }
+    
+    return clonedDiagram;
+  }
+  
 }

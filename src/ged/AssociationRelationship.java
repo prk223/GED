@@ -416,4 +416,37 @@ public class AssociationRelationship extends Relationship
     if((association_tether != null) && (association_tether.getElement() == e))
       association_tether = null;
   }
+  
+  @Override
+  public DiagramElement cloneElement() throws IOException
+  {
+    AssociationRelationship clonedAss = new AssociationRelationship(0, 0);
+    
+    clonedAss.prev_last_vertex.x = prev_last_vertex.x;
+    clonedAss.prev_last_vertex.y = prev_last_vertex.y;
+    clonedAss.prev_destination.x = prev_destination.x;
+    clonedAss.prev_destination.y = prev_destination.y;
+    
+    if(association_tether != null)
+      clonedAss.association_tether = new TetherElementData(
+              association_tether.getElement(), association_tether.getPoint());
+    
+    clonedAss.association_class_uid = association_class_uid;
+    
+    clonedAss.association_class_location.x = association_class_location.x;
+    clonedAss.association_class_location.y = association_class_location.y;
+    clonedAss.association_relationship_location.x = 
+            association_relationship_location.x;
+    clonedAss.association_relationship_location.y = 
+            association_relationship_location.y;
+    
+    Iterator<Point> vertIt = ass_vertices.iterator();
+    while(vertIt.hasNext())
+    {
+      Point vertex = vertIt.next();
+      clonedAss.ass_vertices.add(new Point(vertex.x, vertex.y));
+    }
+  
+    return cloneRelationship(clonedAss);
+  }
 }

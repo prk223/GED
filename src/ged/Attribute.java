@@ -111,4 +111,11 @@ public class Attribute
     return a;
   }
   
+  public Attribute cloneAttribute()
+  {
+    Attribute clonedAttribute = new Attribute(protection_level, type, name);
+    clonedAttribute.is_static = is_static;
+    return clonedAttribute;
+  }
+  
 }

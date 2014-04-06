@@ -84,4 +84,23 @@ public class AggregationRelationship extends Relationship
     AggregationRelationship r = new AggregationRelationship(0, 0);
     return fromPersistentRepresentation(s, r);
   }
+  
+  @Override
+  public DiagramElement cloneElement() throws IOException
+  {
+    AggregationRelationship clonedAg = new AggregationRelationship(0, 0);
+    
+    clonedAg.prev_last_vertex.x = prev_last_vertex.x;
+    clonedAg.prev_last_vertex.y = prev_last_vertex.y;
+    clonedAg.prev_destination.x = prev_destination.x;
+    clonedAg.prev_destination.y = prev_destination.y;
+    
+    int[] x = diamond.xpoints;
+    int[] y = diamond.ypoints;
+    int[] newX = {x[0], x[1], x[2], x[3]};
+    int[] newY = {y[0], y[1], y[2], y[3]};
+    clonedAg.diamond = new Polygon(newX, newY, 4);
+    
+    return cloneRelationship(clonedAg);
+  }
 }

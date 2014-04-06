@@ -28,7 +28,6 @@ public class ClassElement implements DiagramElement
   private final ArrayList<Attribute> attributes;
   private final ArrayList<Operation> operations;
   private Point location;
-  private final EditClassDialog edit_class_dlg;
   private int width, height;
   private final int min_width, min_height;
   private final int buffer;
@@ -44,7 +43,6 @@ public class ClassElement implements DiagramElement
     name = n;
     attributes = new ArrayList<>();
     operations = new ArrayList<>();
-    edit_class_dlg = new EditClassDialog(null, true);
     min_height = Integer.parseInt(
             cfg_mgr.getConfigValue(ConfigurationManager.MIN_CLASS_HEIGHT));
     min_width = Integer.parseInt(
@@ -129,13 +127,6 @@ public class ClassElement implements DiagramElement
         break;
       }
     }
-  }
-  
-  public void addOperation(String n, String ret, Protection p, 
-          ArrayList<Parameter> args)
-  {
-    Operation o = new Operation(p, ret, n, args);
-    operations.add(o);
   }
   
   public void addOperation(Operation o)
@@ -419,7 +410,8 @@ public class ClassElement implements DiagramElement
   @Override
   public void displayEditGui()
   {
-    edit_class_dlg.open(this);
+    EditClassDialog dlg = new EditClassDialog(null, true);
+    dlg.open(this);
   }
   
   @Override
@@ -462,5 +454,31 @@ public class ClassElement implements DiagramElement
   public void alertDestroyedElement(DiagramElement e)
   {
     // Don't care
+  }
+  
+  @Override
+  public DiagramElement cloneElement() throws IOException
+  {
+    ClassElement clonedClass = new ClassElement(name, location.x, location.y);
+    clonedClass.is_interface = is_interface;
+    clonedClass.width = width;
+    clonedClass.height = height;
+    clonedClass.unique_id = unique_id;
+    
+    Iterator<Attribute> attIt = attributes.iterator();
+    while(attIt.hasNext())
+    {
+      Attribute a = attIt.next();
+      clonedClass.attributes.add(a.cloneAttribute());
+    }
+    
+    Iterator<Operation> opIt = operations.iterator();
+    while(opIt.hasNext())
+    {
+      Operation o = opIt.next();
+      clonedClass.operations.add(o.cloneOperation());
+    }
+    
+    return clonedClass;
   }
 }

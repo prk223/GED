@@ -56,8 +56,6 @@ public class Relationship implements DiagramElement
   
   private int unique_id;
   
-  protected static EditRelationshipDialog edit_relationship_dlg;
-  
   
   public Relationship(int x, int y) throws IOException
   {
@@ -649,9 +647,8 @@ public class Relationship implements DiagramElement
   @Override
   public void displayEditGui()
   {
-    edit_relationship_dlg = new EditRelationshipDialog(null, true);
-    edit_relationship_dlg.setVisible(false);
-    edit_relationship_dlg.open(this);
+    EditRelationshipDialog dlg = new EditRelationshipDialog(null, true);
+    dlg.open(this);
   }
   
   @Override
@@ -866,6 +863,52 @@ public class Relationship implements DiagramElement
   public void setDestinationMultiplicity(String mult)
   {
     destination_multiplicity = mult;
+  }
+  
+  public Relationship cloneRelationship(Relationship cloneIntoThis) throws IOException
+  {
+    if(source_tether != null)
+      cloneIntoThis.source_tether = new TetherElementData(
+              source_tether.getElement(), source_tether.getPoint());
+    if(destination_tether != null)
+      cloneIntoThis.destination_tether = new TetherElementData(
+              destination_tether.getElement(), destination_tether.getPoint());
+    
+    cloneIntoThis.source_class_uid = source_class_uid;
+    cloneIntoThis.destination_class_uid = destination_class_uid;
+    
+    cloneIntoThis.source_multiplicity = source_multiplicity;
+    cloneIntoThis.destination_multiplicity = destination_multiplicity;
+    cloneIntoThis.source_mult_angle = source_mult_angle;
+    cloneIntoThis.source_mult_len   = source_mult_len;
+    cloneIntoThis.destination_mult_angle = destination_mult_angle;
+    cloneIntoThis.destination_mult_len   = destination_mult_len;
+    
+    cloneIntoThis.source_location.x = source_location.x;
+    cloneIntoThis.source_location.y = source_location.y;
+    cloneIntoThis.destination_location.x = destination_location.x;
+    cloneIntoThis.destination_location.y = destination_location.y;
+    
+    Iterator<Point> vertIt = vertices.iterator();
+    while(vertIt.hasNext())
+    {
+      Point vertex = vertIt.next();
+      cloneIntoThis.vertices.add(new Point(vertex.x, vertex.y));
+    }
+    
+    cloneIntoThis.unique_id = unique_id;
+    
+    return cloneIntoThis;
+  }
+  
+  @Override
+  public DiagramElement cloneElement() throws IOException
+  {
+    Relationship clonedRelationship = 
+            new Relationship(0, 0);
+    clonedRelationship = cloneRelationship(clonedRelationship);
+  
+    return clonedRelationship;
   }
   
 }

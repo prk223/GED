@@ -8,6 +8,7 @@ package ged;
 
 import java.awt.Graphics;
 import java.awt.Point;
+import java.io.IOException;
 
 /**
  *
@@ -43,5 +44,7 @@ public interface DiagramElement
   public boolean isRelationship();
   
   public void alertDestroyedElement(DiagramElement e);
+  
+  public DiagramElement cloneElement() throws IOException;
   
 }

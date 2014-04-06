@@ -78,4 +78,23 @@ public class InheritanceRelationship extends Relationship
     InheritanceRelationship r = new InheritanceRelationship(0, 0);
     return fromPersistentRepresentation(s, r);
   }
+  
+  @Override
+  public DiagramElement cloneElement() throws IOException
+  {
+    InheritanceRelationship clonedInher = new InheritanceRelationship(0, 0);
+    
+    int[] x = triangle.xpoints;
+    int[] clonedX = {x[0], x[1], x[2]};
+    int[] y = triangle.ypoints;
+    int[] clonedY = {y[0], y[1], y[2]};
+    
+    clonedInher.triangle = new Polygon(clonedX, clonedY, 3);
+    clonedInher.prev_last_vertex.x = prev_last_vertex.x;
+    clonedInher.prev_last_vertex.y = prev_last_vertex.y;
+    clonedInher.prev_destination.x = prev_destination.x;
+    clonedInher.prev_destination.y = prev_destination.y;
+    
+    return cloneRelationship(clonedInher);
+  }
 }

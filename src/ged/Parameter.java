@@ -64,4 +64,10 @@ public class Parameter
     
     return new Parameter(t, n);
   }
+  
+  public Parameter cloneParameter()
+  {
+    Parameter clonedParameter = new Parameter(type, name);
+    return clonedParameter;
+  }
 }

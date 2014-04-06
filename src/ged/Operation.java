@@ -31,16 +31,6 @@ public class Operation
     is_static = false;
   }
   
-  public Operation(Protection p, String ret, String n,
-          ArrayList<Parameter> args)
-  {
-    name = n;
-    return_type = ret;
-    protection_level = p;
-    parameters = args;
-    is_static = false;
-  }
-  
   public String getName()
   {
     return name;
@@ -159,7 +149,6 @@ public class Operation
     Protection p;
     String r;
     String n;
-    ArrayList<Parameter> params = new ArrayList<>();
     
     boolean stc = false;
     String stcStr = getValueFromTag(s, "static");
@@ -169,6 +158,8 @@ public class Operation
     r = getValueFromTag(s, "returnType");
     n = getValueFromTag(s, "name");
     
+    Operation o = new Operation(p, r, n);
+    
     String[] pieces = s.split("<parameter>");
     for(int i = 0; i < pieces.length; i++)
     {
@@ -176,13 +167,28 @@ public class Operation
       {
         pieces[i] = "<parameter>" + pieces[i];
         Parameter param = Parameter.fromPersistentRepresentation(pieces[i]);
-        params.add(param);
+        o.parameters.add(param);
       }
     }
     
-    Operation o = new Operation(p, r, n, params);
     o.setStatic(stc);
     return o;
+  }
+  
+  public Operation cloneOperation()
+  {
+    Operation clonedOperation = new Operation(protection_level, return_type, 
+            name);
+    clonedOperation.is_static = is_static;
+    
+    Iterator<Parameter> pIt = parameters.iterator();
+    while(pIt.hasNext())
+    {
+      Parameter p = pIt.next();
+      clonedOperation.parameters.add(p.cloneParameter());
+    }
+    
+    return clonedOperation;
   }
   
 }
