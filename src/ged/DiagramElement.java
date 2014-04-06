@@ -47,4 +47,6 @@ public interface DiagramElement
   
   public DiagramElement cloneElement() throws IOException;
   
+  public boolean equivalentTo(DiagramElement e);
+  
 }

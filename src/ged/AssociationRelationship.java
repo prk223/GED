@@ -428,10 +428,10 @@ public class AssociationRelationship extends Relationship
     clonedAss.prev_destination.y = prev_destination.y;
     
     if(association_tether != null)
-      clonedAss.association_tether = new TetherElementData(
-              association_tether.getElement(), association_tether.getPoint());
-    
-    clonedAss.association_class_uid = association_class_uid;
+      clonedAss.association_class_uid = 
+              association_tether.getElement().getUniqueId();
+    else
+      clonedAss.association_class_uid = association_class_uid;
     
     clonedAss.association_class_location.x = association_class_location.x;
     clonedAss.association_class_location.y = association_class_location.y;
@@ -448,5 +448,43 @@ public class AssociationRelationship extends Relationship
     }
   
     return cloneRelationship(clonedAss);
+  }
+  
+  @Override
+  public boolean equivalentTo(DiagramElement e)
+  {
+    if(!e.getElementType().equals(getElementType())) return false;
+    AssociationRelationship ass = (AssociationRelationship)e;
+    
+    if(ass.association_class_location.x !=
+           association_class_location.x) return false;
+    if(ass.association_class_location.y !=
+           association_class_location.y) return false;
+    if(ass.association_relationship_location.x !=
+           association_relationship_location.x) return false;
+    if(ass.association_relationship_location.y !=
+           association_relationship_location.y) return false;
+    
+    if(ass.ass_vertices.size() != ass_vertices.size()) return false;
+    Iterator<Point> myVertIt = ass_vertices.iterator();
+    Iterator<Point> assVertIt  = ass_vertices.iterator();
+    while(myVertIt.hasNext())
+    {
+      Point myVertex  = myVertIt.next();
+      Point assVertex = assVertIt.next();
+      if(assVertex.x != myVertex.x) return false;
+      if(assVertex.y != myVertex.y) return false;
+    }
+    
+    int myAssUid = association_class_uid;
+    if(association_tether != null)
+      myAssUid = association_tether.getElement().getUniqueId();
+    int assAssUid = ass.association_class_uid;
+    if(ass.association_tether != null)
+      assAssUid = ass.association_tether.getElement().getUniqueId();
+    if(assAssUid != myAssUid) return false;
+    
+    // Everything ass specific matches, check parent pieces
+    return super.equivalentTo(ass);
   }
 }

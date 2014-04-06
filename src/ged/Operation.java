@@ -191,4 +191,24 @@ public class Operation
     return clonedOperation;
   }
   
+  public boolean equivalentTo(Operation o)
+  {
+    if(o.protection_level != protection_level)   return false;
+    if(!o.return_type.equals(return_type))       return false;
+    if(!o.name.equals(name))                     return false;
+    if(o.parameters.size() != parameters.size()) return false;
+    
+    Iterator<Parameter> myParamIt = parameters.iterator();
+    Iterator<Parameter> oParamIt  = o.parameters.iterator();
+    while(myParamIt.hasNext())
+    {
+      Parameter myP = myParamIt.next();
+      Parameter oP  = oParamIt.next();
+      if(!oP.equivalentTo(myP)) return false;
+    }
+    
+    // Everything is equivalent
+    return true;
+  }
+  
 }

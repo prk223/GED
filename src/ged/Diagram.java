@@ -351,4 +351,33 @@ public class Diagram implements DiagramElement
     return clonedDiagram;
   }
   
+  @Override
+  public boolean equivalentTo(DiagramElement e)
+  {
+    if(e.getElementType().equals(getElementType()))
+    {
+      Diagram d = (Diagram)e;
+      if(d.location.x     != location.x)        return false;
+      if(d.location.y     != location.y)        return false;
+      if(d.unique_id      != unique_id)         return false;
+      if(d.last_unique_id != last_unique_id)    return false;
+      if(elements.size()  != d.elements.size()) return false;
+      
+      Iterator<DiagramElement> myElIt = elements.iterator();
+      Iterator<DiagramElement> dElIt  = d.elements.iterator();
+      while(myElIt.hasNext())
+      {
+        DiagramElement myElement = myElIt.next();
+        DiagramElement dElement  = dElIt.next();
+        if(!myElement.equivalentTo(dElement))
+          return false;
+      }
+    }
+    else
+      return false;
+    
+    // If we got to the end, then everything matches
+    return true;
+  }
+  
 }

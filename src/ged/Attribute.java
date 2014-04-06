@@ -118,4 +118,13 @@ public class Attribute
     return clonedAttribute;
   }
   
+  public boolean equivalentTo(Attribute a)
+  {
+    if(a.protection_level != protection_level) return false;
+    if(!a.type.equals(type))     return false;
+    if(!a.name.equals(name))     return false;
+    
+    return (a.is_static == is_static);
+  }
+  
 }

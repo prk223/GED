@@ -481,4 +481,43 @@ public class ClassElement implements DiagramElement
     
     return clonedClass;
   }
+  
+  @Override
+  public boolean equivalentTo(DiagramElement e)
+  {
+    if(e.getElementType().equals(getElementType()))
+    {
+      ClassElement c = (ClassElement)e;
+      if(!c.name.equals(name)) return false;
+      if(c.location.x != location.x) return false;
+      if(c.location.y != location.y) return false;
+      if(c.is_interface != is_interface) return false;
+      if(c.unique_id != unique_id) return false;
+      
+      if(c.attributes.size() != attributes.size()) return false;
+      Iterator<Attribute> myAttIt = attributes.iterator();
+      Iterator<Attribute> cAttIt  = c.attributes.iterator();
+      while(myAttIt.hasNext())
+      {
+        Attribute myAtt = myAttIt.next();
+        Attribute cAtt  = cAttIt.next();
+        if(!myAtt.equivalentTo(cAtt)) return false;
+      }
+      
+      if(c.operations.size() != operations.size()) return false;
+      Iterator<Operation> myOpIt = operations.iterator();
+      Iterator<Operation> cOpIt  = c.operations.iterator();
+      while(myOpIt.hasNext())
+      {
+        Operation myOp = myOpIt.next();
+        Operation cOp  = cOpIt.next();
+        if(!myOp.equivalentTo(cOp)) return false;
+      }
+    }
+    else
+      return false;
+    
+    // No differences found, must be equivalent
+    return true;
+  }
 }

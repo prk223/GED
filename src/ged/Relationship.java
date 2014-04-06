@@ -868,15 +868,17 @@ public class Relationship implements DiagramElement
   public Relationship cloneRelationship(Relationship cloneIntoThis) throws IOException
   {
     if(source_tether != null)
-      cloneIntoThis.source_tether = new TetherElementData(
-              source_tether.getElement(), source_tether.getPoint());
+      cloneIntoThis.source_class_uid = 
+              source_tether.getElement().getUniqueId();
+    else
+      cloneIntoThis.source_class_uid = source_class_uid;
+      
     if(destination_tether != null)
-      cloneIntoThis.destination_tether = new TetherElementData(
-              destination_tether.getElement(), destination_tether.getPoint());
-    
-    cloneIntoThis.source_class_uid = source_class_uid;
-    cloneIntoThis.destination_class_uid = destination_class_uid;
-    
+      cloneIntoThis.destination_class_uid =
+              destination_tether.getElement().getUniqueId();
+    else
+      cloneIntoThis.destination_class_uid = destination_class_uid;
+      
     cloneIntoThis.source_multiplicity = source_multiplicity;
     cloneIntoThis.destination_multiplicity = destination_multiplicity;
     cloneIntoThis.source_mult_angle = source_mult_angle;
@@ -909,6 +911,59 @@ public class Relationship implements DiagramElement
     clonedRelationship = cloneRelationship(clonedRelationship);
   
     return clonedRelationship;
+  }
+  
+  @Override
+  public boolean equivalentTo(DiagramElement e)
+  {
+    if(e.getElementType().equals(getElementType()))
+    {
+      Relationship r = (Relationship)e;
+
+      if(!r.source_multiplicity.equals(source_multiplicity)) return false;
+      if(!r.destination_multiplicity.equals(destination_multiplicity)) return false;
+      if(r.source_mult_angle != source_mult_angle) return false;
+      if(r.destination_mult_angle != destination_mult_angle) return false;
+      if(r.source_mult_len != source_mult_len) return false;
+      if(r.destination_mult_len != destination_mult_len) return false;
+
+      if(r.source_location.x != source_location.x) return false;
+      if(r.source_location.y != source_location.y) return false;
+      if(r.destination_location.x != destination_location.x) return false;
+      if(r.destination_location.y != destination_location.y) return false;
+      if(r.unique_id != unique_id) return false;
+
+      if(r.vertices.size() != vertices.size()) return false;
+      Iterator<Point> myVertIt = vertices.iterator();
+      Iterator<Point> rVertIt  = vertices.iterator();
+      while(myVertIt.hasNext())
+      {
+        Point myVertex = myVertIt.next();
+        Point rVertex  = rVertIt.next();
+        if(rVertex.x != myVertex.x) return false;
+        if(rVertex.y != myVertex.y) return false;
+      }
+
+      int mySourceUid = source_class_uid;
+      if(source_tether != null)
+        mySourceUid = source_tether.getElement().getUniqueId();
+      int rSourceUid = r.source_class_uid;
+      if(r.source_tether != null)
+        rSourceUid = r.source_tether.getElement().getUniqueId();
+      if(rSourceUid != mySourceUid) return false;
+
+      int myDestUid = destination_class_uid;
+      if(destination_tether != null)
+        myDestUid = destination_tether.getElement().getUniqueId();
+      int rDestUid = r.destination_class_uid;
+      if(r.destination_tether != null)
+        rDestUid = r.destination_tether.getElement().getUniqueId();
+      if(rDestUid != myDestUid) return false;
+    }
+    else return false;
+    
+    // Could not find any differences, must be equivalent
+    return true;
   }
   
 }

@@ -70,4 +70,12 @@ public class Parameter
     Parameter clonedParameter = new Parameter(type, name);
     return clonedParameter;
   }
+  
+  public boolean equivalentTo(Parameter p)
+  {
+    if(!p.type.equals(type)) return false;
+    if(!p.name.equals(name)) return false;
+    
+    return true;
+  }
 }
