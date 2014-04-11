@@ -7,7 +7,6 @@
 package ged;
 
 import java.awt.Graphics;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import javax.swing.JViewport;
@@ -63,35 +62,35 @@ public class DiagramState
     return next_state;
   }
   
-  public DiagramState addClassBtnClicked(MouseEvent evt) throws IOException
+  public DiagramState addClassBtnClicked() throws IOException
   {
     ClassElement e = new ClassElement("", 0, 0);
     next_state = new AddElementDiagramState(view_port, e);
     return next_state;
   }
   
-  public DiagramState addInheritanceBtnClicked(MouseEvent evt) throws IOException
+  public DiagramState addInheritanceBtnClicked() throws IOException
   {
     InheritanceRelationship r = new InheritanceRelationship(0, 0);
     next_state = new AddElementDiagramState(view_port, r);
     return next_state;
   }
   
-  public DiagramState addAggregationBtnClicked(MouseEvent evt) throws IOException
+  public DiagramState addAggregationBtnClicked() throws IOException
   {
     AggregationRelationship r = new AggregationRelationship(0,0);
     next_state = new AddElementDiagramState(view_port, r);
     return next_state;
   }
   
-  public DiagramState addAssociationBtnClicked(MouseEvent evt) throws IOException
+  public DiagramState addAssociationBtnClicked() throws IOException
   {
     AssociationRelationship r = new AssociationRelationship(0,0);
     next_state = new AddElementDiagramState(view_port, r);
     return next_state;
   }
   
-  public DiagramState selectBtnClicked(MouseEvent evt) throws IOException
+  public DiagramState selectBtnClicked() throws IOException
   {
     next_state = new SelectDiagramState(view_port);
     return next_state;

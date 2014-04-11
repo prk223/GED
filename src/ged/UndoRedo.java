@@ -20,8 +20,9 @@ public class UndoRedo
   private final ArrayDeque<DiagramMemento> undo_queue;
   private final ArrayDeque<DiagramMemento> redo_queue;
   private final String password;
+  private Diagram latest_diagram;
   
-  public UndoRedo() throws IOException
+  public UndoRedo(Diagram initialDiagram) throws IOException
   {
     cfg_mgr = ConfigurationManager.getInstance();
     max_undo = Integer.parseInt(
@@ -30,53 +31,61 @@ public class UndoRedo
     undo_queue = new ArrayDeque<>(max_undo);
     redo_queue = new ArrayDeque<>(max_undo);
     password = "undo_redo_password";
+    latest_diagram = (Diagram)initialDiagram.cloneElement();
   }
   
   public void saveState(Diagram d) throws IOException
   {
-    Diagram diagramCopy = (Diagram)d.cloneElement();
-    DiagramMemento memento = new DiagramMemento();
-    memento.setState(diagramCopy, password);
-    
-    // If queue is full, remove last element to make space
-    if(undo_queue.size() == max_undo)
-      undo_queue.removeLast();
-    
-    // Clear redo queue since a new action has been taken
-    redo_queue.clear();
-    
-    undo_queue.push(memento);
-  }
-  
-  public Diagram undo()
-  {
-    Diagram diag = null;
-    if(undo_queue.size() > 0)
+    // Only queue it up if it's different than last time
+    if(!d.equivalentTo(latest_diagram))
     {
-      DiagramMemento mem = undo_queue.pop();
-      diag = mem.getState(password);
+      Diagram pushDiag = latest_diagram;
+      latest_diagram = (Diagram)d.cloneElement();
       
-      redo_queue.push(mem);
-    }
-    
-    return diag;
-  }
-  
-  public Diagram redo()
-  {
-    Diagram diag = null;
-    if(redo_queue.size() > 0)
-    {
-      DiagramMemento mem = redo_queue.pop();
-      diag = mem.getState(password);
-      
-      // If undo queue is fill, remove last to clear room for more
+      DiagramMemento memento = new DiagramMemento();
+      memento.setState(pushDiag, password);
+
+      // If queue is full, remove last element to make space
       if(undo_queue.size() == max_undo)
         undo_queue.removeLast();
-      undo_queue.push(mem);
+
+      // Clear redo queue since a new action has been taken
+      redo_queue.clear();
+
+      undo_queue.push(memento);
+    }
+  }
+  
+  public Diagram undo() throws IOException
+  {
+    if(undo_queue.size() > 0)
+    {
+      DiagramMemento mem = new DiagramMemento();
+      mem.setState(latest_diagram, password);
+      redo_queue.push(mem);
+      
+      mem = undo_queue.pop();
+      latest_diagram = mem.getState(password);
     }
     
-    return diag;
+    return (Diagram)latest_diagram.cloneElement();
+  }
+  
+  public Diagram redo() throws IOException
+  {
+    if(redo_queue.size() > 0)
+    {
+      DiagramMemento mem = new DiagramMemento();
+      mem.setState(latest_diagram, password);
+      if(undo_queue.size() > max_undo)
+        undo_queue.removeLast();
+      undo_queue.push(mem);
+      
+      mem = redo_queue.pop();
+      latest_diagram = mem.getState(password);
+    }
+    
+    return (Diagram)latest_diagram.cloneElement();
   }
   
 }

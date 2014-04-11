@@ -8,10 +8,12 @@ package ged;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import javax.swing.JViewport;
 
 /**
  *
@@ -24,11 +26,18 @@ public class DiagramController
   private static final String DIAG_EXTENSION = ".dgm";
   private final String varWsPath = ConfigurationManager.WORKSPACE_PATH;
   private Diagram cur_diagram;
+  private UndoRedo undo_redo;
+  private DiagramPanel diag_panel;
+  private JViewport view_port;
+  private DiagramState state;
   
   
   private DiagramController() throws IOException
   {
     cfg_mgr = ConfigurationManager.getInstance();
+    diag_panel = null;
+    view_port = null;
+    state = null;
   }
   
   public static DiagramController getInstance() throws IOException
@@ -61,12 +70,13 @@ public class DiagramController
       System.out.println("Unable to delete diagram:" + diagName);
   }
   
-  public void closeDiagram()
+  public void closeDiagram() throws IOException
   {
     cur_diagram = null;
+    state = new SelectDiagramState(view_port);
   }
   
-  public boolean openDiagram(String diagName)
+  public boolean openDiagram(String diagName) throws IOException
   {
     boolean openedSuccessfully = false;
     
@@ -77,7 +87,10 @@ public class DiagramController
     String path = workspacePath + "\\" + diagName + DIAG_EXTENSION;
     cur_diagram = Diagram.loadDiagram(path);
     if(cur_diagram != null)
+    {
       openedSuccessfully = true;
+      undo_redo = new UndoRedo(cur_diagram);
+    }
     
     return openedSuccessfully;
   }
@@ -156,6 +169,9 @@ public class DiagramController
     if(cur_diagram != null)
     {
       cur_diagram.draw(g);
+
+      // Draw anything state specific
+      state.draw(g);
     }
   }
   
@@ -201,6 +217,140 @@ public class DiagramController
     }
     
     return e;
+  }
+  
+  public void undoLastChange() throws IOException
+  {
+    if(cur_diagram != null)
+    {
+      Diagram undoneDiag = undo_redo.undo();
+      if(undoneDiag != null)
+        cur_diagram = undoneDiag;
+      diag_panel.repaint();
+    }
+  }
+  
+  public void redoLastChange() throws IOException
+  {
+    if(cur_diagram != null)
+    {
+      Diagram redoneDiag = undo_redo.redo();
+      if(redoneDiag != null)
+        cur_diagram = redoneDiag;
+      diag_panel.repaint();
+    }
+  }
+  
+  public void setupDiagramPanel(DiagramPanel p, JViewport v) throws IOException
+  {
+    diag_panel = p;
+    view_port  = v;
+    state = new SelectDiagramState(v);
+  }
+  
+  
+  public void mouseDoubleClicked(MouseEvent evt) throws IOException
+  {
+    if(cur_diagram != null)
+    {
+      undo_redo.saveState(cur_diagram);
+      state = state.mouseDoubleClicked(evt);
+      diag_panel.repaint();
+    }
+  }
+  
+  public void mouseMoved(MouseEvent evt)
+  {
+    state = state.mouseMoved(evt);
+    diag_panel.repaint();
+  }
+  
+  public void mouseEntered(MouseEvent evt)
+  {
+    state = state.mouseEntered(evt);
+    diag_panel.repaint();
+  }
+  
+  public void mouseExited(MouseEvent evt)
+  {
+    state = state.mouseExited(evt);
+    diag_panel.repaint();
+  }
+  
+  public void mouseDragged(MouseEvent evt)
+  {
+    state = state.mouseDragged(evt);
+    diag_panel.repaint();
+  }
+  
+  public void mousePressed(MouseEvent evt) throws IOException
+  {
+    if(cur_diagram != null)
+    {
+      undo_redo.saveState(cur_diagram);
+      state = state.mousePressed(evt);
+      diag_panel.repaint();
+    }
+  }
+  
+  public void mouseReleased(MouseEvent evt) throws IOException
+  {
+    if(cur_diagram != null)
+    {
+      undo_redo.saveState(cur_diagram);
+      state = state.mouseReleased(evt);
+      diag_panel.repaint();
+    }
+  }
+  
+  public void rightMousePressed(MouseEvent evt) throws IOException
+  {
+    if(cur_diagram != null)
+    {
+      undo_redo.saveState(cur_diagram);
+      state = state.mouseRightClicked(evt);
+      diag_panel.repaint();
+    }
+  }
+  
+  public void deleteKeyPressed() throws IOException
+  {
+    if(cur_diagram != null)
+    {
+      undo_redo.saveState(cur_diagram);
+      state = state.delete();
+      diag_panel.repaint();
+    }
+  }
+  
+  public void prepAddClass() throws IOException
+  {
+    state = state.addClassBtnClicked();
+    diag_panel.repaint();
+  }
+  
+  public void prepAddInheritance() throws IOException
+  {
+    state = state.addInheritanceBtnClicked();
+    diag_panel.repaint();
+  }
+  
+  public void prepAddAggregation() throws IOException
+  {
+    state = state.addAggregationBtnClicked();
+    diag_panel.repaint();
+  }
+  
+  public void prepAddAssociation() throws IOException
+  {
+    state = state.addAssociationBtnClicked();
+    diag_panel.repaint();
+  }
+  
+  public void selectElements() throws IOException
+  {
+    state = state.selectBtnClicked();
+    diag_panel.repaint();
   }
   
 }

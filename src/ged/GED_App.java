@@ -782,7 +782,14 @@ public class GED_App extends javax.swing.JFrame
     {
       String diagName = (String) ExistingDiagramsTable.getModel().getValueAt(
               rowNum, 0);
-      diagram_dlg.open(diagName);
+      try
+      {
+        diagram_dlg.open(diagName);
+      }
+      catch (IOException ex)
+      {
+        Logger.getLogger(GED_App.class.getName()).log(Level.SEVERE, null, ex);
+      }
     }
   }//GEN-LAST:event_OpenDiagramBtnMouseClicked
 

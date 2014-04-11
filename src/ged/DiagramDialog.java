@@ -34,47 +34,9 @@ public class DiagramDialog extends javax.swing.JDialog
 {
   private final ConfigurationManager cfg_mgr;
   private final DiagramController diag_controller;
+  private UndoRedo undo_redo;
   private Timer save_timer;
-  private DiagramPanel diag_panel;
-  private DiagramState state;
   
-  
-  // Class to handle drawing the diagram
-  public class DiagramPanel extends JPanel
-  {
-    Dimension diagram_size;
-    
-    public DiagramPanel()
-    {
-      setBorder(BorderFactory.createLineBorder(Color.black));
-      diagram_size = new Dimension(25000, 25000);
-    }
-    
-    @Override
-    public Dimension getPreferredSize()
-    {
-      return diagram_size;
-    }
-    
-    @Override
-    public void paintComponent(Graphics g)
-    {
-      // Clear panel
-      super.paintComponent(g);
-      
-      // Get diagram size
-      Dimension d = diag_controller.getDiagramDimension();
-      diagram_size = d;
-      setSize(diagram_size);
-      
-      // draw everything in diagram
-      diag_controller.draw(g);
-      
-      // Draw anything state specific
-      state.draw(g);
-    }
-  }
-
   /**
    * Creates new form DiagramDialog
    * @param parent
@@ -84,8 +46,11 @@ public class DiagramDialog extends javax.swing.JDialog
   public DiagramDialog(java.awt.Frame parent, boolean modal) throws IOException
   {
     super(parent, modal);
+    DiagramPanel diagPanel = new DiagramPanel();
     initComponents();
-    initDrawspaceComponents();
+    initDrawspaceComponents(diagPanel);
+    diag_controller = DiagramController.getInstance();
+    diag_controller.setupDiagramPanel(diagPanel, DiagramScrollPane.getViewport());
     
     // Force save message to be on top
     this.getContentPane().setComponentZOrder(SaveLabel, 0);
@@ -99,8 +64,6 @@ public class DiagramDialog extends javax.swing.JDialog
             getMaximumWindowBounds());
     SaveLabel.setVisible(false);
     
-    diag_controller = DiagramController.getInstance();
-    
     // Set up a timer to make save messages disappear
     save_timer = new Timer(saveTimeoutMs, new ActionListener(){
       @Override
@@ -111,33 +74,38 @@ public class DiagramDialog extends javax.swing.JDialog
       }
     });
     
-    state = new SelectDiagramState(DiagramScrollPane.getViewport());
   }
   
-  private void initDrawspaceComponents()
+  private void initDrawspaceComponents(DiagramPanel diagPanel)
   {
-    diag_panel = new DiagramPanel();
-    DiagramScrollPane.setViewportView(diag_panel);
-    diag_panel.setFocusable(true);
-    diag_panel.requestFocusInWindow();
+    DiagramScrollPane.setViewportView(diagPanel);
+    diagPanel.setFocusable(true);
+    diagPanel.requestFocusInWindow();
     
-    diag_panel.addMouseListener(new java.awt.event.MouseAdapter()
+    diagPanel.addMouseListener(new java.awt.event.MouseAdapter()
     {
       @Override
       public void mouseClicked(MouseEvent evt)
       {
-        if((evt.getClickCount() > 1) && (evt.getButton() == MouseEvent.BUTTON1))
-          DiagPanelMouseDoubleClicked(evt);
+        try
+        {
+          if((evt.getClickCount() > 1) && (evt.getButton() == MouseEvent.BUTTON1))
+            diag_controller.mouseDoubleClicked(evt);
+        }
+        catch (IOException ex)
+        {
+          Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
+        }
       }
       @Override
       public void mouseEntered(java.awt.event.MouseEvent evt)
       {
-        DiagPanelMouseEntered(evt);
+        diag_controller.mouseEntered(evt);
       }
       @Override
       public void mouseExited(java.awt.event.MouseEvent evt)
       {
-        DiagPanelMouseExited(evt);
+        diag_controller.mouseExited(evt);
       }
       @Override
       public void mousePressed(MouseEvent evt)
@@ -145,9 +113,9 @@ public class DiagramDialog extends javax.swing.JDialog
         try
         {
           if(evt.getButton() == MouseEvent.BUTTON1)
-            DiagPanelMousePressed(evt);
+            diag_controller.mousePressed(evt);
           else if(evt.getButton() == MouseEvent.BUTTON3)
-            DiagPanelRightMousePressed(evt);
+            diag_controller.rightMousePressed(evt);
         }
         catch (IOException ex)
         {
@@ -157,30 +125,41 @@ public class DiagramDialog extends javax.swing.JDialog
       @Override
       public void mouseReleased(MouseEvent evt)
       {
-        if(evt.getButton() == MouseEvent.BUTTON1)
-          DiagPanelMouseReleased(evt);
+        try
+        {
+          if(evt.getButton() == MouseEvent.BUTTON1)
+            diag_controller.mouseReleased(evt);
+        }
+        catch (IOException ex)
+        {
+          Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
+        }
       }
     });
-    diag_panel.addMouseMotionListener(new java.awt.event.MouseAdapter()
+    diagPanel.addMouseMotionListener(new java.awt.event.MouseAdapter()
     {
       @Override
       public void mouseMoved(MouseEvent evt)
       {
-        DiagPanelMouseMoved(evt);
+        diag_controller.mouseMoved(evt);
       }
       @Override
       public void mouseDragged(java.awt.event.MouseEvent evt)
       {
-        DiagPanelMouseDragged(evt);
+        diag_controller.mouseDragged(evt);
       }
     });
     
-    diag_panel.getInputMap(JLabel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.
+    diagPanel.getInputMap(JLabel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.
             getKeyStroke(KeyEvent.VK_DELETE, 0), "DeleteKey");
-    diag_panel.getInputMap(JLabel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.
+    diagPanel.getInputMap(JLabel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.
             getKeyStroke(KeyEvent.VK_DECIMAL, 0), "DecimalKey");
-    diag_panel.getInputMap(JLabel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.
+    diagPanel.getInputMap(JLabel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.
             getKeyStroke(KeyEvent.VK_BACK_SPACE, 0), "BackSpaceKey");
+    diagPanel.getInputMap(JLabel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.
+            getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK), "KeyZ");
+    diagPanel.getInputMap(JLabel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.
+            getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK), "KeyY");
 
     Action deleteAction = new AbstractAction()
     {
@@ -189,7 +168,7 @@ public class DiagramDialog extends javax.swing.JDialog
       {
         try
         {
-          DiagPanelDeleteKeyPressed();
+          diag_controller.deleteKeyPressed();
         }
         catch (IOException ex)
         {
@@ -197,63 +176,43 @@ public class DiagramDialog extends javax.swing.JDialog
         }
       }
     };
-    diag_panel.getActionMap().put("DeleteKey", deleteAction);
-    diag_panel.getActionMap().put("DecimalKey", deleteAction);
-    diag_panel.getActionMap().put("BackSpaceKey", deleteAction);
-  }
-  
-  private void DiagPanelMouseDoubleClicked(MouseEvent evt)
-  {
-    state = state.mouseDoubleClicked(evt);
-    diag_panel.repaint();
-  }
-  
-  private void DiagPanelMouseMoved(MouseEvent evt)
-  {
-    state = state.mouseMoved(evt);
-    diag_panel.repaint();
-  }
-  
-  private void DiagPanelMouseEntered(MouseEvent evt)
-  {
-    state = state.mouseEntered(evt);
-    diag_panel.repaint();
-  }
-  
-  private void DiagPanelMouseExited(MouseEvent evt)
-  {
-    state = state.mouseExited(evt);
-    diag_panel.repaint();
-  }
-  
-  private void DiagPanelMouseDragged(MouseEvent evt)
-  {
-    state = state.mouseDragged(evt);
-    diag_panel.repaint();
-  }
-  
-  private void DiagPanelMousePressed(MouseEvent evt)
-  {
-    state = state.mousePressed(evt);
-    diag_panel.repaint();
-  }
-  
-  private void DiagPanelMouseReleased(MouseEvent evt)
-  {
-    state = state.mouseReleased(evt);
-    diag_panel.repaint();
-  }
-  
-  private void DiagPanelRightMousePressed(MouseEvent evt) throws IOException
-  {
-    state = state.mouseRightClicked(evt);
-    diag_panel.repaint();
-  }
-  
-  private void DiagPanelDeleteKeyPressed() throws IOException
-  {
-    state = state.delete();
-    diag_panel.repaint();
+    
+    Action undoAction = new AbstractAction()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        try
+        {
+          diag_controller.undoLastChange();
+        }
+        catch (IOException ex)
+        {
+          Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+    };
+    Action redoAction = new AbstractAction()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        try
+        {
+          diag_controller.redoLastChange();
+        }
+        catch (IOException ex)
+        {
+          Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+    };
+    
+    diagPanel.getActionMap().put("DeleteKey", deleteAction);
+    diagPanel.getActionMap().put("DecimalKey", deleteAction);
+    diagPanel.getActionMap().put("BackSpaceKey", deleteAction);
+    diagPanel.getActionMap().put("KeyZ", undoAction);
+    diagPanel.getActionMap().put("KeyY", redoAction);
   }
 
   /**
@@ -444,74 +403,67 @@ public class DiagramDialog extends javax.swing.JDialog
     }
   }//GEN-LAST:event_DiagramCloseItemActionPerformed
 
-  int x = 0;
-  int y = 0;
   private void AddClassBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_AddClassBtnMouseClicked
   {//GEN-HEADEREND:event_AddClassBtnMouseClicked
     try
     {
-      state = state.addClassBtnClicked(evt);
+      diag_controller.prepAddClass();
     }
     catch (IOException ex)
     {
       Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
     }
-    diag_panel.repaint();
   }//GEN-LAST:event_AddClassBtnMouseClicked
 
   private void SelectBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_SelectBtnMouseClicked
   {//GEN-HEADEREND:event_SelectBtnMouseClicked
     try
     {
-      state = state.selectBtnClicked(evt);
+      diag_controller.selectElements();
     }
     catch (IOException ex)
     {
       Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
     }
-    diag_panel.repaint();
   }//GEN-LAST:event_SelectBtnMouseClicked
 
   private void AddInheritanceBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_AddInheritanceBtnMouseClicked
   {//GEN-HEADEREND:event_AddInheritanceBtnMouseClicked
     try
     {
-      state = state.addInheritanceBtnClicked(evt);
+      diag_controller.prepAddInheritance();
     }
     catch (IOException ex)
     {
       Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
     }
-    diag_panel.repaint();
   }//GEN-LAST:event_AddInheritanceBtnMouseClicked
 
   private void AddAggregationBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_AddAggregationBtnMouseClicked
   {//GEN-HEADEREND:event_AddAggregationBtnMouseClicked
     try
     {
-      state = state.addAggregationBtnClicked(evt);
+      diag_controller.prepAddAggregation();
     }
     catch (IOException ex)
     {
       Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
     }
-    diag_panel.repaint();
   }//GEN-LAST:event_AddAggregationBtnMouseClicked
 
   private void AddAssociationBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_AddAssociationBtnMouseClicked
   {//GEN-HEADEREND:event_AddAssociationBtnMouseClicked
     try
     {
-      state = state.addAssociationBtnClicked(evt);
+      diag_controller.prepAddAssociation();
     }
     catch (IOException ex)
     {
       Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
     }
-    diag_panel.repaint();
   }//GEN-LAST:event_AddAssociationBtnMouseClicked
 
-  public void open(String diagram)
+  public void open(String diagram) throws IOException
   {
     boolean opened = diag_controller.openDiagram(diagram);
     if(opened)
@@ -525,7 +477,6 @@ public class DiagramDialog extends javax.swing.JDialog
   public void close() throws IOException
   {
     diag_controller.closeDiagram();
-    state = new SelectDiagramState(DiagramScrollPane.getViewport());
     setVisible(false);
   }
   /**
