@@ -200,7 +200,6 @@ public class Relationship implements DiagramElement
     }
     
     
-    int charHeight = metrics.getHeight();
     AffineTransform origTransform = g2.getTransform();
     g2.rotate(textSrcAngle, srcX, srcY);
     g2.drawString(source_multiplicity, srcX, srcY);

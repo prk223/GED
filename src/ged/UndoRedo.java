@@ -46,7 +46,7 @@ public class UndoRedo
       memento.setState(pushDiag, password);
 
       // If queue is full, remove last element to make space
-      if(undo_queue.size() == max_undo)
+      while(undo_queue.size() >= max_undo)
         undo_queue.removeLast();
 
       // Clear redo queue since a new action has been taken
@@ -77,7 +77,7 @@ public class UndoRedo
     {
       DiagramMemento mem = new DiagramMemento();
       mem.setState(latest_diagram, password);
-      if(undo_queue.size() > max_undo)
+      while(undo_queue.size() >= max_undo)
         undo_queue.removeLast();
       undo_queue.push(mem);
       

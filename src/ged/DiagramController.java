@@ -297,8 +297,12 @@ public class DiagramController
   {
     if(cur_diagram != null)
     {
-      undo_redo.saveState(cur_diagram);
+      // For this function only, need to save state AFTER the release
+      // not before. This is because mouse drags do not save state, so if you
+      // save state before, then you only capture the drag changes, but you
+      // need to capture the attach changes from the release event too.
       state = state.mouseReleased(evt);
+      undo_redo.saveState(cur_diagram);
       diag_panel.repaint();
     }
   }
