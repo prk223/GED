@@ -219,28 +219,41 @@ public class DiagramController
     return e;
   }
   
-  public void undoLastChange() throws IOException
+  public boolean undoLastChange() throws IOException
   {
+    boolean undone = false;
+    
     if(cur_diagram != null)
     {
       Diagram undoneDiag = undo_redo.undo();
-      if(undoneDiag != null)
+      if((undoneDiag != null) && (!undoneDiag.equivalentTo(cur_diagram)))
+      {
         cur_diagram = undoneDiag;
-      state = new SelectDiagramState(view_port);
-      diag_panel.repaint();
+        undone = true;
+        state = new SelectDiagramState(view_port);
+        diag_panel.repaint();
+      }
     }
+    
+    return undone;
   }
   
-  public void redoLastChange() throws IOException
+  public boolean redoLastChange() throws IOException
   {
+    boolean redone = false;
     if(cur_diagram != null)
     {
       Diagram redoneDiag = undo_redo.redo();
-      if(redoneDiag != null)
+      if((redoneDiag != null) && (!redoneDiag.equivalentTo(cur_diagram)))
+      {
         cur_diagram = redoneDiag;
-      state = new SelectDiagramState(view_port);
-      diag_panel.repaint();
+        redone = true;
+        state = new SelectDiagramState(view_port);
+        diag_panel.repaint();
+      }
     }
+    
+    return redone;
   }
   
   public void setupDiagramPanel(DiagramPanel p, JViewport v) throws IOException
@@ -304,8 +317,8 @@ public class DiagramController
       // save state before, then you only capture the drag changes, but you
       // need to capture the attach changes from the release event too.
       state = state.mouseReleased(evt);
-      undo_redo.saveState(cur_diagram);
       diag_panel.repaint();
+      undo_redo.saveState(cur_diagram);
     }
   }
   

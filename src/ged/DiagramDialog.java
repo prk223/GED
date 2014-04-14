@@ -29,7 +29,7 @@ public class DiagramDialog extends javax.swing.JDialog
 {
   private final ConfigurationManager cfg_mgr;
   private final DiagramController diag_controller;
-  private Timer save_timer;
+  private Timer diagram_msg_timer;
   
   /**
    * Creates new form DiagramDialog
@@ -47,24 +47,24 @@ public class DiagramDialog extends javax.swing.JDialog
     diag_controller.setupDiagramPanel(diagPanel, DiagramScrollPane.getViewport());
     
     // Force save message to be on top
-    this.getContentPane().setComponentZOrder(SaveLabel, 0);
+    this.getContentPane().setComponentZOrder(DiagramMessage, 0);
     
     cfg_mgr = ConfigurationManager.getInstance();
-    int saveTimeoutMs = Integer.parseInt(
+    int msgTimeoutMs = Integer.parseInt(
             cfg_mgr.getConfigValue(ConfigurationManager.MSG_TIMEOUT));
     
     setVisible(false);  
     setBounds(GraphicsEnvironment.getLocalGraphicsEnvironment().
             getMaximumWindowBounds());
-    SaveLabel.setVisible(false);
+    DiagramMessage.setVisible(false);
     
     // Set up a timer to make save messages disappear
-    save_timer = new Timer(saveTimeoutMs, new ActionListener(){
+    diagram_msg_timer = new Timer(msgTimeoutMs, new ActionListener(){
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        SaveLabel.setVisible(false);
-        save_timer.stop();
+        DiagramMessage.setVisible(false);
+        diagram_msg_timer.stop();
       }
     });
     
@@ -154,6 +154,8 @@ public class DiagramDialog extends javax.swing.JDialog
             getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK), "KeyZ");
     diagPanel.getInputMap(JLabel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.
             getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK), "KeyY");
+    diagPanel.getInputMap(JLabel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.
+            getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK), "KeyS");
 
     Action deleteAction = new AbstractAction()
     {
@@ -176,14 +178,7 @@ public class DiagramDialog extends javax.swing.JDialog
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        try
-        {
-          diag_controller.undoLastChange();
-        }
-        catch (IOException ex)
-        {
-          Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        undo();
       }
     };
     Action redoAction = new AbstractAction()
@@ -191,14 +186,16 @@ public class DiagramDialog extends javax.swing.JDialog
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        try
-        {
-          diag_controller.redoLastChange();
-        }
-        catch (IOException ex)
-        {
-          Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        redo();
+      }
+    };
+    
+    Action saveAction = new AbstractAction()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        save();
       }
     };
     
@@ -207,6 +204,7 @@ public class DiagramDialog extends javax.swing.JDialog
     diagPanel.getActionMap().put("BackSpaceKey", deleteAction);
     diagPanel.getActionMap().put("KeyZ", undoAction);
     diagPanel.getActionMap().put("KeyY", redoAction);
+    diagPanel.getActionMap().put("KeyS", saveAction);
   }
 
   /**
@@ -219,7 +217,7 @@ public class DiagramDialog extends javax.swing.JDialog
   private void initComponents()
   {
 
-    SaveLabel = new javax.swing.JLabel();
+    DiagramMessage = new javax.swing.JLabel();
     AddClassBtn = new javax.swing.JButton();
     AddInheritanceBtn = new javax.swing.JButton();
     SelectBtn = new javax.swing.JButton();
@@ -230,18 +228,21 @@ public class DiagramDialog extends javax.swing.JDialog
     DiagramFileMenu = new javax.swing.JMenu();
     DiagramSaveItem = new javax.swing.JMenuItem();
     DiagramCloseItem = new javax.swing.JMenuItem();
+    DiagramEditMenu = new javax.swing.JMenu();
+    DiagramUndoItem = new javax.swing.JMenuItem();
+    DiagramRedoItem = new javax.swing.JMenuItem();
 
     setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     setModal(true);
     setName("Diagram"); // NOI18N
     setUndecorated(true);
 
-    SaveLabel.setLabelFor(DiagramScrollPane);
-    SaveLabel.setText("SaveMsg");
-    SaveLabel.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-    SaveLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-    SaveLabel.setMinimumSize(new java.awt.Dimension(2000000, 14));
-    SaveLabel.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+    DiagramMessage.setLabelFor(DiagramScrollPane);
+    DiagramMessage.setText("SaveMsg");
+    DiagramMessage.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+    DiagramMessage.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+    DiagramMessage.setMinimumSize(new java.awt.Dimension(2000000, 14));
+    DiagramMessage.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
 
     AddClassBtn.setText("Class");
     AddClassBtn.addMouseListener(new java.awt.event.MouseAdapter()
@@ -300,7 +301,7 @@ public class DiagramDialog extends javax.swing.JDialog
 
     DiagramFileMenu.setText("File");
 
-    DiagramSaveItem.setText("Save");
+    DiagramSaveItem.setText("Save (CTRL+S)");
     DiagramSaveItem.addActionListener(new java.awt.event.ActionListener()
     {
       public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -322,6 +323,30 @@ public class DiagramDialog extends javax.swing.JDialog
 
     DiagramMenuBar.add(DiagramFileMenu);
 
+    DiagramEditMenu.setText("Edit");
+
+    DiagramUndoItem.setText("Undo (CTRL+Z)");
+    DiagramUndoItem.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        DiagramUndoItemActionPerformed(evt);
+      }
+    });
+    DiagramEditMenu.add(DiagramUndoItem);
+
+    DiagramRedoItem.setText("Redo (CTRL+Y)");
+    DiagramRedoItem.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        DiagramRedoItemActionPerformed(evt);
+      }
+    });
+    DiagramEditMenu.add(DiagramRedoItem);
+
+    DiagramMenuBar.add(DiagramEditMenu);
+
     setJMenuBar(DiagramMenuBar);
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -341,7 +366,7 @@ public class DiagramDialog extends javax.swing.JDialog
       .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(layout.createSequentialGroup()
           .addContainerGap()
-          .addComponent(SaveLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 667, Short.MAX_VALUE)
+          .addComponent(DiagramMessage, javax.swing.GroupLayout.PREFERRED_SIZE, 667, Short.MAX_VALUE)
           .addContainerGap()))
     );
     layout.setVerticalGroup(
@@ -362,7 +387,7 @@ public class DiagramDialog extends javax.swing.JDialog
       .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
           .addContainerGap(459, Short.MAX_VALUE)
-          .addComponent(SaveLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(DiagramMessage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addContainerGap()))
     );
 
@@ -371,18 +396,7 @@ public class DiagramDialog extends javax.swing.JDialog
 
   private void DiagramSaveItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_DiagramSaveItemActionPerformed
   {//GEN-HEADEREND:event_DiagramSaveItemActionPerformed
-    boolean saved = diag_controller.saveDiagram();
-    String saveMsg;
-    if(saved)
-      saveMsg = "Successfully saved diagram: ";
-    else
-      saveMsg = "FAILED TO SAVE DIAGRAM: ";
-    saveMsg += diag_controller.getOpenDiagramName();
-    SaveLabel.setText(saveMsg);
-    SaveLabel.setVisible(true);
-    
-    save_timer.stop();
-    save_timer.start();
+    save();
   }//GEN-LAST:event_DiagramSaveItemActionPerformed
 
   private void DiagramCloseItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_DiagramCloseItemActionPerformed
@@ -457,6 +471,16 @@ public class DiagramDialog extends javax.swing.JDialog
     }
   }//GEN-LAST:event_AddAssociationBtnMouseClicked
 
+  private void DiagramUndoItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_DiagramUndoItemActionPerformed
+  {//GEN-HEADEREND:event_DiagramUndoItemActionPerformed
+    undo();
+  }//GEN-LAST:event_DiagramUndoItemActionPerformed
+
+  private void DiagramRedoItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_DiagramRedoItemActionPerformed
+  {//GEN-HEADEREND:event_DiagramRedoItemActionPerformed
+    redo();
+  }//GEN-LAST:event_DiagramRedoItemActionPerformed
+
   public void open(String diagram) throws IOException
   {
     boolean opened = diag_controller.openDiagram(diagram);
@@ -473,6 +497,67 @@ public class DiagramDialog extends javax.swing.JDialog
     diag_controller.closeDiagram();
     setVisible(false);
   }
+  
+  private void undo()
+  {
+    try
+    {
+      boolean ableToUndo = diag_controller.undoLastChange();
+
+      // If unable to undo, display a message so user knows
+      if(!ableToUndo)
+      {
+        String undoMsg = "Unable to undo any further.";
+        DiagramMessage.setText(undoMsg);
+        DiagramMessage.setVisible(true);
+        diagram_msg_timer.stop();
+        diagram_msg_timer.start();
+      }
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
+    }
+  }
+  
+  private void redo()
+  {
+    try
+    {
+      boolean ableToRedo = diag_controller.redoLastChange();
+    
+      // If unable to undo, display a message so user knows
+      if(!ableToRedo)
+      {
+        String redoMsg = "Unable to redo any further, already at latest.";
+        DiagramMessage.setText(redoMsg);
+        DiagramMessage.setVisible(true);
+        diagram_msg_timer.stop();
+        diagram_msg_timer.start();
+      }
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
+    }
+  }
+  
+  private void save()
+  {
+    boolean saved = diag_controller.saveDiagram();
+    String saveMsg;
+    if(saved)
+      saveMsg = "Successfully saved diagram: ";
+    else
+      saveMsg = "FAILED TO SAVE DIAGRAM: ";
+    saveMsg += diag_controller.getOpenDiagramName();
+    DiagramMessage.setText(saveMsg);
+    DiagramMessage.setVisible(true);
+    
+    diagram_msg_timer.stop();
+    diagram_msg_timer.start();
+  }
+  
   /**
    * @param args the command line arguments
    */
@@ -545,11 +630,14 @@ public class DiagramDialog extends javax.swing.JDialog
   private javax.swing.JButton AddClassBtn;
   private javax.swing.JButton AddInheritanceBtn;
   private javax.swing.JMenuItem DiagramCloseItem;
+  private javax.swing.JMenu DiagramEditMenu;
   private javax.swing.JMenu DiagramFileMenu;
   private javax.swing.JMenuBar DiagramMenuBar;
+  private javax.swing.JLabel DiagramMessage;
+  private javax.swing.JMenuItem DiagramRedoItem;
   private javax.swing.JMenuItem DiagramSaveItem;
   private javax.swing.JScrollPane DiagramScrollPane;
-  private javax.swing.JLabel SaveLabel;
+  private javax.swing.JMenuItem DiagramUndoItem;
   private javax.swing.JButton SelectBtn;
   // End of variables declaration//GEN-END:variables
 }
