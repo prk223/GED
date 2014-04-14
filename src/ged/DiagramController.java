@@ -226,6 +226,7 @@ public class DiagramController
       Diagram undoneDiag = undo_redo.undo();
       if(undoneDiag != null)
         cur_diagram = undoneDiag;
+      state = new SelectDiagramState(view_port);
       diag_panel.repaint();
     }
   }
@@ -237,6 +238,7 @@ public class DiagramController
       Diagram redoneDiag = undo_redo.redo();
       if(redoneDiag != null)
         cur_diagram = redoneDiag;
+      state = new SelectDiagramState(view_port);
       diag_panel.repaint();
     }
   }

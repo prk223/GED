@@ -29,7 +29,6 @@ public class DiagramDialog extends javax.swing.JDialog
 {
   private final ConfigurationManager cfg_mgr;
   private final DiagramController diag_controller;
-  private UndoRedo undo_redo;
   private Timer save_timer;
   
   /**
