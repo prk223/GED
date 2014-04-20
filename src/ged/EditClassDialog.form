@@ -457,6 +457,8 @@
         </Component>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.ButtonGroup" name="classProtBtnGroup">
+    </Component>
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
@@ -494,27 +496,32 @@
                           <Component id="EditClassOkBtn" alignment="1" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
+                  <Group type="102" alignment="1" attributes="0">
+                      <EmptySpace min="-2" pref="399" max="-2" attributes="0"/>
+                      <Component id="ClassAttributeDeleteBtn" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="ClassAttributeAddBtn" min="-2" max="-2" attributes="0"/>
+                  </Group>
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <Component id="ClassInterfaceCheckbox" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                          </Group>
                           <Component id="EditClassLabel" alignment="1" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="ClassNameLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="ClassNameTextField" max="32767" attributes="0"/>
                           </Group>
-                          <Component id="ClassOperationScrollPane" alignment="1" pref="603" max="32767" attributes="0"/>
-                          <Group type="102" alignment="1" attributes="0">
-                              <EmptySpace min="-2" pref="377" max="-2" attributes="0"/>
-                              <Component id="ClassAttributeDeleteBtn" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="ClassAttributeAddBtn" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="ClassOperationScrollPane" alignment="1" pref="613" max="32767" attributes="0"/>
                           <Component id="ClassAttributeScrollPane" alignment="0" max="32767" attributes="0"/>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="ClassPublicRadioBtn" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="ClassProtectedRadioBtn" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="ClassPrivateRadioBtn" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="ClassInterfaceCheckbox" min="-2" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
                   </Group>
               </Group>
@@ -533,7 +540,14 @@
                   <Component id="ClassNameTextField" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="ClassInterfaceCheckbox" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                      <Component id="ClassPublicRadioBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="ClassProtectedRadioBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="ClassPrivateRadioBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Component id="ClassInterfaceCheckbox" min="-2" max="-2" attributes="0"/>
+              </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="ClassAttributeScrollPane" pref="86" max="32767" attributes="0"/>
               <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
@@ -694,6 +708,30 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ClassInterfaceCheckboxActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="ClassPublicRadioBtn">
+      <Properties>
+        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+          <ComponentRef name="classProtBtnGroup"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Public"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="ClassProtectedRadioBtn">
+      <Properties>
+        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+          <ComponentRef name="classProtBtnGroup"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Protected"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="ClassPrivateRadioBtn">
+      <Properties>
+        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+          <ComponentRef name="classProtBtnGroup"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Private"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>

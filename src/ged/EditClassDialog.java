@@ -75,7 +75,7 @@ public class EditClassDialog extends javax.swing.JDialog
         OperationProtectedRadioBtn.setSelected(true);
       else if(pLvl == Protection.PRIVATE)
         OperationPrivateRadioBtn.setSelected(true);
-      else
+        else
         OperationPublicRadioBtn.setSelected(true);
       OperationReturnTypeField.setText(editOp.getReturnType());
       OperationNameField.setText(editOp.getName());
@@ -116,6 +116,14 @@ public class EditClassDialog extends javax.swing.JDialog
     if(editing_element != null)
     {
       ClassNameTextField.setText(editing_element.getName());
+      
+      Protection pLvl = editing_element.getProtectionLevel();
+      if(pLvl == Protection.PROTECTED)
+        ClassProtectedRadioBtn.setSelected(true);
+      else if(pLvl == Protection.PRIVATE)
+        ClassPrivateRadioBtn.setSelected(true);
+      else
+        ClassPublicRadioBtn.setSelected(true);
 
       if(editing_element.getInterface())
         ClassInterfaceCheckbox.setSelected(true);
@@ -202,6 +210,7 @@ public class EditClassDialog extends javax.swing.JDialog
     ParameterNameLabel = new javax.swing.JLabel();
     ParameterTypeLabel = new javax.swing.JLabel();
     ParameterOkBtn = new javax.swing.JButton();
+    classProtBtnGroup = new javax.swing.ButtonGroup();
     EditClassLabel = new javax.swing.JLabel();
     ClassNameLabel = new javax.swing.JLabel();
     ClassNameTextField = new javax.swing.JTextField();
@@ -215,6 +224,9 @@ public class EditClassDialog extends javax.swing.JDialog
     ClassOperationDeleteBtn = new javax.swing.JButton();
     EditClassOkBtn = new javax.swing.JButton();
     ClassInterfaceCheckbox = new javax.swing.JCheckBox();
+    ClassPublicRadioBtn = new javax.swing.JRadioButton();
+    ClassProtectedRadioBtn = new javax.swing.JRadioButton();
+    ClassPrivateRadioBtn = new javax.swing.JRadioButton();
 
     AttributeDlg.setMinimumSize(new java.awt.Dimension(623, 411));
     AttributeDlg.setModal(true);
@@ -670,6 +682,15 @@ public class EditClassDialog extends javax.swing.JDialog
       }
     });
 
+    classProtBtnGroup.add(ClassPublicRadioBtn);
+    ClassPublicRadioBtn.setText("Public");
+
+    classProtBtnGroup.add(ClassProtectedRadioBtn);
+    ClassProtectedRadioBtn.setText("Protected");
+
+    classProtBtnGroup.add(ClassPrivateRadioBtn);
+    ClassPrivateRadioBtn.setText("Private");
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
@@ -684,24 +705,29 @@ public class EditClassDialog extends javax.swing.JDialog
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ClassOperationAddBtn))
               .addComponent(EditClassOkBtn, javax.swing.GroupLayout.Alignment.TRAILING)))
+          .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGap(399, 399, 399)
+            .addComponent(ClassAttributeDeleteBtn)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(ClassAttributeAddBtn))
           .addGroup(layout.createSequentialGroup()
             .addContainerGap()
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-              .addGroup(layout.createSequentialGroup()
-                .addComponent(ClassInterfaceCheckbox)
-                .addGap(0, 0, Short.MAX_VALUE))
               .addComponent(EditClassLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
               .addGroup(layout.createSequentialGroup()
                 .addComponent(ClassNameLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ClassNameTextField))
-              .addComponent(ClassOperationScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 603, Short.MAX_VALUE)
+              .addComponent(ClassOperationScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 613, Short.MAX_VALUE)
+              .addComponent(ClassAttributeScrollPane)
               .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(377, 377, 377)
-                .addComponent(ClassAttributeDeleteBtn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ClassAttributeAddBtn))
-              .addComponent(ClassAttributeScrollPane))))
+                .addComponent(ClassPublicRadioBtn)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(ClassProtectedRadioBtn)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(ClassPrivateRadioBtn)
+                .addGap(18, 18, 18)
+                .addComponent(ClassInterfaceCheckbox)))))
         .addContainerGap())
     );
     layout.setVerticalGroup(
@@ -714,7 +740,12 @@ public class EditClassDialog extends javax.swing.JDialog
           .addComponent(ClassNameLabel)
           .addComponent(ClassNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-        .addComponent(ClassInterfaceCheckbox)
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+            .addComponent(ClassPublicRadioBtn)
+            .addComponent(ClassProtectedRadioBtn)
+            .addComponent(ClassPrivateRadioBtn))
+          .addComponent(ClassInterfaceCheckbox))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addComponent(ClassAttributeScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
         .addGap(1, 1, 1)
@@ -737,6 +768,15 @@ public class EditClassDialog extends javax.swing.JDialog
 
   private void EditClassOkBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_EditClassOkBtnMouseClicked
   {//GEN-HEADEREND:event_EditClassOkBtnMouseClicked
+    if(editing_element != null)
+    {
+      if(ClassPrivateRadioBtn.isSelected())
+      editing_element.setProtectionLevel(Protection.PRIVATE);
+    else if(ClassProtectedRadioBtn.isSelected())
+      editing_element.setProtectionLevel(Protection.PROTECTED);
+    else
+      editing_element.setProtectionLevel(Protection.PUBLIC);
+    }
     setVisible(false);
   }//GEN-LAST:event_EditClassOkBtnMouseClicked
 
@@ -1048,6 +1088,9 @@ public class EditClassDialog extends javax.swing.JDialog
   private javax.swing.JButton ClassOperationDeleteBtn;
   private javax.swing.JScrollPane ClassOperationScrollPane;
   private javax.swing.JTable ClassOperationTable;
+  private javax.swing.JRadioButton ClassPrivateRadioBtn;
+  private javax.swing.JRadioButton ClassProtectedRadioBtn;
+  private javax.swing.JRadioButton ClassPublicRadioBtn;
   private javax.swing.JLabel EditAttributeLabel;
   private javax.swing.JLabel EditClassLabel;
   private javax.swing.JButton EditClassOkBtn;
@@ -1074,5 +1117,6 @@ public class EditClassDialog extends javax.swing.JDialog
   private javax.swing.JTextField ParameterTypeField;
   private javax.swing.JLabel ParameterTypeLabel;
   private javax.swing.ButtonGroup ProtectionButtonGroup;
+  private javax.swing.ButtonGroup classProtBtnGroup;
   // End of variables declaration//GEN-END:variables
 }

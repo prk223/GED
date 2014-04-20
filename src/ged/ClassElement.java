@@ -24,6 +24,7 @@ public class ClassElement implements DiagramElement
   private final ConfigurationManager cfg_mgr;
   
   private boolean is_interface;
+  private Protection protection_level;
   private String name;
   private final ArrayList<Attribute> attributes;
   private final ArrayList<Operation> operations;
@@ -51,11 +52,17 @@ public class ClassElement implements DiagramElement
             cfg_mgr.getConfigValue(ConfigurationManager.LINE_BFR_SIZE));
     
     unique_id = 0;
+    protection_level = Protection.PUBLIC;
   }
   
   public boolean getInterface()
   {
     return is_interface;
+  }
+  
+  public Protection getProtectionLevel()
+  {
+    return protection_level;
   }
   
   public String getName()
@@ -81,6 +88,11 @@ public class ClassElement implements DiagramElement
   public void setName(String n)
   {
     name = n;
+  }
+  
+  public void setProtectionLevel(Protection p)
+  {
+    protection_level = p;
   }
   
   public void addAttribute(String n, String t, Protection p)
@@ -271,6 +283,8 @@ public class ClassElement implements DiagramElement
   {
     String rep = "<uniqueID>" + unique_id + "</uniqueID>";
     
+    rep += "<classProtection>" + protection_level.toString() + "</classProtection>";
+    
     rep += "<location>";
     rep += Integer.toString(location.x) + "," + Integer.toString(location.y);
     rep += "</location>";
@@ -319,6 +333,12 @@ public class ClassElement implements DiagramElement
     n = getValueFromTag(s, "name");
     
     e = new ClassElement(n, x, y);
+
+    String prot = getValueFromTag(s, "classProtection");
+    if(!prot.equals(""))
+      e.protection_level = Protection.valueOf(prot);
+    else
+      e.protection_level = Protection.PUBLIC;
     
     int uid = Integer.parseInt(getValueFromTag(s, "uniqueID"));
     e.setUniqueId(uid);
@@ -460,6 +480,7 @@ public class ClassElement implements DiagramElement
   public DiagramElement cloneElement() throws IOException
   {
     ClassElement clonedClass = new ClassElement(name, location.x, location.y);
+    clonedClass.protection_level = protection_level;
     clonedClass.is_interface = is_interface;
     clonedClass.width = width;
     clonedClass.height = height;
@@ -489,6 +510,7 @@ public class ClassElement implements DiagramElement
     {
       ClassElement c = (ClassElement)e;
       if(!c.name.equals(name)) return false;
+      if(c.protection_level != protection_level) return false;
       if(c.location.x != location.x) return false;
       if(c.location.y != location.y) return false;
       if(c.is_interface != is_interface) return false;
