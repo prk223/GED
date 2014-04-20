@@ -89,6 +89,7 @@
                   <Component id="AddClassBtn" max="32767" attributes="0"/>
                   <Component id="AddAggregationBtn" alignment="1" pref="114" max="32767" attributes="0"/>
                   <Component id="AddAssociationBtn" max="32767" attributes="0"/>
+                  <Component id="GenerateCodeBtn" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="DiagramScrollPane" pref="557" max="32767" attributes="0"/>
@@ -115,7 +116,9 @@
               <Component id="AddAssociationBtn" min="-2" pref="61" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="SelectBtn" min="-2" pref="61" max="-2" attributes="0"/>
-              <EmptySpace pref="103" max="32767" attributes="0"/>
+              <EmptySpace pref="31" max="32767" attributes="0"/>
+              <Component id="GenerateCodeBtn" min="-2" pref="61" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
           <Component id="DiagramScrollPane" alignment="0" max="32767" attributes="0"/>
           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
@@ -219,6 +222,20 @@
       </Properties>
       <Events>
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="AddAssociationBtnMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="GenerateCodeBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Generate Code"/>
+        <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[57, 23]"/>
+        </Property>
+        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[57, 23]"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="GenerateCodeBtnMouseReleased"/>
       </Events>
     </Component>
   </SubComponents>

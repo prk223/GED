@@ -965,4 +965,20 @@ public class Relationship implements DiagramElement
     return true;
   }
   
+  public ClassElement getSourceClass()
+  {
+    ClassElement e = null;
+    if(source_tether != null)
+      e = (ClassElement)source_tether.getElement();
+    return e;
+  }
+  
+  public ClassElement getDestinationClass()
+  {
+    ClassElement e = null;
+    if(destination_tether != null)
+      e = (ClassElement)destination_tether.getElement();
+    return e;
+  }
+  
 }
