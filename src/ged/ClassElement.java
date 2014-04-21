@@ -542,4 +542,10 @@ public class ClassElement implements DiagramElement
     // No differences found, must be equivalent
     return true;
   }
+  
+  @Override
+  public String accept(ElementCheckerVisitor visitor)
+  {
+    return visitor.visit(this);
+  }
 }

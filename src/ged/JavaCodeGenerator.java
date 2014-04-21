@@ -86,7 +86,10 @@ public class JavaCodeGenerator extends CodeGenerator
           opLine += p.getString();
           if(paramIt.hasNext()) opLine += ", ";
         }
-        opLine += ")\n" + tabLevel + "{\n\n" + tabLevel + "}\n\n";
+        if(c.getInterface())
+          opLine += ");\n";
+        else
+          opLine += ")\n" + tabLevel + "{\n\n" + tabLevel + "}\n\n";
         codeWriter.write(opLine);
       }
       
@@ -254,6 +257,14 @@ public class JavaCodeGenerator extends CodeGenerator
       modWriter.close();
     }
     
+    tmpFile.delete();
+    
     return modifiedFile;
+  }
+  
+  @Override
+  protected ElementCheckerVisitor getChecker()
+  {
+    return new JavaElementCheckerVisitor();
   }
 }

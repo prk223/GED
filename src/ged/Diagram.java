@@ -380,4 +380,10 @@ public class Diagram implements DiagramElement
     return true;
   }
   
+  @Override
+  public String accept(ElementCheckerVisitor visitor)
+  {
+    return visitor.visit(this);
+  }
+  
 }

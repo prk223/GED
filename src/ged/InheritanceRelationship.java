@@ -97,4 +97,10 @@ public class InheritanceRelationship extends Relationship
     
     return cloneRelationship(clonedInher);
   }
+  
+  @Override
+  public String accept(ElementCheckerVisitor visitor)
+  {
+    return visitor.visit(this);
+  }
 }

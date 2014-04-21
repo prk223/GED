@@ -25,6 +25,8 @@ public class CodeGenerator
   protected ConfigurationManager cfg_mgr;
   protected String tab_size;
   protected ProjectManager proj_mgr;
+  private ArrayList<DiagramElement> good_elements;
+  private String errors;
   
   protected CodeGenerator() throws IOException
   {
@@ -71,53 +73,36 @@ public class CodeGenerator
   // To be overwritten by subclasses
   public ArrayList<File> generateCode(Diagram d) throws IOException
   {
+    ArrayList<File> codeFiles = new ArrayList<>();
     ArrayList<File> baseFiles = new ArrayList<>();
     String fileNameBase = getFileNameBase(d);
     
-    ArrayList<DiagramElement> elements = d.getElements();
-    Iterator<DiagramElement> itEl = elements.iterator();
-    ArrayList<String> classNames = new ArrayList<>();
+    checkElements(d);
+    if(!errors.isEmpty())
+    {
+      File errorFile = createErrorFile(d);
+      codeFiles.add(errorFile);
+    }
+    
+    Iterator<DiagramElement> itEl = good_elements.iterator();
     while(itEl.hasNext())
     {
       DiagramElement e = itEl.next();
       if(e.getElementType().equals("Class"))
       {
         ClassElement c = (ClassElement)e;
-        if(c.getName().equals(""))
-          System.err.println("ERR: Class has no name!");
-        else
-        {
-          File codeFile = createBaseClassFile(c, fileNameBase);
-          if(codeFile != null)
-          {
-            boolean duplicateClass = false;
-            Iterator<String> nameIt = classNames.iterator();
-            while(nameIt.hasNext())
-            {
-              String name = nameIt.next();
-              if(name.equals(c.getName()))
-                duplicateClass = true;
-            }
-            if(duplicateClass)
-              System.err.println("ERR: Duplicate class:"+c.getName());
-            else
-            {
-              classNames.add(c.getName());
-              baseFiles.add(codeFile);
-            }
-          }
-        }
+        File codeFile = createBaseClassFile(c, fileNameBase);
+        if(codeFile != null)
+          baseFiles.add(codeFile);
       }
     }
     
-    ArrayList<File> codeFiles = new ArrayList<>();
     Iterator<File> fileIt = baseFiles.iterator();
     while(fileIt.hasNext())
     {
       File baseFile = fileIt.next();
       
-      elements = d.getElements();
-      itEl = elements.iterator();
+      itEl = good_elements.iterator();
       while(itEl.hasNext())
       {
         DiagramElement e = itEl.next();
@@ -173,5 +158,52 @@ public class CodeGenerator
   protected File addHeaders(File f) throws IOException
   {
     return f;
+  }
+  
+  // to be overwritten by subclasses
+  protected ElementCheckerVisitor getChecker()
+  {
+    return null;
+  }
+  
+  private void checkElements(Diagram diagram)
+  {
+    errors = "";
+    good_elements = new ArrayList<>();
+    
+    ElementCheckerVisitor checker = getChecker();
+    String error = diagram.accept(checker);
+    if(error.isEmpty())
+    {
+      ArrayList<DiagramElement> elements = diagram.getElements();
+      Iterator<DiagramElement> itEl = elements.iterator();
+      while(itEl.hasNext())
+      {
+        DiagramElement e = itEl.next();
+        error = e.accept(checker);
+        if(error.isEmpty())
+          good_elements.add(e);
+        else
+          errors += "ERROR:" + error + "\n";
+      }
+    }
+    else
+      errors += "ERROR:" + error + "\n";
+  }
+  
+  private File createErrorFile(Diagram d) throws IOException
+  {
+    String[] individualErrors = errors.split("\n");
+    int errorCount = individualErrors.length;
+    
+    String filePath = getFileNameBase(d) + "_errors";
+    File errorFile = new File(filePath);
+    BufferedWriter errorWriter = new BufferedWriter(new FileWriter(errorFile));
+    errorWriter.write("Errors detected while generating code.\n");
+    errorWriter.write("Detected " + errorCount + " errors:\n");
+    errorWriter.write(errors);
+    errorWriter.close();
+    
+    return errorFile;
   }
 }

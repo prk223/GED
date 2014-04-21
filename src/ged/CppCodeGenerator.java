@@ -310,4 +310,10 @@ public class CppCodeGenerator extends CodeGenerator
     
     return modifiedFile;
   }
+  
+  @Override
+  protected ElementCheckerVisitor getChecker()
+  {
+    return new CppElementCheckerVisitor();
+  }
 }

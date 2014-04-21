@@ -487,4 +487,10 @@ public class AssociationRelationship extends Relationship
     // Everything ass specific matches, check parent pieces
     return super.equivalentTo(ass);
   }
+  
+  @Override
+  public String accept(ElementCheckerVisitor visitor)
+  {
+    return visitor.visit(this);
+  }
 }

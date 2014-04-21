@@ -49,4 +49,6 @@ public interface DiagramElement
   
   public boolean equivalentTo(DiagramElement e);
   
+  public String accept(ElementCheckerVisitor visitor);
+  
 }

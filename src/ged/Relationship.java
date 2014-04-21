@@ -981,4 +981,10 @@ public class Relationship implements DiagramElement
     return e;
   }
   
+  @Override
+  public String accept(ElementCheckerVisitor visitor)
+  {
+    return visitor.visit(this);
+  }
+  
 }

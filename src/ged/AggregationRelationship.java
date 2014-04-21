@@ -103,4 +103,10 @@ public class AggregationRelationship extends Relationship
     
     return cloneRelationship(clonedAg);
   }
+  
+  @Override
+  public String accept(ElementCheckerVisitor visitor)
+  {
+    return visitor.visit(this);
+  }
 }
