@@ -226,7 +226,8 @@ public class DiagramDialog extends javax.swing.JDialog
     DiagramScrollPane = new javax.swing.JScrollPane();
     AddAggregationBtn = new javax.swing.JButton();
     AddAssociationBtn = new javax.swing.JButton();
-    GenerateCodeBtn = new javax.swing.JButton();
+    JavaGenerateCodeBtn = new javax.swing.JButton();
+    CppGenerateCodeBtn = new javax.swing.JButton();
     DiagramMenuBar = new javax.swing.JMenuBar();
     DiagramFileMenu = new javax.swing.JMenu();
     DiagramSaveItem = new javax.swing.JMenuItem();
@@ -302,14 +303,25 @@ public class DiagramDialog extends javax.swing.JDialog
       }
     });
 
-    GenerateCodeBtn.setText("Generate Code");
-    GenerateCodeBtn.setMaximumSize(new java.awt.Dimension(57, 23));
-    GenerateCodeBtn.setMinimumSize(new java.awt.Dimension(57, 23));
-    GenerateCodeBtn.addMouseListener(new java.awt.event.MouseAdapter()
+    JavaGenerateCodeBtn.setText("Generate Java Code");
+    JavaGenerateCodeBtn.setMaximumSize(new java.awt.Dimension(57, 23));
+    JavaGenerateCodeBtn.setMinimumSize(new java.awt.Dimension(57, 23));
+    JavaGenerateCodeBtn.addMouseListener(new java.awt.event.MouseAdapter()
     {
       public void mouseReleased(java.awt.event.MouseEvent evt)
       {
-        GenerateCodeBtnMouseReleased(evt);
+        JavaGenerateCodeBtnMouseReleased(evt);
+      }
+    });
+
+    CppGenerateCodeBtn.setText("Generate C++ Code");
+    CppGenerateCodeBtn.setMaximumSize(new java.awt.Dimension(57, 23));
+    CppGenerateCodeBtn.setMinimumSize(new java.awt.Dimension(57, 23));
+    CppGenerateCodeBtn.addMouseListener(new java.awt.event.MouseAdapter()
+    {
+      public void mouseReleased(java.awt.event.MouseEvent evt)
+      {
+        CppGenerateCodeBtnMouseReleased(evt);
       }
     });
 
@@ -371,13 +383,14 @@ public class DiagramDialog extends javax.swing.JDialog
         .addContainerGap()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
           .addComponent(SelectBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(AddInheritanceBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+          .addComponent(AddInheritanceBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(AddClassBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(AddAggregationBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+          .addComponent(AddAggregationBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(AddAssociationBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(GenerateCodeBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+          .addComponent(CppGenerateCodeBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(JavaGenerateCodeBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(DiagramScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 557, Short.MAX_VALUE))
+        .addComponent(DiagramScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE))
       .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(layout.createSequentialGroup()
           .addContainerGap()
@@ -397,8 +410,10 @@ public class DiagramDialog extends javax.swing.JDialog
         .addComponent(AddAssociationBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addComponent(SelectBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
-        .addComponent(GenerateCodeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+        .addComponent(CppGenerateCodeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(JavaGenerateCodeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addContainerGap())
       .addComponent(DiagramScrollPane)
       .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -498,19 +513,33 @@ public class DiagramDialog extends javax.swing.JDialog
     redo();
   }//GEN-LAST:event_DiagramRedoItemActionPerformed
 
-  private void GenerateCodeBtnMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event_GenerateCodeBtnMouseReleased
-  {//GEN-HEADEREND:event_GenerateCodeBtnMouseReleased
+  private void JavaGenerateCodeBtnMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event_JavaGenerateCodeBtnMouseReleased
+  {//GEN-HEADEREND:event_JavaGenerateCodeBtnMouseReleased
     setVisible(false);
     try
     {
-      code_dialog.open();
+      code_dialog.open(true);
     }
     catch (IOException ex)
     {
       Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
     }
     setVisible(true);
-  }//GEN-LAST:event_GenerateCodeBtnMouseReleased
+  }//GEN-LAST:event_JavaGenerateCodeBtnMouseReleased
+
+  private void CppGenerateCodeBtnMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event_CppGenerateCodeBtnMouseReleased
+  {//GEN-HEADEREND:event_CppGenerateCodeBtnMouseReleased
+    setVisible(false);
+    try
+    {
+      code_dialog.open(false);
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    setVisible(true);
+  }//GEN-LAST:event_CppGenerateCodeBtnMouseReleased
 
   public void open(String diagram) throws IOException
   {
@@ -660,6 +689,7 @@ public class DiagramDialog extends javax.swing.JDialog
   private javax.swing.JButton AddAssociationBtn;
   private javax.swing.JButton AddClassBtn;
   private javax.swing.JButton AddInheritanceBtn;
+  private javax.swing.JButton CppGenerateCodeBtn;
   private javax.swing.JMenuItem DiagramCloseItem;
   private javax.swing.JMenu DiagramEditMenu;
   private javax.swing.JMenu DiagramFileMenu;
@@ -669,7 +699,7 @@ public class DiagramDialog extends javax.swing.JDialog
   private javax.swing.JMenuItem DiagramSaveItem;
   private javax.swing.JScrollPane DiagramScrollPane;
   private javax.swing.JMenuItem DiagramUndoItem;
-  private javax.swing.JButton GenerateCodeBtn;
+  private javax.swing.JButton JavaGenerateCodeBtn;
   private javax.swing.JButton SelectBtn;
   // End of variables declaration//GEN-END:variables
 }

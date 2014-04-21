@@ -37,6 +37,7 @@ public class CodeDialog extends javax.swing.JDialog
   private Timer code_msg_timer;
   private CodeGenerator code_gen;
   private final JavaCodeGenerator java_gen;
+  private final CppCodeGenerator cpp_gen;
   private ArrayList<File> code_files;
   private int file_index;
   
@@ -76,6 +77,7 @@ public class CodeDialog extends javax.swing.JDialog
     });
     
     java_gen = new JavaCodeGenerator();
+    cpp_gen  = new CppCodeGenerator();
     code_gen = java_gen;
     file_index = 0;
   }
@@ -134,6 +136,7 @@ public class CodeDialog extends javax.swing.JDialog
 
     CodeTextArea.setEditable(false);
     CodeTextArea.setColumns(20);
+    CodeTextArea.setFont(new java.awt.Font("Consolas", 0, 13)); // NOI18N
     CodeTextArea.setRows(5);
     CodeTextArea.setText("Code area");
     CodeScrollPane.setViewportView(CodeTextArea);
@@ -268,11 +271,13 @@ public class CodeDialog extends javax.swing.JDialog
     }
   }//GEN-LAST:event_PreviousPageBtnMouseReleased
 
-  public void open() throws IOException
+  public void open(boolean java) throws IOException
   {
     Diagram openedDiagram = diag_controller.getOpenDiagram();
     if(openedDiagram != null)
     {
+      if(java) code_gen = java_gen;
+      else     code_gen = cpp_gen;
       TitledBorder paneBorder = (TitledBorder)CodeScrollPane.getBorder();
       paneBorder.setTitle(openedDiagram.getName());
       code_files = code_gen.generateCode(openedDiagram);
