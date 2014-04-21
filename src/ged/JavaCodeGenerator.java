@@ -9,7 +9,6 @@ package ged;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -23,8 +22,10 @@ import java.util.Iterator;
 public class JavaCodeGenerator extends CodeGenerator
 {
   
-  public JavaCodeGenerator()
-  {}
+  public JavaCodeGenerator() throws IOException
+  {
+    super();
+  }
   
   @Override
   protected File createBaseClassFile(ClassElement c, String baseFileName) throws IOException
@@ -42,7 +43,7 @@ public class JavaCodeGenerator extends CodeGenerator
       classLine += c.getName() + "\n{\n";
       codeWriter.write(classLine);
       
-      tabLevel += "  ";
+      tabLevel += tab_size;
       
       // Member attributes
       // If an interface, do not put them here. Java interfaces cannot
@@ -55,6 +56,8 @@ public class JavaCodeGenerator extends CodeGenerator
         {
           Attribute a = itAt.next();
           String attLine = tabLevel;
+          if(a.getStatic())
+            attLine += "static ";
           Protection p = a.getProtectionLevel();
           attLine += p.toString().toLowerCase() + " ";
           attLine += a.getType() + " " + a.getName() + ";\n";
@@ -70,6 +73,8 @@ public class JavaCodeGenerator extends CodeGenerator
       {
         Operation o = itOp.next();
         String opLine = tabLevel;
+        if(o.getStatic())
+          opLine += "static ";
         opLine += o.getProtectionLevel().toString().toLowerCase();
         opLine += " " + o.getReturnType();
         opLine += " " + o.getName() + "(";
@@ -185,20 +190,23 @@ public class JavaCodeGenerator extends CodeGenerator
           {
             multIsNumber = false;
           }
+          
+          String tabLevel = tab_size;
+          
           if((multIsNumber && (mult <= 1) || srcMult.isEmpty()))
-            line += "  " + source.getName() + " " + source.getName() + "Var;";
+            line += tab_size + source.getName() + " " + source.getName() + "Var;";
           else if(multIsNumber && (mult > 1))
           {
-            line += "  ArrayList<" + source.getName() + "> ";
+            line += tabLevel + "ArrayList<" + source.getName() + "> ";
             line += source.getName() + "Array = new ArrayList<>("+mult+");";
           }
           else if(srcMult.contains("..") || srcMult.contains("*"))
           {
-            line += "  ArrayList<" + source.getName() + "> ";
+            line += tabLevel + "ArrayList<" + source.getName() + "> ";
             line += source.getName() + "Array;";
           }
           else // name of variable was directly typed
-            line += "  " + source.getName() + " " + srcMult + ";";
+            line += tabLevel + source.getName() + " " + srcMult + ";";
           
           firstLine = false;
         }
@@ -218,5 +226,34 @@ public class JavaCodeGenerator extends CodeGenerator
   protected File modifyFile(File f, AssociationRelationship r)
   {
     return f;
+  }
+  
+  @Override
+  protected File addHeaders(File f) throws IOException
+  {
+    File modifiedFile = f;
+    boolean hasArrayList = false;
+    File tmpFile = copyToTempFile(f);
+    BufferedReader tmpReader = new BufferedReader(new FileReader(tmpFile));
+    String line = tmpReader.readLine();
+    String newFileStr = "";
+    while(line != null)
+    {
+      newFileStr += line + "\n";
+      if(line.contains("ArrayList<"))
+        hasArrayList = true;
+      line = tmpReader.readLine();
+    }
+    tmpReader.close();
+    
+    if(hasArrayList)
+    {
+      newFileStr = "import java.util.ArrayList;\n\n" + newFileStr;
+      BufferedWriter modWriter = new BufferedWriter(new FileWriter(modifiedFile));
+      modWriter.write(newFileStr);
+      modWriter.close();
+    }
+    
+    return modifiedFile;
   }
 }
