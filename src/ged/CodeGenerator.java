@@ -22,14 +22,28 @@ import java.util.Iterator;
  */
 public class CodeGenerator
 {
+  protected ConfigurationManager cfg_mgr;
+  protected String tab_size;
+  protected ProjectManager proj_mgr;
+  
+  protected CodeGenerator() throws IOException
+  {
+    cfg_mgr  = ConfigurationManager.getInstance();
+    proj_mgr = ProjectManager.getInstance();
+    cfg_mgr = ConfigurationManager.getInstance();
+    
+    int numSpacesInTab = Integer.parseInt(cfg_mgr.getConfigValue(
+            ConfigurationManager.TAB_SIZE));
+    tab_size = "";
+    for(int i = 0; i < numSpacesInTab; i++)
+      tab_size += " ";
+  }
   
   protected String getFileNameBase(Diagram d) throws IOException
   {
-    ConfigurationManager cfgMgr = ConfigurationManager.getInstance();
-    ProjectManager projMgr      = ProjectManager.getInstance();
     
-    String path = cfgMgr.getConfigValue(ConfigurationManager.WORKSPACE_PATH);
-    path += "\\" + projMgr.getOpenProjectName();
+    String path = cfg_mgr.getConfigValue(ConfigurationManager.WORKSPACE_PATH);
+    path += "\\" + proj_mgr.getOpenProjectName();
     path += "_" + d.getName() + "_";
     
     return path;
@@ -124,6 +138,7 @@ public class CodeGenerator
         if(modifiedFile != null)
           baseFile = modifiedFile;
       }
+      baseFile = addHeaders(baseFile);
       codeFiles.add(baseFile);
     }
     
@@ -150,6 +165,12 @@ public class CodeGenerator
   
   // to be overwritten by subclasses
   protected File modifyFile(File f, AssociationRelationship r) throws IOException
+  {
+    return f;
+  }
+  
+  // to be overwritten by subclasses
+  protected File addHeaders(File f) throws IOException
   {
     return f;
   }

@@ -42,6 +42,7 @@ public class ConfigurationManager
   public static final String DEST_MULT_DFLT_LEN    = "DEST_MULT_DFLT_LEN";
   public static final String DEST_MULT_DFLT_ANGL   = "DEST_MULT_DFLT_ANGL";
   public static final String RLTN_SNAP_DIST        = "RLTN_SNAP_DIST";
+  public static final String TAB_SIZE              = "TAB_SIZE";
   
   private final ArrayList<ConfigurationItem> config_items = new ArrayList<>();
   
@@ -92,6 +93,7 @@ public class ConfigurationManager
     config_items.add(new ConfigurationItem(DEST_MULT_DFLT_LEN, "20"));
     config_items.add(new ConfigurationItem(DEST_MULT_DFLT_ANGL, "45"));
     config_items.add(new ConfigurationItem(RLTN_SNAP_DIST, "3"));
+    config_items.add(new ConfigurationItem(TAB_SIZE, "2"));
     
     File configFile = new File(".\\" + CFG_FILENAME);
     if(configFile.exists())
