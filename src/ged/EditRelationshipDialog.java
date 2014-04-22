@@ -6,6 +6,8 @@
 
 package ged;
 
+import java.awt.event.MouseEvent;
+
 /**
  *
  * @author Comp
@@ -13,6 +15,7 @@ package ged;
 public class EditRelationshipDialog extends javax.swing.JDialog
 {
   private Relationship editing_relationship;
+  private MouseEvent opening_evt;
 
   /**
    * Creates new form EditRelationshipDialog
@@ -26,11 +29,24 @@ public class EditRelationshipDialog extends javax.swing.JDialog
     editing_relationship = null;
   }
   
-  public void open(Relationship e)
+  public void open(Relationship e, MouseEvent evt)
   {
+    opening_evt = evt;
     if(e != null)
     {
       editing_relationship = e;
+      if(e.getElementType().equals("Association"))
+      {
+        AssociationRelationship a = (AssociationRelationship)e;
+        AssociationTextField.setText(a.getAssociation());
+        AssociationTextField.setVisible(true);
+        AssociationLabel.setVisible(true);
+      }
+      else
+      {
+        AssociationTextField.setVisible(false);
+        AssociationLabel.setVisible(false);
+      }
       SourceMultTextField.setText(e.getSourceMultiplicity());
       DestMultTextField.setText(e.getDestinationMultiplicity());
       setVisible(true);
@@ -53,6 +69,8 @@ public class EditRelationshipDialog extends javax.swing.JDialog
     DestMultLabel = new javax.swing.JLabel();
     DestMultTextField = new javax.swing.JTextField();
     EditRelationshipOkBtn = new javax.swing.JButton();
+    AssociationLabel = new javax.swing.JLabel();
+    AssociationTextField = new javax.swing.JTextField();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -92,6 +110,9 @@ public class EditRelationshipDialog extends javax.swing.JDialog
       }
     });
 
+    AssociationLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+    AssociationLabel.setText("Association:");
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
@@ -111,18 +132,28 @@ public class EditRelationshipDialog extends javax.swing.JDialog
             .addComponent(DestMultLabel)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addComponent(DestMultTextField)
+            .addContainerGap())
+          .addGroup(layout.createSequentialGroup()
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(EditRelationshipOkBtn))
+              .addGroup(layout.createSequentialGroup()
+                .addComponent(AssociationLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(AssociationTextField)))
             .addContainerGap())))
-      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        .addComponent(EditRelationshipOkBtn)
-        .addGap(19, 19, 19))
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
         .addComponent(EditRelationshipLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(AssociationLabel)
+          .addComponent(AssociationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(SourceMultLabel)
           .addComponent(SourceMultTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -130,9 +161,9 @@ public class EditRelationshipDialog extends javax.swing.JDialog
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(DestMultLabel)
           .addComponent(DestMultTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGap(18, 18, 18)
         .addComponent(EditRelationshipOkBtn)
-        .addContainerGap(297, Short.MAX_VALUE))
+        .addContainerGap(264, Short.MAX_VALUE))
     );
 
     pack();
@@ -153,6 +184,13 @@ public class EditRelationshipDialog extends javax.swing.JDialog
 
   private void EditRelationshipOkBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_EditRelationshipOkBtnMouseClicked
   {//GEN-HEADEREND:event_EditRelationshipOkBtnMouseClicked
+    if((editing_relationship != null) && 
+            (editing_relationship.getElementType().equals("Association")))
+    {
+      AssociationRelationship a = (AssociationRelationship)editing_relationship;
+      a.setAssociation(AssociationTextField.getText(),
+              opening_evt.getX(), opening_evt.getY());
+    }
     setVisible(false);
   }//GEN-LAST:event_EditRelationshipOkBtnMouseClicked
 
@@ -216,6 +254,8 @@ public class EditRelationshipDialog extends javax.swing.JDialog
   }
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JLabel AssociationLabel;
+  private javax.swing.JTextField AssociationTextField;
   private javax.swing.JLabel DestMultLabel;
   private javax.swing.JTextField DestMultTextField;
   private javax.swing.JLabel EditRelationshipLabel;

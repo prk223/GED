@@ -11,6 +11,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -428,7 +429,7 @@ public class ClassElement implements DiagramElement
   }
   
   @Override
-  public void displayEditGui()
+  public void displayEditGui(MouseEvent evt)
   {
     EditClassDialog dlg = new EditClassDialog(null, true);
     dlg.open(this);

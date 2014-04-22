@@ -13,6 +13,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Stroke;
+import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -135,15 +136,7 @@ public class Relationship implements DiagramElement
   
   protected void drawLine(Graphics g, Point A, Point B)
   {
-    ClassElement e = null;
-    if(destination_tether != null)
-      e = (ClassElement)destination_tether.getElement();
-    if(e != null && e.getInterface())
-    {
-      drawDashedLine(g, A, B);
-    }
-    else
-      g.drawLine(A.x, A.y, B.x, B.y);
+    g.drawLine(A.x, A.y, B.x, B.y);
   }
   
   protected void drawDashedLine(Graphics g, Point A, Point B)
@@ -644,10 +637,10 @@ public class Relationship implements DiagramElement
   }
   
   @Override
-  public void displayEditGui()
+  public void displayEditGui(MouseEvent evt)
   {
     EditRelationshipDialog dlg = new EditRelationshipDialog(null, true);
-    dlg.open(this);
+    dlg.open(this, evt);
   }
   
   @Override

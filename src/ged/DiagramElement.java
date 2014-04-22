@@ -8,6 +8,7 @@ package ged;
 
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 /**
@@ -29,7 +30,7 @@ public interface DiagramElement
   
   public double getDistanceFrom(int x, int y);
   
-  public void displayEditGui();
+  public void displayEditGui(MouseEvent evt);
   
   public int getMaxX();
   

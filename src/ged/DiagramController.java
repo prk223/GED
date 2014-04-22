@@ -225,7 +225,7 @@ public class DiagramController
     
     if(cur_diagram != null)
     {
-      Diagram undoneDiag = undo_redo.undo();
+      Diagram undoneDiag = undo_redo.undo(cur_diagram);
       if((undoneDiag != null) && (!undoneDiag.equivalentTo(cur_diagram)))
       {
         cur_diagram = undoneDiag;
@@ -243,7 +243,7 @@ public class DiagramController
     boolean redone = false;
     if(cur_diagram != null)
     {
-      Diagram redoneDiag = undo_redo.redo();
+      Diagram redoneDiag = undo_redo.redo(cur_diagram);
       if((redoneDiag != null) && (!redoneDiag.equivalentTo(cur_diagram)))
       {
         cur_diagram = redoneDiag;

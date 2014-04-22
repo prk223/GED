@@ -56,8 +56,9 @@ public class UndoRedo
     }
   }
   
-  public Diagram undo() throws IOException
+  public Diagram undo(Diagram currentDiag) throws IOException
   {
+    saveState(currentDiag);
     if(undo_queue.size() > 0)
     {
       DiagramMemento mem = new DiagramMemento();
@@ -71,8 +72,9 @@ public class UndoRedo
     return (Diagram)latest_diagram.cloneElement();
   }
   
-  public Diagram redo() throws IOException
+  public Diagram redo(Diagram currentDiag) throws IOException
   {
+    saveState(currentDiag);
     if(redo_queue.size() > 0)
     {
       DiagramMemento mem = new DiagramMemento();

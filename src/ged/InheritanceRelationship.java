@@ -73,6 +73,18 @@ public class InheritanceRelationship extends Relationship
     g.drawPolygon(triangle);
   }
   
+  @Override
+  public void drawLine(Graphics g, Point A, Point B)
+  {
+    ClassElement e = getDestinationClass();
+    if(e != null && e.getInterface())
+    {
+      drawDashedLine(g, A, B);
+    }
+    else
+      g.drawLine(A.x, A.y, B.x, B.y);
+  }
+  
   public static DiagramElement fromPersistentRepresentation(String s) throws IOException
   {
     InheritanceRelationship r = new InheritanceRelationship(0, 0);

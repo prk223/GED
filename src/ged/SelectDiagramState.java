@@ -55,7 +55,7 @@ public class SelectDiagramState extends DiagramState
   {
     DiagramElement e = getNearestElement(null, evt.getX(), evt.getY());
     if(e != null)
-      e.displayEditGui();
+      e.displayEditGui(evt);
     
     return next_state;
   }

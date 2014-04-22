@@ -7,11 +7,10 @@
 package ged;
 
 import static ged.Util.getValueFromTag;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  *
@@ -19,32 +18,16 @@ import java.util.Iterator;
  */
 public class AssociationRelationship extends Relationship
 {
-  // Cache some variables to avoid excess calculations
-  private final Point prev_last_vertex;
-  private final Point prev_destination;
-  private TetherElementData association_tether;
-  private int association_class_uid;
-  private final Point association_class_location;
-  private final Point association_relationship_location;
-  private final ArrayList<Point> ass_vertices;
-  private final int min_snap_distance;
+  private String association;
+  private final Point association_location;
+  private FontMetrics metrics;
   
   public AssociationRelationship(int x, int y) throws IOException
   {
     super(x, y);
-    int lineLength = Integer.parseInt(cfg_mgr.
-            getConfigValue(ConfigurationManager.DFLT_RLTNSHP_LEN));
-    min_snap_distance = Integer.parseInt(cfg_mgr.
-            getConfigValue(ConfigurationManager.RLTN_SNAP_DIST));
-    
-    prev_last_vertex = new Point(0,0);
-    prev_destination = new Point(0,0);
-    association_relationship_location = new Point(x + (lineLength / 2), y);
-    association_class_location = new Point(x + (lineLength / 2), 
-                                           y + (lineLength / 2));
-    association_tether = null;
-    association_class_uid = 0;
-    ass_vertices = new ArrayList<>();
+    association = "";
+    association_location = new Point(0, 0);
+    metrics = null;
   }
   
   @Override
@@ -53,28 +36,32 @@ public class AssociationRelationship extends Relationship
     return "Association";
   }
   
+  public String getAssociation()
+  {
+    return association;
+  }
+  
+  public void setAssociation(String ass, int x, int y)
+  {
+    if(!ass.equals(association))
+    {
+      association = ass;
+      setAssociationLocation(x, y);
+    }
+  }
+  
+  public void setAssociationLocation(int x, int y)
+  {
+    association_location.x = x;
+    association_location.y = y;
+  }
+  
   @Override
   public void draw(Graphics g)
   {
-    Point curPoint = association_relationship_location;
-    
-    // Go through each vertex drawing a line to it
-    Iterator<Point> vertIt = ass_vertices.iterator();
-    while(vertIt.hasNext())
-    {
-      Point vertex = vertIt.next();
-      drawDashedLine(g, new Point(curPoint.x, curPoint.y),
-              new Point(vertex.x, vertex.y));
-      int vertexX = vertex.x - (vertex_diameter/2);
-      int vertexY = vertex.y - (vertex_diameter/2);
-      g.fillOval(vertexX, vertexY, vertex_diameter, vertex_diameter);
-      curPoint = vertex;
-    }
-    
-    // Draw final line to class destination
-    drawDashedLine(g, curPoint, association_class_location);
-    
     super.draw(g);
+    g.drawString(association, association_location.x, association_location.y);
+    metrics = g.getFontMetrics();
   }
   
   @Override
@@ -84,295 +71,49 @@ public class AssociationRelationship extends Relationship
   }
   
   @Override
-  protected void drawEndpoints(Graphics g)
+  public void setLocation(Point loc)
   {
-    int destX = destination_location.x;
-    int destY = destination_location.y;
-    
-    Point last_vertex = getLastVertex();
-    // Check if vertex or destination changed
-    if((prev_last_vertex.x != last_vertex.x)          ||
-       (prev_last_vertex.y != last_vertex.y)          ||
-       (prev_destination.x != destination_location.x) ||
-       (prev_destination.y != destination_location.y))
-    { // If there is a change, re-calculate diamond
-      prev_last_vertex.x = last_vertex.x;
-      prev_last_vertex.y = last_vertex.y;
-      prev_destination.x = destination_location.x;
-      prev_destination.y = destination_location.y;
-
-      // TODO: calculate
+    if(selected_point == association_location)
+    {
+      setAssociationLocation(loc.x, loc.y);
     }
-
-    // TODO: Draw something
+    else if(selected_point == null)
+    {
+      int distX = loc.x - source_location.x;
+      int distY = loc.y - source_location.y;
+      association_location.x += distX;
+      association_location.y += distY;
+      super.setLocation(loc);
+    }
+    else
+      super.setLocation(loc);
   }
   
   @Override
   public double getDistanceFrom(int x, int y)
   {
-    double minDistance = super.getDistanceFrom(x, y);
-    double distance;
-    
-    Point p = new Point(x, y);
-    Point closestPoint = association_relationship_location;
-    if(selected_point != null)
-      closestPoint = selected_point;
-    
-    Point curPoint = association_relationship_location;
-    Iterator<Point> vertIt = ass_vertices.iterator();
-    while(vertIt.hasNext())
+    double distance = -1.0;
+    // Check if association text was selected
+    if(metrics != null)
     {
-      Point vertex = vertIt.next();
-      distance = pointDistFromLineSegment(p, curPoint, vertex);
-      if(distance < minDistance)
-      {
-        minDistance = distance;
-        closestPoint = getClosestEndpoint(p, curPoint, vertex);
-      }
-      curPoint = vertex;
-    }
-    
-    distance = pointDistFromLineSegment(p, curPoint, association_class_location);
-    if(distance < minDistance)
-    {
-      minDistance = distance;
-      closestPoint = getClosestEndpoint(p, curPoint, association_class_location);
-    }
-    
-    double distToClosestPoint = getDistanceBetweenPoints(p, closestPoint);
-    if(distToClosestPoint < max_select_distance)
-      selected_point = closestPoint;
-    else
-      selected_point = null;
-    
-    return minDistance;
-  }
-  
-  @Override
-  public boolean addVertex(int x, int y)
-  {
-    double distance;
-    boolean foundVertexSpot = super.addVertex(x, y);
-    
-    if(!foundVertexSpot)
-    {
-      Point p = new Point(x, y);
-      Point curPoint = association_relationship_location;
-
-      Iterator<Point> vertIt = ass_vertices.iterator();
-      int index = 0;
-      while(vertIt.hasNext())
-      {
-        Point vertex = vertIt.next();
-        Point closestPoint = getClosestPoint(p, curPoint, vertex);
-        distance = getDistanceBetweenPoints(p, closestPoint);
-        if(distance < max_select_distance)
-        {
-          ass_vertices.add(index, closestPoint);
-          foundVertexSpot = true;
-          break;
-        }
-        curPoint = (Point)vertex.clone();
-        index++;
-      }
-
-      if(!foundVertexSpot)
-      {
-        Point closestPoint = getClosestPoint(p, curPoint, 
-                association_class_location);
-        distance = getDistanceBetweenPoints(p, closestPoint);
-        if(distance < max_select_distance)
-        {
-          ass_vertices.add(index, closestPoint);
-          foundVertexSpot = true;
-        }
-      }
-    }
-    
-    return foundVertexSpot;
-  }
-  
-  public static DiagramElement fromPersistentRepresentation(String s) throws IOException
-  {
-    AssociationRelationship r = new AssociationRelationship(0, 0);
-    int assUID = Integer.parseInt(getValueFromTag(s, "assUID"));
-    r.association_class_uid = assUID;
-    
-    Point assClassPoint = new Point(0, 0);
-    String assClassLocStr = getValueFromTag(s, "associationClassLoc");
-    if(!"".equals(assClassLocStr))
-    {
-      String[] assLocArr = assClassLocStr.split(",");
-      if(assLocArr.length > 1)
-      {
-        assClassPoint.x = Integer.parseInt(assLocArr[0]);
-        assClassPoint.y = Integer.parseInt(assLocArr[1]);
-      }
-      r.association_class_location.x = assClassPoint.x;
-      r.association_class_location.y = assClassPoint.y;
-    }
-    
-    Point assRelPoint = new Point(0, 0);
-    String assRelLocStr = getValueFromTag(s, "associationRelationshipLoc");
-    if(!"".equals(assRelLocStr))
-    {
-      String[] assLocArr = assRelLocStr.split(",");
-      if(assLocArr.length > 1)
-      {
-        assRelPoint.x = Integer.parseInt(assLocArr[0]);
-        assRelPoint.y = Integer.parseInt(assLocArr[1]);
-      }
-      r.association_relationship_location.x = assRelPoint.x;
-      r.association_relationship_location.y = assRelPoint.y;
-    }
-    
-    // Get all vertices
-    String[] vert_pieces = s.split("<assVertex>");
-    for(int i = 0; i < vert_pieces.length; i++)
-    {
-      if(vert_pieces[i].contains("</assVertex>"))
-      {
-        vert_pieces[i] = "<assVertex>" + vert_pieces[i];
-        vert_pieces[i] = getValueFromTag(vert_pieces[i], "assVertex");
-        Point vertex = new Point(0, 0);
-        String[] vertArr = vert_pieces[i].split(",");
-        if(vertArr.length > 1)
-        {
-          vertex.x = Integer.parseInt(vertArr[0]);
-          vertex.y = Integer.parseInt(vertArr[1]);
-          r.ass_vertices.add(vertex);
-        }
-      }
-    }
-    
-    return fromPersistentRepresentation(s, r);
-  }
-  
-  @Override
-  protected void updateTethers() throws IOException
-  {
-    boolean changedLocation = false;
-    Point source = new Point(source_location.x, source_location.y);
-    Point dest = new Point(destination_location.x, destination_location.y);
-    super.updateTethers();
-    if((source.x != source_location.x)     || 
-        (source.y != source_location.y)    ||
-        (dest.x != destination_location.x) || 
-        (dest.y != destination_location.y))
-    {
-      changedLocation = true;
-    }
-    
-    if((association_tether == null) && association_class_uid != 0)
-    {
-      DiagramElement e = diag_controller.getUniqueElement(association_class_uid);
-      if(e != null && "Class".equals(e.getElementType()))
-        association_tether = 
-                new TetherElementData((ClassElement)e, association_class_location);
-      else
-        System.out.println("WARN:Relationship:Attached UID was not a class!");
-      association_class_uid = 0;
-    }
-    if(association_tether != null)
-    {
-      Point newLoc = association_tether.getPoint();
-      association_class_location.x = newLoc.x;
-      association_class_location.y = newLoc.y;
-      changedLocation = true;
-    }
-    
-    if(changedLocation)
-      snapToMainLine();
-  }
-  
-  @Override
-  public void setLocation(Point loc)
-  {
-    Point ref = new Point(source_location.x, source_location.y);
-    super.setLocation(loc);
-    if(selected_point != null)
-    {
+      int textMinX = association_location.x;
+      int textMaxX = association_location.x + metrics.stringWidth(association);
+      int textMinY = association_location.y - metrics.getHeight();
+      int textMaxY = association_location.y;
       
-      Iterator<Point> vertIt = ass_vertices.iterator();
-      while(vertIt.hasNext())
+      if((x <= textMaxX) && (x >= textMinX) &&
+         (y <= textMaxY) && (y >= textMinY))
       {
-        Point vertex = vertIt.next();
-        if(selected_point != vertex)
-        {
-          double distance = getDistanceBetweenPoints(selected_point, vertex);
-          if(distance < vertex_remove_distance)
-          {
-            vertIt.remove();
-            break;
-          }
-        }
+        distance = 0.0;
+        selected_point = association_location;
       }
-      
-      if(selected_point == association_class_location)
-        association_tether = null;
-      else
-        snapToMainLine();
     }
-    else
+    if(distance < 0.0)
     {
-      association_tether = null;
-      
-      int deltaX = loc.x - ref.x;
-      int deltaY = loc.y - ref.y;
-      
-      association_relationship_location.x += deltaX;
-      association_relationship_location.y += deltaY;
-      
-      Iterator<Point> vertIt = ass_vertices.iterator();
-      while(vertIt.hasNext())
-      {
-        Point vertex = vertIt.next();
-        vertex.x += deltaX;
-        vertex.y += deltaY;
-      }
-      
-      association_class_location.x += deltaX;
-      association_class_location.y += deltaY;
-    }
-  }
-  
-  private void snapToMainLine()
-  {
-    Point curPoint = source_location;
-    double distance;
-    double leastDistance = 10000000;
-    Point closestSeg1 = source_location;
-    Point closestSeg2 = destination_location;
-    Iterator<Point> vertIt = vertices.iterator();
-    while(vertIt.hasNext())
-    {
-      Point vertex = vertIt.next();
-      distance = pointDistFromLineSegment(association_relationship_location,
-              curPoint, vertex);
-      if(distance < leastDistance)
-      {
-        leastDistance = distance;
-        closestSeg1 = curPoint;
-        closestSeg2 = vertex;
-      }
-      curPoint = vertex;
+      distance = super.getDistanceFrom(x, y);
     }
     
-    distance = pointDistFromLineSegment(association_relationship_location,
-            curPoint, destination_location);
-    if(distance < leastDistance)
-    {
-      closestSeg1 = curPoint;
-      closestSeg2 = destination_location;
-    }
-    
-    if(distance > min_snap_distance)
-    {
-      Point closestPoint = getClosestPoint(association_relationship_location,
-              closestSeg1, closestSeg2);
-      association_relationship_location.x = closestPoint.x;
-      association_relationship_location.y = closestPoint.y;
-    }
+    return distance;
   }
   
   @Override
@@ -380,112 +121,53 @@ public class AssociationRelationship extends Relationship
   {
     String rep = super.getPersistentRepresentation();
     
-    int ass_uid = 0;
-    if(association_tether != null)
-      ass_uid = association_tether.getElement().getUniqueId();
-    rep += "<assUID>" + ass_uid + "</assUID>";
-    rep += "<associationClassLoc>" + association_class_location.x + "," + 
-            association_class_location.y + "</associationClassLoc>";
-    rep += "<associationRelationshipLoc>" + 
-            association_relationship_location.x + "," + 
-            association_relationship_location.y + 
-            "</associationRelationshipLoc>";
-    
-    Iterator<Point> vertIt = ass_vertices.iterator();
-    while(vertIt.hasNext())
-    {
-      Point p = vertIt.next();
-      rep += "<assVertex>" + p.x + "," + p.y + "</assVertex>";
-    }
+    rep += "<assString>"+association+"</assString>";
+    rep += "<assX>"+association_location.x+"</assX>";
+    rep += "<assY>"+association_location.y+"</assY>";
     
     return rep;
   }
   
-  @Override
-  protected void tetherToClass(ClassElement e) throws IOException
+  public static DiagramElement fromPersistentRepresentation(String s) throws IOException
   {
-    super.tetherToClass(e);
-    if(selected_point == association_class_location)
-      association_tether = new TetherElementData(e, association_class_location);
-  }
-  
-  @Override
-  public void alertDestroyedElement(DiagramElement e)
-  {
-    super.alertDestroyedElement(e);
-    if((association_tether != null) && (association_tether.getElement() == e))
-      association_tether = null;
+    AssociationRelationship r = new AssociationRelationship(0, 0);
+    
+    r.association = getValueFromTag(s, "assString");
+    String coord  = getValueFromTag(s, "assX");
+    if(!coord.equals(""))
+      r.association_location.x = Integer.parseInt(coord);
+     coord = getValueFromTag(s, "assY");
+    if(!coord.equals(""))
+      r.association_location.y = Integer.parseInt(coord);
+    
+    return fromPersistentRepresentation(s, r);
   }
   
   @Override
   public DiagramElement cloneElement() throws IOException
   {
     AssociationRelationship clonedAss = new AssociationRelationship(0, 0);
-    
-    clonedAss.prev_last_vertex.x = prev_last_vertex.x;
-    clonedAss.prev_last_vertex.y = prev_last_vertex.y;
-    clonedAss.prev_destination.x = prev_destination.x;
-    clonedAss.prev_destination.y = prev_destination.y;
-    
-    if(association_tether != null)
-      clonedAss.association_class_uid = 
-              association_tether.getElement().getUniqueId();
-    else
-      clonedAss.association_class_uid = association_class_uid;
-    
-    clonedAss.association_class_location.x = association_class_location.x;
-    clonedAss.association_class_location.y = association_class_location.y;
-    clonedAss.association_relationship_location.x = 
-            association_relationship_location.x;
-    clonedAss.association_relationship_location.y = 
-            association_relationship_location.y;
-    
-    Iterator<Point> vertIt = ass_vertices.iterator();
-    while(vertIt.hasNext())
-    {
-      Point vertex = vertIt.next();
-      clonedAss.ass_vertices.add(new Point(vertex.x, vertex.y));
-    }
-  
+    clonedAss.association = association;
+    clonedAss.association_location.x = association_location.x;
+    clonedAss.association_location.y = association_location.y;
     return cloneRelationship(clonedAss);
   }
   
   @Override
   public boolean equivalentTo(DiagramElement e)
   {
-    if(!e.getElementType().equals(getElementType())) return false;
-    AssociationRelationship ass = (AssociationRelationship)e;
-    
-    if(ass.association_class_location.x !=
-           association_class_location.x) return false;
-    if(ass.association_class_location.y !=
-           association_class_location.y) return false;
-    if(ass.association_relationship_location.x !=
-           association_relationship_location.x) return false;
-    if(ass.association_relationship_location.y !=
-           association_relationship_location.y) return false;
-    
-    if(ass.ass_vertices.size() != ass_vertices.size()) return false;
-    Iterator<Point> myVertIt = ass_vertices.iterator();
-    Iterator<Point> assVertIt  = ass_vertices.iterator();
-    while(myVertIt.hasNext())
+    boolean equal = true;
+    if(e.getElementType().equals(getElementType()))
     {
-      Point myVertex  = myVertIt.next();
-      Point assVertex = assVertIt.next();
-      if(assVertex.x != myVertex.x) return false;
-      if(assVertex.y != myVertex.y) return false;
+      AssociationRelationship a = (AssociationRelationship)e;
+      if(!a.getAssociation().equals(getAssociation())) equal = false;
+      if(a.association_location.x != association_location.x) equal = false;
+      if(a.association_location.y != association_location.y) equal = false;
     }
+    else
+      equal = false;
     
-    int myAssUid = association_class_uid;
-    if(association_tether != null)
-      myAssUid = association_tether.getElement().getUniqueId();
-    int assAssUid = ass.association_class_uid;
-    if(ass.association_tether != null)
-      assAssUid = ass.association_tether.getElement().getUniqueId();
-    if(assAssUid != myAssUid) return false;
-    
-    // Everything ass specific matches, check parent pieces
-    return super.equivalentTo(ass);
+    return equal && super.equivalentTo(e);
   }
   
   @Override

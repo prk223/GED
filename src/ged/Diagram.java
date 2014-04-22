@@ -9,6 +9,7 @@ package ged;
 import static ged.Util.getValueFromTag;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -225,7 +226,7 @@ public class Diagram implements DiagramElement
   }
   
   @Override
-  public void displayEditGui()
+  public void displayEditGui(MouseEvent evt)
   {
     // Nothing to do here
   }

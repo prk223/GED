@@ -802,16 +802,19 @@ public class EditClassDialog extends javax.swing.JDialog
     if(editing_element != null && evt.getClickCount() > 1)
     {
       int row = ClassAttributeTable.getSelectedRow();
-      String attributeText = (String)ClassAttributeTable.getModel().
-              getValueAt(row, 0);
-      
-      Iterator<Attribute> itAttr = editing_element.getAttributes().iterator();
-      while(itAttr.hasNext())
+      if(row >= 0)
       {
-        Attribute a = itAttr.next();
-        if(a.getString().equals(attributeText))
+        String attributeText = (String)ClassAttributeTable.getModel().
+                getValueAt(row, 0);
+
+        Iterator<Attribute> itAttr = editing_element.getAttributes().iterator();
+        while(itAttr.hasNext())
         {
-          editAttribute(a);
+          Attribute a = itAttr.next();
+          if(a.getString().equals(attributeText))
+          {
+            editAttribute(a);
+          }
         }
       }
     }
@@ -883,18 +886,21 @@ public class EditClassDialog extends javax.swing.JDialog
     if(editing_element != null)
     {
       int row = ClassOperationTable.getSelectedRow();
-      String operationText = (String)ClassOperationTable.getModel().
-              getValueAt(row, 0);
-      Iterator<Operation> itOp = editing_element.getOperations().iterator();
-      while(itOp.hasNext())
+      if(row >= 0)
       {
-        Operation o = itOp.next();
-        String oText = o.getString();
-        if(oText.equals(operationText))
+        String operationText = (String)ClassOperationTable.getModel().
+                getValueAt(row, 0);
+        Iterator<Operation> itOp = editing_element.getOperations().iterator();
+        while(itOp.hasNext())
         {
-          editing_element.deleteOperation(o);
-          updateTables();
-          break;
+          Operation o = itOp.next();
+          String oText = o.getString();
+          if(oText.equals(operationText))
+          {
+            editing_element.deleteOperation(o);
+            updateTables();
+            break;
+          }
         }
       }
     }
@@ -905,18 +911,21 @@ public class EditClassDialog extends javax.swing.JDialog
     if(editing_element != null)
     {
       int row = ClassAttributeTable.getSelectedRow();
-      String attributeText = (String)ClassAttributeTable.getModel().
-              getValueAt(row, 0);
-      Iterator<Attribute> itAttr = editing_element.getAttributes().iterator();
-      while(itAttr.hasNext())
+      if(row >= 0)
       {
-        Attribute a = itAttr.next();
-        String aText = a.getString();
-        if(aText.equals(attributeText))
+        String attributeText = (String)ClassAttributeTable.getModel().
+                getValueAt(row, 0);
+        Iterator<Attribute> itAttr = editing_element.getAttributes().iterator();
+        while(itAttr.hasNext())
         {
-          editing_element.deleteAttribute(a);
-          updateTables();
-          break;
+          Attribute a = itAttr.next();
+          String aText = a.getString();
+          if(aText.equals(attributeText))
+          {
+            editing_element.deleteAttribute(a);
+            updateTables();
+            break;
+          }
         }
       }
     }
@@ -927,17 +936,20 @@ public class EditClassDialog extends javax.swing.JDialog
     if(editing_element != null && evt.getClickCount() > 1)
     {
       int row = ClassOperationTable.getSelectedRow();
-      String opText = (String)ClassOperationTable.getModel().
-              getValueAt(row, 0);
-      
-      Iterator<Operation> itOp = editing_element.getOperations().iterator();
-      while(itOp.hasNext())
+      if(row >= 0)
       {
-        Operation o = itOp.next();
-        if(o.getString().equals(opText))
+        String opText = (String)ClassOperationTable.getModel().
+                getValueAt(row, 0);
+
+        Iterator<Operation> itOp = editing_element.getOperations().iterator();
+        while(itOp.hasNext())
         {
-          editOperation(o);
-          break;
+          Operation o = itOp.next();
+          if(o.getString().equals(opText))
+          {
+            editOperation(o);
+            break;
+          }
         }
       }
     }
@@ -963,18 +975,21 @@ public class EditClassDialog extends javax.swing.JDialog
     if(editing_operation != null)
     {
       int row = OperationParameterTable.getSelectedRow();
-      String paramText = (String)OperationParameterTable.getModel().
-              getValueAt(row, 0);
-      Iterator<Parameter> itPrm = editing_operation.getParameters().iterator();
-      while(itPrm.hasNext())
+      if(row >= 0)
       {
-        Parameter p = itPrm.next();
-        String pText = p.getString();
-        if(pText.equals(paramText))
+        String paramText = (String)OperationParameterTable.getModel().
+                getValueAt(row, 0);
+        Iterator<Parameter> itPrm = editing_operation.getParameters().iterator();
+        while(itPrm.hasNext())
         {
-          editing_operation.deleteParameter(p);
-          updateTables();
-          break;
+          Parameter p = itPrm.next();
+          String pText = p.getString();
+          if(pText.equals(paramText))
+          {
+            editing_operation.deleteParameter(p);
+            updateTables();
+            break;
+          }
         }
       }
     }
@@ -996,16 +1011,19 @@ public class EditClassDialog extends javax.swing.JDialog
     if(editing_operation != null && evt.getClickCount() > 1)
     {
       int row = OperationParameterTable.getSelectedRow();
-      String paramText = (String)OperationParameterTable.getModel().
-              getValueAt(row, 0);
-      
-      Iterator<Parameter> itPrm = editing_operation.getParameters().iterator();
-      while(itPrm.hasNext())
+      if(row >= 0)
       {
-        Parameter p = itPrm.next();
-        if(p.getString().equals(paramText))
+        String paramText = (String)OperationParameterTable.getModel().
+                getValueAt(row, 0);
+
+        Iterator<Parameter> itPrm = editing_operation.getParameters().iterator();
+        while(itPrm.hasNext())
         {
-          editParameter(p);
+          Parameter p = itPrm.next();
+          if(p.getString().equals(paramText))
+          {
+            editParameter(p);
+          }
         }
       }
     }
