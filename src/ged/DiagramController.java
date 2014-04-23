@@ -372,4 +372,10 @@ public class DiagramController
     diag_panel.repaint();
   }
   
+  public void selectAll() throws IOException
+  {
+    state = state.selectAll();
+    diag_panel.repaint();
+  }
+  
 }

@@ -158,6 +158,8 @@ public class DiagramDialog extends javax.swing.JDialog
             getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK), "KeyY");
     diagPanel.getInputMap(JLabel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.
             getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK), "KeyS");
+    diagPanel.getInputMap(JLabel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.
+            getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK), "KeyA");
 
     Action deleteAction = new AbstractAction()
     {
@@ -201,12 +203,29 @@ public class DiagramDialog extends javax.swing.JDialog
       }
     };
     
+    Action selectAllAction = new AbstractAction()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        try
+        {
+          selectAll();
+        }
+        catch (IOException ex)
+        {
+          Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+    };
+    
     diagPanel.getActionMap().put("DeleteKey", deleteAction);
     diagPanel.getActionMap().put("DecimalKey", deleteAction);
     diagPanel.getActionMap().put("BackSpaceKey", deleteAction);
     diagPanel.getActionMap().put("KeyZ", undoAction);
     diagPanel.getActionMap().put("KeyY", redoAction);
     diagPanel.getActionMap().put("KeyS", saveAction);
+    diagPanel.getActionMap().put("KeyA", selectAllAction);
   }
 
   /**
@@ -233,6 +252,7 @@ public class DiagramDialog extends javax.swing.JDialog
     DiagramSaveItem = new javax.swing.JMenuItem();
     DiagramCloseItem = new javax.swing.JMenuItem();
     DiagramEditMenu = new javax.swing.JMenu();
+    SelectAllItem = new javax.swing.JMenuItem();
     DiagramUndoItem = new javax.swing.JMenuItem();
     DiagramRedoItem = new javax.swing.JMenuItem();
 
@@ -350,6 +370,16 @@ public class DiagramDialog extends javax.swing.JDialog
     DiagramMenuBar.add(DiagramFileMenu);
 
     DiagramEditMenu.setText("Edit");
+
+    SelectAllItem.setText("Select All (CTRL+A)");
+    SelectAllItem.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        SelectAllItemActionPerformed(evt);
+      }
+    });
+    DiagramEditMenu.add(SelectAllItem);
 
     DiagramUndoItem.setText("Undo (CTRL+Z)");
     DiagramUndoItem.addActionListener(new java.awt.event.ActionListener()
@@ -541,6 +571,18 @@ public class DiagramDialog extends javax.swing.JDialog
     setVisible(true);
   }//GEN-LAST:event_CppGenerateCodeBtnMouseReleased
 
+  private void SelectAllItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_SelectAllItemActionPerformed
+  {//GEN-HEADEREND:event_SelectAllItemActionPerformed
+    try
+    {
+      selectAll();
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(DiagramDialog.class.getName()).log(Level.SEVERE, null, ex);
+    }
+  }//GEN-LAST:event_SelectAllItemActionPerformed
+
   public void open(String diagram) throws IOException
   {
     boolean opened = diag_controller.openDiagram(diagram);
@@ -616,6 +658,11 @@ public class DiagramDialog extends javax.swing.JDialog
     
     diagram_msg_timer.stop();
     diagram_msg_timer.start();
+  }
+  
+  private void selectAll() throws IOException
+  {
+    diag_controller.selectAll();
   }
   
   /**
@@ -700,6 +747,7 @@ public class DiagramDialog extends javax.swing.JDialog
   private javax.swing.JScrollPane DiagramScrollPane;
   private javax.swing.JMenuItem DiagramUndoItem;
   private javax.swing.JButton JavaGenerateCodeBtn;
+  private javax.swing.JMenuItem SelectAllItem;
   private javax.swing.JButton SelectBtn;
   // End of variables declaration//GEN-END:variables
 }

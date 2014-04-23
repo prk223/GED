@@ -86,7 +86,21 @@ public class AssociationRelationship extends Relationship
       super.setLocation(loc);
     }
     else
+    {
+      int distX = loc.x - selected_point.x;
+      int distY = loc.y - selected_point.y;
+      association_location.x += distX;
+      association_location.y += distY;
       super.setLocation(loc);
+    }
+  }
+  
+  @Override
+  public void move(int deltaX, int deltaY)
+  {
+    super.move(deltaX, deltaY);
+    association_location.x += deltaX;
+    association_location.y += deltaY;
   }
   
   @Override

@@ -11,6 +11,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JViewport;
@@ -57,7 +58,17 @@ public class ElementSelectedState extends SelectDiagramState
       {
         DiagramElement e = getNearestElement(null, evt.getX(), evt.getY());
         if(e != null)
-          next_state = new ElementSelectedState(view_port, e, evt);
+        {
+          if(evt.isControlDown() && (e != selected_element))
+          {
+            ArrayList<DiagramElement> elements = new ArrayList<>();
+            elements.add(selected_element);
+            elements.add(e);
+            next_state = new ElementsSelectedState(view_port, elements, evt);
+          }
+          else
+            next_state = new ElementSelectedState(view_port, e, evt);
+        }
         else
           next_state = new SelectDiagramState(view_port, evt);
       }

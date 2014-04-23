@@ -331,6 +331,30 @@ public class Relationship implements DiagramElement
   }
   
   @Override
+  public void move(int deltaX, int deltaY)
+  {
+    if(source_tether == null)
+    {
+      source_location.x += deltaX;
+      source_location.y += deltaY;
+    }
+
+    Iterator<Point> vertIt = vertices.iterator();
+    while(vertIt.hasNext())
+    {
+      Point vertex = vertIt.next();
+      vertex.x += deltaX;
+      vertex.y += deltaY;
+    }
+
+    if(destination_tether == null)
+    {
+      destination_location.x += deltaX;
+      destination_location.y += deltaY;
+    }
+  }
+  
+  @Override
   public String getElementType()
   {
     return "Relationship";

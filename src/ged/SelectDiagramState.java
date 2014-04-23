@@ -10,6 +10,7 @@ import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -165,6 +166,23 @@ public class SelectDiagramState extends DiagramState
     {
       if(e.isRelationship())
           next_state = new RelationshipSelectedState(view_port, (Relationship)e, evt);
+    }
+    
+    return next_state;
+  }
+  
+  @Override
+  public DiagramState selectAll()
+  {
+    Diagram diag = diag_controller.getOpenDiagram();
+    ArrayList<DiagramElement> elements = diag_controller.getDiagramElements();
+    try
+    {
+      next_state = new ElementsSelectedState(view_port, elements);
+    }
+    catch(IOException e)
+    {
+      System.err.println("Failed to create ElementsSelectedState");
     }
     
     return next_state;

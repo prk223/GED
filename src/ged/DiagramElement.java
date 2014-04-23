@@ -52,4 +52,6 @@ public interface DiagramElement
   
   public String accept(ElementCheckerVisitor visitor);
   
+  public void move(int deltaX, int deltaY);
+  
 }

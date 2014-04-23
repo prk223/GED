@@ -109,4 +109,9 @@ public class DiagramState
   {
     return next_state;
   }
+  
+  public DiagramState selectAll() throws IOException
+  {
+    return next_state;
+  }
 }

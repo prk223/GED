@@ -274,6 +274,13 @@ public class ClassElement implements DiagramElement
   }
   
   @Override
+  public void move(int deltaX, int deltaY)
+  {
+    location.x += deltaX;
+    location.y += deltaY;
+  }
+  
+  @Override
   public String getElementType()
   {
     return "Class";

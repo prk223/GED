@@ -32,6 +32,14 @@
             <Property name="text" type="java.lang.String" value="Edit"/>
           </Properties>
           <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="SelectAllItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Select All (CTRL+A)"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="SelectAllItemActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="DiagramUndoItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Undo (CTRL+Z)"/>
