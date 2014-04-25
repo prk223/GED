@@ -26,7 +26,7 @@ import java.util.Iterator;
 public class Diagram implements DiagramElement
 {
   private final ConfigurationManager cfg_mgr;
-  private final String name;
+  private String name;
   private final ArrayList<DiagramElement> elements;
   private Point location;
   private final int diag_buffer_size;
@@ -50,6 +50,11 @@ public class Diagram implements DiagramElement
   public String getName()
   {
     return name;
+  }
+  
+  public void setName(String n)
+  {
+    name = n;
   }
   
   public boolean save(String filePath)

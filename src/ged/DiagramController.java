@@ -98,6 +98,38 @@ public class DiagramController
     return openedSuccessfully;
   }
   
+  public boolean openDiagramFile(String filePath) throws IOException
+  {
+    boolean openedSuccessfully = false;
+    
+    // Close diagram if one is already open
+    closeDiagram();
+    
+    cur_diagram = Diagram.loadDiagram(filePath);
+    if(cur_diagram != null)
+    {
+      openedSuccessfully = true;
+      undo_redo = new UndoRedo(cur_diagram);
+    }
+    
+    return openedSuccessfully;
+  }
+  
+  public boolean saveDiagram(String filePath)
+  {
+    boolean success = false;
+    
+    if(cur_diagram != null)
+    {
+      File f = new File(filePath);
+      String s = f.getName();
+      String diagName = (f.getName().split("\\."))[0];
+      cur_diagram.setName(diagName);
+      success = cur_diagram.save(filePath);
+    }
+    return success;
+  }
+  
   public boolean saveDiagram()
   {
     boolean success = false;
@@ -108,7 +140,7 @@ public class DiagramController
       String diagName = cur_diagram.getName();
       String fileName = diagName + DIAG_EXTENSION;
       String filePath = workspacePath + "\\" + fileName;
-      success = cur_diagram.save(filePath);
+      success = saveDiagram(filePath);
     }
     return success;
   }
