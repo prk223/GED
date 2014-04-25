@@ -815,6 +815,16 @@ public class Relationship implements DiagramElement
       destination_tether = new TetherElementData(e, destination_location);
   }
   
+  protected void tetherSourceToClass(ClassElement e) throws IOException
+  {
+    source_tether = new TetherElementData(e, source_location);
+  }
+  
+  protected void tetherDestinationToClass(ClassElement e) throws IOException
+  {
+    destination_tether = new TetherElementData(e, destination_location);
+  }
+  
   protected Point getLastVertex()
   {
     Point lastPoint = source_location;
@@ -1028,12 +1038,22 @@ public class Relationship implements DiagramElement
     return e;
   }
   
+  public int getSourceClassUid()
+  {
+    return source_class_uid;
+  }
+  
   public ClassElement getDestinationClass()
   {
     ClassElement e = null;
     if(destination_tether != null)
       e = (ClassElement)destination_tether.getElement();
     return e;
+  }
+  
+  public int getDestinationClassUid()
+  {
+    return destination_class_uid;
   }
   
   @Override

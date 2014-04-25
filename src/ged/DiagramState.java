@@ -139,6 +139,10 @@ public class DiagramState
       // Get paste offset based on first element
       DiagramElement first = elIt.next();
       
+      // Set up list of elements to paste
+      ArrayList<DiagramElement> pasteElements = new ArrayList<>();
+      pasteElements.add(first.cloneElement());
+      
       // Get center location of all elements
       int minX = first.getMinX();
       int minY = first.getMinY();
@@ -147,6 +151,7 @@ public class DiagramState
       while(elIt.hasNext())
       {
         DiagramElement e = elIt.next();
+        pasteElements.add(e.cloneElement());
         if(e.getMinX() < minX)
           minX = e.getMinX();
         if(e.getMinY() < minY)
@@ -156,18 +161,60 @@ public class DiagramState
         if(e.getMaxY() > maxY)
           maxY = e.getMaxY();
       }
-      int deltaX = loc.x - ((maxX - minX) / 2);
-      int deltaY = loc.y - ((maxY - minY) / 2);
+      int deltaX = loc.x - ((maxX - minX) / 2) - minX;
+      int deltaY = loc.y - ((maxY - minY) / 2) - minY;
       
-      elIt = copied_elements.iterator();
+      tetherCopiedElements(pasteElements);
+      
+      elIt = pasteElements.iterator();
       while(elIt.hasNext())
       {
-        DiagramElement e = elIt.next().cloneElement();
+        DiagramElement e = elIt.next();
         e.move(deltaX, deltaY);
         diag_controller.addDiagramElement(e);
       }
     }
     
     return next_state;
+  }
+  
+  private static void tetherCopiedElements(ArrayList<DiagramElement> elements) throws IOException
+  {
+    // Get a list of relationship elements
+    Iterator<DiagramElement> elIt = elements.iterator();
+    ArrayList<Relationship> relationships = new ArrayList<>();
+    while(elIt.hasNext())
+    {
+      DiagramElement e = elIt.next();
+      if(e.isRelationship())
+        relationships.add((Relationship)e);
+    }
+    
+    // Tether relationships if needed
+    Iterator<Relationship> relIt = relationships.iterator();
+    while(relIt.hasNext())
+    {
+      Relationship r = relIt.next();
+      int srcUid = r.getSourceClassUid();
+      int destUid = r.getDestinationClassUid();
+      if((srcUid > 0) || (destUid > 0))
+      {
+        elIt = elements.iterator();
+        while(elIt.hasNext())
+        {
+          DiagramElement e = elIt.next();
+          if((e.getElementType().equals("Class")) && 
+             (e.getUniqueId() == srcUid))
+          {
+            r.tetherSourceToClass((ClassElement)e);
+          }
+          if((e.getElementType().equals("Class")) && 
+             (e.getUniqueId() == destUid))
+          {
+            r.tetherDestinationToClass((ClassElement)e);
+          }
+        }
+      }
+    }
   }
 }

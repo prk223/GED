@@ -161,7 +161,7 @@ public class ElementsSelectedState extends SelectDiagramState
     while(elIt.hasNext())
     {
       DiagramElement e = elIt.next();
-      copied_elements.add(e);
+      copied_elements.add(e.cloneElement());
     }
     
     return next_state;

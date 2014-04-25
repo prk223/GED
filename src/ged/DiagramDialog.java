@@ -140,13 +140,15 @@ public class DiagramDialog extends javax.swing.JDialog
       @Override
       public void mouseMoved(MouseEvent evt)
       {
-        diag_controller.mouseMoved(evt);
         mouse_loc.x = evt.getX();
         mouse_loc.y = evt.getY();
+        diag_controller.mouseMoved(evt);
       }
       @Override
       public void mouseDragged(java.awt.event.MouseEvent evt)
       {
+        mouse_loc.x = evt.getX();
+        mouse_loc.y = evt.getY();
         diag_controller.mouseDragged(evt);
       }
     });

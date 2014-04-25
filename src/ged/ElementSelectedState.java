@@ -132,7 +132,7 @@ public class ElementSelectedState extends SelectDiagramState
   public DiagramState copy() throws IOException
   {
     copied_elements = new ArrayList<>();
-    copied_elements.add(selected_element);
+    copied_elements.add(selected_element.cloneElement());
     
     return next_state;
   }
