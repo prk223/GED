@@ -443,6 +443,18 @@ public class ClassElement implements DiagramElement
   }
   
   @Override
+  public int getMinX()
+  {
+    return location.x;
+  }
+  
+  @Override
+  public int getMinY()
+  {
+    return location.y;
+  }
+  
+  @Override
   public int getMaxX()
   {
     return location.x + width;

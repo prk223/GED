@@ -668,6 +668,44 @@ public class Relationship implements DiagramElement
   }
   
   @Override
+  public int getMinX()
+  {
+    int minX = source_location.x;
+    
+    if(destination_location.x < minX)
+      minX = destination_location.x;
+    
+    Iterator<Point> vertIt = vertices.iterator();
+    while(vertIt.hasNext())
+    {
+      Point v = vertIt.next();
+      if(v.x < minX)
+        minX = v.x;
+    }
+    
+    return minX;
+  }
+  
+  @Override
+  public int getMinY()
+  {
+    int minY = source_location.y;
+    
+    if(destination_location.y < minY)
+      minY = destination_location.y;
+    
+    Iterator<Point> vertIt = vertices.iterator();
+    while(vertIt.hasNext())
+    {
+      Point v = vertIt.next();
+      if(v.y < minY)
+        minY = v.y;
+    }
+    
+    return minY;
+  }
+  
+  @Override
   public int getMaxX()
   {
     int maxX = source_location.x;

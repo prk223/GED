@@ -239,6 +239,43 @@ public class Diagram implements DiagramElement
   }
   
   @Override
+  public int getMinX()
+  {
+    int minX = 0;
+    Iterator<DiagramElement> itEl = elements.iterator();
+    while(itEl.hasNext())
+    {
+      DiagramElement e = itEl.next();
+      if(e.getMaxX() < minX)
+        minX = e.getMaxX();
+    }
+    
+    // Subtract buffer to diagram around what's already drawn
+    minX -= diag_buffer_size;
+    
+    return minX;
+  }
+  
+  @Override
+  public int getMinY()
+  {
+    int minY = 0;
+    
+    Iterator<DiagramElement> itEl = elements.iterator();
+    while(itEl.hasNext())
+    {
+      DiagramElement e = itEl.next();
+      if(e.getMaxY() < minY)
+        minY = e.getMaxY();
+    }
+    
+    // Subtract buffer to diagram around what's already drawn
+    minY -= diag_buffer_size;
+    
+    return minY;
+  }
+  
+  @Override
   public int getMaxX()
   {
     int maxX = 0;
@@ -303,9 +340,6 @@ public class Diagram implements DiagramElement
         DiagramElement element = eIt.next();
         if(element != e && element.getUniqueId() == e.getUniqueId())
         {
-          String warnMsg = "WARNING:Diagram: Found 2 elements with the same ID:";
-          warnMsg += e.getUniqueId();
-          System.out.println(warnMsg);
           last_unique_id++;
           e.setUniqueId(last_unique_id);
         }

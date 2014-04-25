@@ -7,6 +7,7 @@
 package ged;
 
 import java.awt.GraphicsEnvironment;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -31,6 +32,7 @@ public class DiagramDialog extends javax.swing.JDialog
   private final DiagramController diag_controller;
   private Timer diagram_msg_timer;
   private final CodeDialog code_dialog;
+  private final Point mouse_loc;
   
   /**
    * Creates new form DiagramDialog
@@ -70,6 +72,7 @@ public class DiagramDialog extends javax.swing.JDialog
     });
     
     code_dialog = new CodeDialog(parent, true);
+    mouse_loc = new Point(0,0);
   }
   
   private void initDrawspaceComponents(DiagramPanel diagPanel)
@@ -138,6 +141,8 @@ public class DiagramDialog extends javax.swing.JDialog
       public void mouseMoved(MouseEvent evt)
       {
         diag_controller.mouseMoved(evt);
+        mouse_loc.x = evt.getX();
+        mouse_loc.y = evt.getY();
       }
       @Override
       public void mouseDragged(java.awt.event.MouseEvent evt)
@@ -160,6 +165,12 @@ public class DiagramDialog extends javax.swing.JDialog
             getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK), "KeyS");
     diagPanel.getInputMap(JLabel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.
             getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK), "KeyA");
+    diagPanel.getInputMap(JLabel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.
+            getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK), "KeyC");
+    diagPanel.getInputMap(JLabel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.
+            getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK), "KeyX");
+    diagPanel.getInputMap(JLabel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.
+            getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK), "KeyV");
 
     Action deleteAction = new AbstractAction()
     {
@@ -219,6 +230,33 @@ public class DiagramDialog extends javax.swing.JDialog
       }
     };
     
+    Action copyAction = new AbstractAction()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        copy();
+      }
+    };
+    
+    Action cutAction = new AbstractAction()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        cut();
+      }
+    };
+    
+    Action pasteAction = new AbstractAction()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        paste();
+      }
+    };
+    
     diagPanel.getActionMap().put("DeleteKey", deleteAction);
     diagPanel.getActionMap().put("DecimalKey", deleteAction);
     diagPanel.getActionMap().put("BackSpaceKey", deleteAction);
@@ -226,6 +264,9 @@ public class DiagramDialog extends javax.swing.JDialog
     diagPanel.getActionMap().put("KeyY", redoAction);
     diagPanel.getActionMap().put("KeyS", saveAction);
     diagPanel.getActionMap().put("KeyA", selectAllAction);
+    diagPanel.getActionMap().put("KeyC", copyAction);
+    diagPanel.getActionMap().put("KeyX", cutAction);
+    diagPanel.getActionMap().put("KeyV", pasteAction);
   }
 
   /**
@@ -255,6 +296,9 @@ public class DiagramDialog extends javax.swing.JDialog
     SelectAllItem = new javax.swing.JMenuItem();
     DiagramUndoItem = new javax.swing.JMenuItem();
     DiagramRedoItem = new javax.swing.JMenuItem();
+    CopyItem = new javax.swing.JMenuItem();
+    CutItem = new javax.swing.JMenuItem();
+    PasteItem = new javax.swing.JMenuItem();
 
     setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     setModal(true);
@@ -400,6 +444,36 @@ public class DiagramDialog extends javax.swing.JDialog
       }
     });
     DiagramEditMenu.add(DiagramRedoItem);
+
+    CopyItem.setText("Copy (CTRL+C)");
+    CopyItem.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        CopyItemActionPerformed(evt);
+      }
+    });
+    DiagramEditMenu.add(CopyItem);
+
+    CutItem.setText("Cut (CTRL+X)");
+    CutItem.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        CutItemActionPerformed(evt);
+      }
+    });
+    DiagramEditMenu.add(CutItem);
+
+    PasteItem.setText("Paste (CTRL+V)");
+    PasteItem.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        PasteItemActionPerformed(evt);
+      }
+    });
+    DiagramEditMenu.add(PasteItem);
 
     DiagramMenuBar.add(DiagramEditMenu);
 
@@ -583,6 +657,21 @@ public class DiagramDialog extends javax.swing.JDialog
     }
   }//GEN-LAST:event_SelectAllItemActionPerformed
 
+  private void CopyItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CopyItemActionPerformed
+  {//GEN-HEADEREND:event_CopyItemActionPerformed
+    copy();
+  }//GEN-LAST:event_CopyItemActionPerformed
+
+  private void CutItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CutItemActionPerformed
+  {//GEN-HEADEREND:event_CutItemActionPerformed
+    cut();
+  }//GEN-LAST:event_CutItemActionPerformed
+
+  private void PasteItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_PasteItemActionPerformed
+  {//GEN-HEADEREND:event_PasteItemActionPerformed
+    paste();
+  }//GEN-LAST:event_PasteItemActionPerformed
+
   public void open(String diagram) throws IOException
   {
     boolean opened = diag_controller.openDiagram(diagram);
@@ -665,6 +754,21 @@ public class DiagramDialog extends javax.swing.JDialog
     diag_controller.selectAll();
   }
   
+  private void copy()
+  {
+    diag_controller.copy();
+  }
+  
+  private void cut()
+  {
+    diag_controller.cut();
+  }
+  
+  private void paste()
+  {
+    diag_controller.paste(mouse_loc);
+  }
+  
   /**
    * @param args the command line arguments
    */
@@ -736,7 +840,9 @@ public class DiagramDialog extends javax.swing.JDialog
   private javax.swing.JButton AddAssociationBtn;
   private javax.swing.JButton AddClassBtn;
   private javax.swing.JButton AddInheritanceBtn;
+  private javax.swing.JMenuItem CopyItem;
   private javax.swing.JButton CppGenerateCodeBtn;
+  private javax.swing.JMenuItem CutItem;
   private javax.swing.JMenuItem DiagramCloseItem;
   private javax.swing.JMenu DiagramEditMenu;
   private javax.swing.JMenu DiagramFileMenu;
@@ -747,6 +853,7 @@ public class DiagramDialog extends javax.swing.JDialog
   private javax.swing.JScrollPane DiagramScrollPane;
   private javax.swing.JMenuItem DiagramUndoItem;
   private javax.swing.JButton JavaGenerateCodeBtn;
+  private javax.swing.JMenuItem PasteItem;
   private javax.swing.JMenuItem SelectAllItem;
   private javax.swing.JButton SelectBtn;
   // End of variables declaration//GEN-END:variables

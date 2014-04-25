@@ -22,7 +22,6 @@ import javax.swing.JViewport;
  */
 public class SelectDiagramState extends DiagramState
 {
-  protected final DiagramController diag_controller;
   private final ConfigurationManager cfg_mgr;
   private int diag_ref_x; // reference for dragging diagram
   private int diag_ref_y;
@@ -32,7 +31,6 @@ public class SelectDiagramState extends DiagramState
   public SelectDiagramState(JViewport v) throws IOException
   {
     super(v);
-    diag_controller = DiagramController.getInstance();
     cfg_mgr = ConfigurationManager.getInstance();
     select_distance = Double.parseDouble(
             cfg_mgr.getConfigValue(ConfigurationManager.SELECT_DISTANCE));
@@ -42,13 +40,15 @@ public class SelectDiagramState extends DiagramState
   public SelectDiagramState(JViewport v, MouseEvent evt) throws IOException
   {
     super(v);
-    diag_controller = DiagramController.getInstance();
     cfg_mgr = ConfigurationManager.getInstance();
     select_distance = Double.parseDouble(
             cfg_mgr.getConfigValue(ConfigurationManager.SELECT_DISTANCE));
     diag_ref_x = evt.getX();
     diag_ref_y = evt.getY();
-    left_mouse_down = false;
+    if((evt.getModifiers() & MouseEvent.BUTTON1_MASK) != 0)
+      left_mouse_down = true;
+    else
+      left_mouse_down = false;
   }
   
   @Override

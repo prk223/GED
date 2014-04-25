@@ -8,11 +8,14 @@ package ged;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JViewport;
 
 /**
@@ -375,6 +378,45 @@ public class DiagramController
   public void selectAll() throws IOException
   {
     state = state.selectAll();
+    diag_panel.repaint();
+  }
+  
+  public void cut()
+  {
+    try
+    {
+      state = state.cut();
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(DiagramController.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    diag_panel.repaint();
+  }
+  
+  public void copy()
+  {
+    try
+    {
+      state = state.copy();
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(DiagramController.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    diag_panel.repaint();
+  }
+  
+  public void paste(Point loc)
+  {
+    try
+    {
+      state = state.paste(loc);
+    }
+    catch (IOException ex)
+    {
+      Logger.getLogger(DiagramController.class.getName()).log(Level.SEVERE, null, ex);
+    }
     diag_panel.repaint();
   }
   

@@ -32,6 +32,10 @@ public interface DiagramElement
   
   public void displayEditGui(MouseEvent evt);
   
+  public int getMinX();
+  
+  public int getMinY();
+  
   public int getMaxX();
   
   public int getMaxY();

@@ -118,4 +118,23 @@ public class ElementSelectedState extends SelectDiagramState
     return next_state;
   }
   
+  @Override
+  public DiagramState cut() throws IOException
+  {
+    copy();
+    diag_controller.removeDiagramElement(selected_element);
+    next_state = new SelectDiagramState(view_port);
+    
+    return next_state;
+  }
+  
+  @Override
+  public DiagramState copy() throws IOException
+  {
+    copied_elements = new ArrayList<>();
+    copied_elements.add(selected_element);
+    
+    return next_state;
+  }
+  
 }

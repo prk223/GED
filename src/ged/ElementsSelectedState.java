@@ -138,4 +138,33 @@ public class ElementsSelectedState extends SelectDiagramState
     return next_state;
   }
   
+  @Override
+  public DiagramState cut() throws IOException
+  {
+    copy();
+    Iterator<DiagramElement> elIt = selected_elements.iterator();
+    while(elIt.hasNext())
+    {
+      DiagramElement e = elIt.next();
+      diag_controller.removeDiagramElement(e);
+    }
+    next_state = new SelectDiagramState(view_port);
+    
+    return next_state;
+  }
+  
+  @Override
+  public DiagramState copy() throws IOException
+  {
+    copied_elements = new ArrayList<>();
+    Iterator<DiagramElement> elIt = selected_elements.iterator();
+    while(elIt.hasNext())
+    {
+      DiagramElement e = elIt.next();
+      copied_elements.add(e);
+    }
+    
+    return next_state;
+  }
+  
 }

@@ -7,8 +7,11 @@
 package ged;
 
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import javax.swing.JViewport;
 
 /**
@@ -19,12 +22,15 @@ public class DiagramState
 {
   protected final JViewport view_port;
   protected DiagramState next_state;
+  protected final DiagramController diag_controller;
+  protected static ArrayList<DiagramElement> copied_elements;
   
   @SuppressWarnings("LeakingThisInConstructor")
-  public DiagramState(JViewport v)
+  public DiagramState(JViewport v) throws IOException
   {
     view_port = v;
     next_state = this;
+    diag_controller = DiagramController.getInstance();
   }
   
   public DiagramState mouseDoubleClicked(MouseEvent evt)
@@ -112,6 +118,56 @@ public class DiagramState
   
   public DiagramState selectAll() throws IOException
   {
+    return next_state;
+  }
+  
+  public DiagramState cut() throws IOException
+  {
+    return next_state;
+  }
+  
+  public DiagramState copy() throws IOException
+  {
+    return next_state;
+  }
+  
+  public DiagramState paste(Point loc) throws IOException
+  {
+    if((copied_elements != null) && !copied_elements.isEmpty())
+    {
+      Iterator<DiagramElement> elIt = copied_elements.iterator();
+      // Get paste offset based on first element
+      DiagramElement first = elIt.next();
+      
+      // Get center location of all elements
+      int minX = first.getMinX();
+      int minY = first.getMinY();
+      int maxX = first.getMaxX();
+      int maxY = first.getMaxY();
+      while(elIt.hasNext())
+      {
+        DiagramElement e = elIt.next();
+        if(e.getMinX() < minX)
+          minX = e.getMinX();
+        if(e.getMinY() < minY)
+          minY = e.getMinY();
+        if(e.getMaxX() > maxX)
+          maxX = e.getMaxX();
+        if(e.getMaxY() > maxY)
+          maxY = e.getMaxY();
+      }
+      int deltaX = loc.x - ((maxX - minX) / 2);
+      int deltaY = loc.y - ((maxY - minY) / 2);
+      
+      elIt = copied_elements.iterator();
+      while(elIt.hasNext())
+      {
+        DiagramElement e = elIt.next().cloneElement();
+        e.move(deltaX, deltaY);
+        diag_controller.addDiagramElement(e);
+      }
+    }
+    
     return next_state;
   }
 }
