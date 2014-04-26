@@ -70,7 +70,6 @@ public abstract class CodeGenerator
     return tmpFile;
   }
   
-  // To be overwritten by subclasses
   public ArrayList<File> generateCode(ClassDiagram d) throws IOException
   {
     ArrayList<File> codeFiles = new ArrayList<>();

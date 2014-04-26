@@ -22,14 +22,14 @@ import javax.swing.JViewport;
  */
 public class ElementSelectedState extends SelectDiagramState
 {
-  protected final DiagramElement selected_element;
+  protected final ElementDecorator selected_element;
   private final int drag_offset_x; // offset from element loc to spot clicked
   private final int drag_offset_y;
   
   public ElementSelectedState(JViewport v, DiagramElement e, MouseEvent evt) throws IOException
   {
     super(v);
-    selected_element = e;
+    selected_element = new ElementDecorator(e, Color.BLUE);
     if(selected_element == null)
       System.err.println("ElSelState:selected_element cannot be null!");
     drag_offset_x = selected_element.getLocation().x - evt.getX();
@@ -41,11 +41,7 @@ public class ElementSelectedState extends SelectDiagramState
   @Override
   public void draw(Graphics g)
   {
-    Color oldColor = g.getColor();
-    Color newColor = new Color(0, 0, 255);
-    g.setColor(newColor);
     selected_element.draw(g);
-    g.setColor(oldColor);
   }
   
   @Override
@@ -59,10 +55,10 @@ public class ElementSelectedState extends SelectDiagramState
         DiagramElement e = getNearestElement(null, evt.getX(), evt.getY());
         if(e != null)
         {
-          if(evt.isControlDown() && (e != selected_element))
+          if(evt.isControlDown() && (e != selected_element.getElement()))
           {
             ArrayList<DiagramElement> elements = new ArrayList<>();
-            elements.add(selected_element);
+            elements.add(selected_element.getElement());
             elements.add(e);
             return new ElementsSelectedState(view_port, elements, evt);
           }
@@ -113,7 +109,7 @@ public class ElementSelectedState extends SelectDiagramState
   @Override
   public DiagramState delete() throws IOException
   {
-    diag_controller.removeDiagramElement(selected_element);
+    diag_controller.removeDiagramElement(selected_element.getElement());
     return new SelectDiagramState(view_port);
   }
   
@@ -121,7 +117,7 @@ public class ElementSelectedState extends SelectDiagramState
   public DiagramState cut() throws IOException
   {
     copy();
-    diag_controller.removeDiagramElement(selected_element);
+    diag_controller.removeDiagramElement(selected_element.getElement());
     return new SelectDiagramState(view_port);
   }
   
@@ -129,7 +125,7 @@ public class ElementSelectedState extends SelectDiagramState
   public DiagramState copy() throws IOException
   {
     copied_elements = new ArrayList<>();
-    copied_elements.add(selected_element.cloneElement());
+    copied_elements.add(selected_element.getElement().cloneElement());
     
     return this;
   }

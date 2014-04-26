@@ -19,17 +19,13 @@ import javax.swing.JViewport;
  */
 public class AddElementDiagramState extends DiagramState
 {
-  private final DiagramController diag_controller;
-  private final DiagramElement new_element;
+  private final ElementDecorator new_element;
   private boolean mouse_on_diagram;
   
   public AddElementDiagramState(JViewport v, DiagramElement e) throws IOException
   {
     super(v);
-    diag_controller = DiagramController.getInstance();
-    new_element = e;
-    if(new_element == null)
-      System.err.println("AddElementDiagramState: e cannot be null!");
+    new_element = new ElementDecorator(e, Color.RED);
     mouse_on_diagram = false;
   }
   
@@ -38,7 +34,7 @@ public class AddElementDiagramState extends DiagramState
   {
     try
     {
-      diag_controller.addDiagramElement(new_element);
+      diag_controller.addDiagramElement(new_element.getElement());
       return new SelectDiagramState(view_port);
     }
     catch (IOException ex)
@@ -78,15 +74,7 @@ public class AddElementDiagramState extends DiagramState
   @Override
   public void draw(Graphics g)
   {
-    // Change the color for the class that is being placed
-    Color oldColor = g.getColor();
-    Color newColor = new Color(255, 0, 0);
-    g.setColor(newColor);
-
     if(mouse_on_diagram)
       new_element.draw(g);
-
-    // Replace the color
-    g.setColor(oldColor);
   }
 }

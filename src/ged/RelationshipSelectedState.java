@@ -20,6 +20,6 @@ public class RelationshipSelectedState extends ElementSelectedState
   {
     super(v, r, evt);
     if(evt.getButton() == MouseEvent.BUTTON3)
-      ((Relationship)(selected_element)).addVertex(evt.getX(), evt.getY());
+      r.addVertex(evt.getX(), evt.getY());
   }
 }
