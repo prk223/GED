@@ -267,17 +267,13 @@ public class CodeDialog extends javax.swing.JDialog
 
   public void open(boolean java) throws IOException
   {
-    ClassDiagram openedDiagram = diag_controller.getOpenDiagram();
-    if(openedDiagram != null)
-    {
-      if(java) code_files = diag_controller.generateJavaCode();
-      else     code_files = diag_controller.generateCppCode();
-      file_index = 0;
-      TitledBorder paneBorder = (TitledBorder)CodeScrollPane.getBorder();
-      paneBorder.setTitle(openedDiagram.getName());
-      displayCurrentFile();
-      setVisible(true);
-    }
+    if(java) code_files = diag_controller.generateJavaCode();
+    else     code_files = diag_controller.generateCppCode();
+    file_index = 0;
+    TitledBorder paneBorder = (TitledBorder)CodeScrollPane.getBorder();
+    paneBorder.setTitle(diag_controller.getOpenDiagramName());
+    displayCurrentFile();
+    setVisible(true);
   }
   
   public void close() throws IOException
