@@ -138,7 +138,7 @@ public class SelectDiagramState extends DiagramState
           int x, int y)
   {
     DiagramElement nearestElem = null; // Clear any previous selection
-    Diagram diag = diag_controller.getOpenDiagram();
+    ClassDiagram diag = diag_controller.getOpenDiagram();
     double minDistance = select_distance;
     Iterator<DiagramElement> it = diag.getElements().iterator();
     while(it.hasNext())
@@ -174,7 +174,7 @@ public class SelectDiagramState extends DiagramState
   @Override
   public DiagramState selectAll()
   {
-    Diagram diag = diag_controller.getOpenDiagram();
+    ClassDiagram diag = diag_controller.getOpenDiagram();
     ArrayList<DiagramElement> elements = diag_controller.getDiagramElements();
     try
     {

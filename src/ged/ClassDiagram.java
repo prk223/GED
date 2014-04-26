@@ -23,7 +23,7 @@ import java.util.Iterator;
  *
  * @author Comp
  */
-public class Diagram implements DiagramElement
+public class ClassDiagram extends DiagramElement
 {
   private final ConfigurationManager cfg_mgr;
   private String name;
@@ -33,7 +33,7 @@ public class Diagram implements DiagramElement
   private int unique_id;
   private int last_unique_id;
   
-  public Diagram(String diagName) throws IOException
+  public ClassDiagram(String diagName) throws IOException
   {
     location = new Point(0, 0);
     name = diagName;
@@ -76,9 +76,9 @@ public class Diagram implements DiagramElement
     return success;
   }
 
-  public static Diagram loadDiagram(String filePath)
+  public static ClassDiagram loadDiagram(String filePath)
   {
-    Diagram loadedDiagram = null;
+    ClassDiagram loadedDiagram = null;
     File diagFile = new File(filePath);
     if(diagFile.exists())
     {
@@ -173,12 +173,12 @@ public class Diagram implements DiagramElement
     return rep;
   }
   
-  public static Diagram fromStringRepresentation(String s) throws IOException
+  public static ClassDiagram fromStringRepresentation(String s) throws IOException
   {
-    Diagram d;
+    ClassDiagram d;
     
     String n = getValueFromTag(s, "diagram");
-    d = new Diagram(n);
+    d = new ClassDiagram(n);
     
     String startTag = "<element:";
     String endTag = "</element:";
@@ -382,7 +382,7 @@ public class Diagram implements DiagramElement
   @Override
   public DiagramElement cloneElement() throws IOException
   {
-    Diagram clonedDiagram = new Diagram(name);
+    ClassDiagram clonedDiagram = new ClassDiagram(name);
     clonedDiagram.location.x = location.x;
     clonedDiagram.location.y = location.y;
     clonedDiagram.unique_id = unique_id;
@@ -403,7 +403,7 @@ public class Diagram implements DiagramElement
   {
     if(e.getElementType().equals(getElementType()))
     {
-      Diagram d = (Diagram)e;
+      ClassDiagram d = (ClassDiagram)e;
       if(d.location.x     != location.x)        return false;
       if(d.location.y     != location.y)        return false;
       if(d.unique_id      != unique_id)         return false;

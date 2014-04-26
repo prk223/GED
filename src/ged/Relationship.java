@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  *
  * @author Comp
  */
-public class Relationship implements DiagramElement
+public class Relationship extends DiagramElement
 {
   protected final ConfigurationManager cfg_mgr;
   protected final DiagramController diag_controller;

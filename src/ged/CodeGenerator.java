@@ -41,7 +41,7 @@ public class CodeGenerator
       tab_size += " ";
   }
   
-  protected String getFileNameBase(Diagram d) throws IOException
+  protected String getFileNameBase(ClassDiagram d) throws IOException
   {
     
     String path = cfg_mgr.getConfigValue(ConfigurationManager.WORKSPACE_PATH);
@@ -71,7 +71,7 @@ public class CodeGenerator
   }
   
   // To be overwritten by subclasses
-  public ArrayList<File> generateCode(Diagram d) throws IOException
+  public ArrayList<File> generateCode(ClassDiagram d) throws IOException
   {
     ArrayList<File> codeFiles = new ArrayList<>();
     ArrayList<File> baseFiles = new ArrayList<>();
@@ -166,7 +166,7 @@ public class CodeGenerator
     return null;
   }
   
-  private void checkElements(Diagram diagram)
+  private void checkElements(ClassDiagram diagram)
   {
     errors = "";
     good_elements = new ArrayList<>();
@@ -191,7 +191,7 @@ public class CodeGenerator
       errors += "ERROR:" + error + "\n";
   }
   
-  private File createErrorFile(Diagram d) throws IOException
+  private File createErrorFile(ClassDiagram d) throws IOException
   {
     String[] individualErrors = errors.split("\n");
     int errorCount = individualErrors.length;

@@ -15,47 +15,47 @@ import java.io.IOException;
  *
  * @author Comp
  */
-public interface DiagramElement
+public abstract class DiagramElement
 {
   
-  public void draw(Graphics g);
+  public abstract void draw(Graphics g);
   
-  public Point getLocation();
+  public abstract Point getLocation();
   
-  public void setLocation(Point loc);
+  public abstract void setLocation(Point loc);
   
-  public String getElementType();
+  public abstract String getElementType();
 
-  public String getPersistentRepresentation();
+  public abstract String getPersistentRepresentation();
   
-  public double getDistanceFrom(int x, int y);
+  public abstract double getDistanceFrom(int x, int y);
   
-  public void displayEditGui(MouseEvent evt);
+  public abstract void displayEditGui(MouseEvent evt);
   
-  public int getMinX();
+  public abstract int getMinX();
   
-  public int getMinY();
+  public abstract int getMinY();
   
-  public int getMaxX();
+  public abstract int getMaxX();
   
-  public int getMaxY();
+  public abstract int getMaxY();
   
-  public void setUniqueId(int id);
+  public abstract void setUniqueId(int id);
   
-  public int getUniqueId();
+  public abstract int getUniqueId();
   
-  public void setNearElement(DiagramElement e);
+  public abstract void setNearElement(DiagramElement e);
   
-  public boolean isRelationship();
+  public abstract boolean isRelationship();
   
-  public void alertDestroyedElement(DiagramElement e);
+  public abstract void alertDestroyedElement(DiagramElement e);
   
-  public DiagramElement cloneElement() throws IOException;
+  public abstract DiagramElement cloneElement() throws IOException;
   
-  public boolean equivalentTo(DiagramElement e);
+  public abstract boolean equivalentTo(DiagramElement e);
   
-  public String accept(ElementCheckerVisitor visitor);
+  public abstract String accept(ElementCheckerVisitor visitor);
   
-  public void move(int deltaX, int deltaY);
+  public abstract void move(int deltaX, int deltaY);
   
 }

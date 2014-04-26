@@ -28,7 +28,7 @@ public class DiagramController
   private ConfigurationManager cfg_mgr = null;
   private static final String DIAG_EXTENSION = ".dgm";
   private final String varWsPath = ConfigurationManager.WORKSPACE_PATH;
-  private Diagram cur_diagram;
+  private ClassDiagram cur_diagram;
   private UndoRedo undo_redo;
   private DiagramPanel diag_panel;
   private JViewport view_port;
@@ -53,9 +53,9 @@ public class DiagramController
     return instance;
   }
   
-  public Diagram createDiagram(String diagName) throws IOException
+  public ClassDiagram createDiagram(String diagName) throws IOException
   {
-    Diagram diag = new Diagram(diagName);
+    ClassDiagram diag = new ClassDiagram(diagName);
     String workspacePath = cfg_mgr.getConfigValue(varWsPath);
     String fileName = diagName + DIAG_EXTENSION;
     String filePath = workspacePath + "\\" + fileName;
@@ -88,7 +88,7 @@ public class DiagramController
     
     String workspacePath = cfg_mgr.getConfigValue(varWsPath);
     String path = workspacePath + "\\" + diagName + DIAG_EXTENSION;
-    cur_diagram = Diagram.loadDiagram(path);
+    cur_diagram = ClassDiagram.loadDiagram(path);
     if(cur_diagram != null)
     {
       openedSuccessfully = true;
@@ -105,7 +105,7 @@ public class DiagramController
     // Close diagram if one is already open
     closeDiagram();
     
-    cur_diagram = Diagram.loadDiagram(filePath);
+    cur_diagram = ClassDiagram.loadDiagram(filePath);
     if(cur_diagram != null)
     {
       openedSuccessfully = true;
@@ -154,7 +154,7 @@ public class DiagramController
     return diagName;
   }
   
-  public Diagram getOpenDiagram()
+  public ClassDiagram getOpenDiagram()
   {
     return cur_diagram;
   }
@@ -260,7 +260,7 @@ public class DiagramController
     
     if(cur_diagram != null)
     {
-      Diagram undoneDiag = undo_redo.undo(cur_diagram);
+      ClassDiagram undoneDiag = undo_redo.undo(cur_diagram);
       if((undoneDiag != null) && (!undoneDiag.equivalentTo(cur_diagram)))
       {
         cur_diagram = undoneDiag;
@@ -278,7 +278,7 @@ public class DiagramController
     boolean redone = false;
     if(cur_diagram != null)
     {
-      Diagram redoneDiag = undo_redo.redo(cur_diagram);
+      ClassDiagram redoneDiag = undo_redo.redo(cur_diagram);
       if((redoneDiag != null) && (!redoneDiag.equivalentTo(cur_diagram)))
       {
         cur_diagram = redoneDiag;

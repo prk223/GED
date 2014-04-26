@@ -177,7 +177,7 @@ public class ProjectManager
   {
     if(cur_project != null)
     {
-      Diagram diag = diag_controller.createDiagram(diagName);
+      ClassDiagram diag = diag_controller.createDiagram(diagName);
       cur_project.addDiagram(diag);
       saveProject();
     }
@@ -252,9 +252,9 @@ public class ProjectManager
     return ret;
   }
   
-  public ArrayList<Diagram> getDiagrams()
+  public ArrayList<ClassDiagram> getDiagrams()
   {
-    ArrayList<Diagram> diagrams;
+    ArrayList<ClassDiagram> diagrams;
     if(cur_project != null)
       diagrams = cur_project.getDiagrams();
     else
@@ -291,10 +291,10 @@ public class ProjectManager
       diagramsTable.removeRow(i);
     }
       
-    ArrayList<Diagram> diagrams = getDiagrams();
+    ArrayList<ClassDiagram> diagrams = getDiagrams();
     for(int i = 0; i < diagrams.size(); i++)
     {
-      Diagram diagram = diagrams.get(i);
+      ClassDiagram diagram = diagrams.get(i);
       String diagName = diagram.getName();
       diagramsTable.addRow(new String[]{diagName});
     }

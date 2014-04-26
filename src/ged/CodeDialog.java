@@ -42,7 +42,7 @@ public class CodeDialog extends javax.swing.JDialog
   private int file_index;
   
   /**
-   * Creates new form DiagramDialog
+   * Creates new form ClassDiagramDialog
    * @param parent
    * @param modal
    * @throws java.io.IOException
@@ -273,7 +273,7 @@ public class CodeDialog extends javax.swing.JDialog
 
   public void open(boolean java) throws IOException
   {
-    Diagram openedDiagram = diag_controller.getOpenDiagram();
+    ClassDiagram openedDiagram = diag_controller.getOpenDiagram();
     if(openedDiagram != null)
     {
       if(java) code_gen = java_gen;

@@ -20,9 +20,9 @@ public class UndoRedo
   private final ArrayDeque<DiagramMemento> undo_queue;
   private final ArrayDeque<DiagramMemento> redo_queue;
   private final String password;
-  private Diagram latest_diagram;
+  private ClassDiagram latest_diagram;
   
-  public UndoRedo(Diagram initialDiagram) throws IOException
+  public UndoRedo(ClassDiagram initialDiagram) throws IOException
   {
     cfg_mgr = ConfigurationManager.getInstance();
     max_undo = Integer.parseInt(
@@ -31,16 +31,16 @@ public class UndoRedo
     undo_queue = new ArrayDeque<>(max_undo);
     redo_queue = new ArrayDeque<>(max_undo);
     password = "undo_redo_password";
-    latest_diagram = (Diagram)initialDiagram.cloneElement();
+    latest_diagram = (ClassDiagram)initialDiagram.cloneElement();
   }
   
-  public void saveState(Diagram d) throws IOException
+  public void saveState(ClassDiagram d) throws IOException
   {
     // Only queue it up if it's different than last time
     if(!d.equivalentTo(latest_diagram))
     {
-      Diagram pushDiag = latest_diagram;
-      latest_diagram = (Diagram)d.cloneElement();
+      ClassDiagram pushDiag = latest_diagram;
+      latest_diagram = (ClassDiagram)d.cloneElement();
       
       DiagramMemento memento = new DiagramMemento();
       memento.setState(pushDiag, password);
@@ -56,7 +56,7 @@ public class UndoRedo
     }
   }
   
-  public Diagram undo(Diagram currentDiag) throws IOException
+  public ClassDiagram undo(ClassDiagram currentDiag) throws IOException
   {
     saveState(currentDiag);
     if(undo_queue.size() > 0)
@@ -69,10 +69,10 @@ public class UndoRedo
       latest_diagram = mem.getState(password);
     }
     
-    return (Diagram)latest_diagram.cloneElement();
+    return (ClassDiagram)latest_diagram.cloneElement();
   }
   
-  public Diagram redo(Diagram currentDiag) throws IOException
+  public ClassDiagram redo(ClassDiagram currentDiag) throws IOException
   {
     saveState(currentDiag);
     if(redo_queue.size() > 0)
@@ -87,7 +87,7 @@ public class UndoRedo
       latest_diagram = mem.getState(password);
     }
     
-    return (Diagram)latest_diagram.cloneElement();
+    return (ClassDiagram)latest_diagram.cloneElement();
   }
   
 }

@@ -15,7 +15,7 @@ import java.io.IOException;
 public class DiagramMemento
 {
   private int hashed_password;
-  private Diagram saved_diagram;
+  private ClassDiagram saved_diagram;
   
   public DiagramMemento()
   {
@@ -23,9 +23,9 @@ public class DiagramMemento
     saved_diagram   = null;
   }
   
-  public Diagram getState(String password)
+  public ClassDiagram getState(String password)
   {
-    Diagram d = null;
+    ClassDiagram d = null;
     int hash = password.hashCode();
     if(hashed_password == hash)
       d = saved_diagram;
@@ -35,10 +35,10 @@ public class DiagramMemento
     return d;
   }
   
-  public void setState(Diagram d, String password) throws IOException
+  public void setState(ClassDiagram d, String password) throws IOException
   {
     hashed_password = password.hashCode();
-    saved_diagram = (Diagram)d.cloneElement();
+    saved_diagram = (ClassDiagram)d.cloneElement();
   }
   
 }

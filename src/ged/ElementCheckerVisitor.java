@@ -12,7 +12,7 @@ package ged;
  */
 public interface ElementCheckerVisitor
 {
-  public String visit(Diagram diagram);
+  public String visit(ClassDiagram diagram);
   public String visit(ClassElement c);
   public String visit(Relationship r);
   public String visit(InheritanceRelationship r);

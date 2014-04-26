@@ -27,7 +27,7 @@ public class JavaElementCheckerVisitor implements ElementCheckerVisitor
   }
   
   @Override
-  public String visit(Diagram diagram)
+  public String visit(ClassDiagram diagram)
   {
     String error = "";
     if(diagram.getElements().isEmpty())

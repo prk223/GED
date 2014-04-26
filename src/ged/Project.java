@@ -22,7 +22,7 @@ public class Project
 {
   private String name;
   private String description;
-  private final ArrayList<Diagram> diagrams;
+  private final ArrayList<ClassDiagram> diagrams;
   
   public Project(String pName, String pDescription)
   {
@@ -31,7 +31,7 @@ public class Project
     diagrams = new ArrayList<>();
   }
   
-  public void addDiagram(Diagram diag)
+  public void addDiagram(ClassDiagram diag)
   {
     diagrams.add(diag);
   }
@@ -40,7 +40,7 @@ public class Project
   {
     for(int i = 0; i < diagrams.size(); i++)
     {
-      Diagram d = diagrams.get(i);
+      ClassDiagram d = diagrams.get(i);
       String n = d.getName();
       if(n.equals(diagName))
       {
@@ -60,7 +60,7 @@ public class Project
     description = s;
   }
   
-  public ArrayList<Diagram> getDiagrams()
+  public ArrayList<ClassDiagram> getDiagrams()
   {
     return diagrams;
   }
@@ -109,7 +109,7 @@ public class Project
         String diagramName = projRdr.readLine();
         while(diagramName != null)
         {
-          Diagram diag = new Diagram(diagramName);
+          ClassDiagram diag = new ClassDiagram(diagramName);
           loadedProject.addDiagram(diag);
           diagramName = projRdr.readLine();
         }

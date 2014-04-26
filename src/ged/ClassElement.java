@@ -20,7 +20,7 @@ import java.util.Iterator;
  *
  * @author Comp
  */
-public class ClassElement implements DiagramElement
+public class ClassElement extends DiagramElement
 {
   private final ConfigurationManager cfg_mgr;
   
