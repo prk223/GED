@@ -20,7 +20,7 @@ import java.util.Iterator;
  *
  * @author Comp
  */
-public class CodeGenerator
+public abstract class CodeGenerator
 {
   protected ConfigurationManager cfg_mgr;
   protected String tab_size;
@@ -130,41 +130,17 @@ public class CodeGenerator
     return codeFiles;
   }
   
-  // to be overwritten by subclasses
-  protected File createBaseClassFile(ClassElement c, String baseFilename) throws IOException
-  {
-    return null;
-  }
+  protected abstract File createBaseClassFile(ClassElement c, String baseFilename) throws IOException;
   
-  // to be overwritten by subclasses
-  protected File modifyFile(File f, InheritanceRelationship r) throws IOException
-  {
-    return f;
-  }
+  protected abstract File modifyFile(File f, InheritanceRelationship r) throws IOException;
   
-  // to be overwritten by subclasses
-  protected File modifyFile(File f, AggregationRelationship r) throws IOException
-  {
-    return f;
-  }
+  protected abstract File modifyFile(File f, AggregationRelationship r) throws IOException;
   
-  // to be overwritten by subclasses
-  protected File modifyFile(File f, AssociationRelationship r) throws IOException
-  {
-    return f;
-  }
+  protected abstract File modifyFile(File f, AssociationRelationship r) throws IOException;
   
-  // to be overwritten by subclasses
-  protected File addHeaders(File f) throws IOException
-  {
-    return f;
-  }
+  protected abstract File addHeaders(File f) throws IOException;
   
-  // to be overwritten by subclasses
-  protected ElementCheckerVisitor getChecker()
-  {
-    return null;
-  }
+  protected abstract ElementCheckerVisitor getChecker();
   
   private void checkElements(ClassDiagram diagram)
   {
