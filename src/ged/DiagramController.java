@@ -452,4 +452,30 @@ public class DiagramController
     diag_panel.repaint();
   }
   
+  public ArrayList<File> generateJavaCode() throws IOException
+  {
+    ArrayList<File> codeFiles = new ArrayList<>();
+    
+    if(cur_diagram != null)
+    {
+      CodeGenerator codeGen = new JavaCodeGenerator();
+      codeFiles = codeGen.generateCode(cur_diagram);
+    }
+    
+    return codeFiles;
+  }
+  
+  public ArrayList<File> generateCppCode() throws IOException
+  {
+    ArrayList<File> codeFiles = new ArrayList<>();
+    
+    if(cur_diagram != null)
+    {
+      CodeGenerator codeGen = new CppCodeGenerator();
+      codeFiles = codeGen.generateCode(cur_diagram);
+    }
+    
+    return codeFiles;
+  }
+  
 }

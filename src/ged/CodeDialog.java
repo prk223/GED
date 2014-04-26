@@ -35,9 +35,6 @@ public class CodeDialog extends javax.swing.JDialog
   private final ConfigurationManager cfg_mgr;
   private final DiagramController diag_controller;
   private Timer code_msg_timer;
-  private CodeGenerator code_gen;
-  private final JavaCodeGenerator java_gen;
-  private final CppCodeGenerator cpp_gen;
   private ArrayList<File> code_files;
   private int file_index;
   
@@ -76,9 +73,6 @@ public class CodeDialog extends javax.swing.JDialog
       }
     });
     
-    java_gen = new JavaCodeGenerator();
-    cpp_gen  = new CppCodeGenerator();
-    code_gen = java_gen;
     file_index = 0;
   }
   
@@ -276,12 +270,11 @@ public class CodeDialog extends javax.swing.JDialog
     ClassDiagram openedDiagram = diag_controller.getOpenDiagram();
     if(openedDiagram != null)
     {
-      if(java) code_gen = java_gen;
-      else     code_gen = cpp_gen;
+      if(java) code_files = diag_controller.generateJavaCode();
+      else     code_files = diag_controller.generateCppCode();
+      file_index = 0;
       TitledBorder paneBorder = (TitledBorder)CodeScrollPane.getBorder();
       paneBorder.setTitle(openedDiagram.getName());
-      code_files = code_gen.generateCode(openedDiagram);
-      file_index = 0;
       displayCurrentFile();
       setVisible(true);
     }
@@ -386,19 +379,7 @@ public class CodeDialog extends javax.swing.JDialog
         }
       }
     }
-    catch (ClassNotFoundException ex)
-    {
-      java.util.logging.Logger.getLogger(CodeDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-    }
-    catch (InstantiationException ex)
-    {
-      java.util.logging.Logger.getLogger(CodeDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-    }
-    catch (IllegalAccessException ex)
-    {
-      java.util.logging.Logger.getLogger(CodeDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-    }
-    catch (javax.swing.UnsupportedLookAndFeelException ex)
+    catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex)
     {
       java.util.logging.Logger.getLogger(CodeDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
     }
