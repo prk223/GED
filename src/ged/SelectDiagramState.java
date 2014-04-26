@@ -58,7 +58,7 @@ public class SelectDiagramState extends DiagramState
     if(e != null)
       e.displayEditGui(evt);
     
-    return next_state;
+    return this;
   }
   
   @Override
@@ -72,9 +72,9 @@ public class SelectDiagramState extends DiagramState
         if(e != null)
         {
           if(e.isRelationship())
-            next_state = new RelationshipSelectedState(view_port, (Relationship)e, evt);
+            return new RelationshipSelectedState(view_port, (Relationship)e, evt);
           else
-            next_state = new ElementSelectedState(view_port, e, evt);
+            return new ElementSelectedState(view_port, e, evt);
         }
       }
       catch (IOException ex)
@@ -86,7 +86,7 @@ public class SelectDiagramState extends DiagramState
       left_mouse_down = true;
     }
     
-    return next_state;
+    return this;
   }
   
   @Override
@@ -95,7 +95,7 @@ public class SelectDiagramState extends DiagramState
     if(evt.getButton() == MouseEvent.BUTTON1)
       left_mouse_down = false;
     
-    return next_state;
+    return this;
   }
   
   @Override
@@ -131,7 +131,7 @@ public class SelectDiagramState extends DiagramState
       diag_ref_y = evt.getY() - deltaY;
     }
       
-    return next_state;
+    return this;
   }
   
   protected DiagramElement getNearestElement(DiagramElement excludeElement,
@@ -165,10 +165,10 @@ public class SelectDiagramState extends DiagramState
     if(e != null)
     {
       if(e.isRelationship())
-          next_state = new RelationshipSelectedState(view_port, (Relationship)e, evt);
+          return new RelationshipSelectedState(view_port, (Relationship)e, evt);
     }
     
-    return next_state;
+    return this;
   }
   
   @Override
@@ -178,14 +178,102 @@ public class SelectDiagramState extends DiagramState
     ArrayList<DiagramElement> elements = diag_controller.getDiagramElements();
     try
     {
-      next_state = new ElementsSelectedState(view_port, elements);
+      return new ElementsSelectedState(view_port, elements);
     }
     catch(IOException e)
     {
       System.err.println("Failed to create ElementsSelectedState");
     }
     
-    return next_state;
+    return this;
+  }
+  
+  @Override
+  public DiagramState paste(Point loc) throws IOException
+  {
+    if((copied_elements != null) && !copied_elements.isEmpty())
+    {
+      Iterator<DiagramElement> elIt = copied_elements.iterator();
+      // Get paste offset based on first element
+      DiagramElement first = elIt.next();
+      
+      // Set up list of elements to paste
+      ArrayList<DiagramElement> pasteElements = new ArrayList<>();
+      pasteElements.add(first.cloneElement());
+      
+      // Get center location of all elements
+      int minX = first.getMinX();
+      int minY = first.getMinY();
+      int maxX = first.getMaxX();
+      int maxY = first.getMaxY();
+      while(elIt.hasNext())
+      {
+        DiagramElement e = elIt.next();
+        pasteElements.add(e.cloneElement());
+        if(e.getMinX() < minX)
+          minX = e.getMinX();
+        if(e.getMinY() < minY)
+          minY = e.getMinY();
+        if(e.getMaxX() > maxX)
+          maxX = e.getMaxX();
+        if(e.getMaxY() > maxY)
+          maxY = e.getMaxY();
+      }
+      int deltaX = loc.x - ((maxX - minX) / 2) - minX;
+      int deltaY = loc.y - ((maxY - minY) / 2) - minY;
+      
+      tetherCopiedElements(pasteElements);
+      
+      elIt = pasteElements.iterator();
+      while(elIt.hasNext())
+      {
+        DiagramElement e = elIt.next();
+        e.move(deltaX, deltaY);
+        diag_controller.addDiagramElement(e);
+      }
+    }
+    
+    return this;
+  }
+  
+  private static void tetherCopiedElements(ArrayList<DiagramElement> elements) throws IOException
+  {
+    // Get a list of relationship elements
+    Iterator<DiagramElement> elIt = elements.iterator();
+    ArrayList<Relationship> relationships = new ArrayList<>();
+    while(elIt.hasNext())
+    {
+      DiagramElement e = elIt.next();
+      if(e.isRelationship())
+        relationships.add((Relationship)e);
+    }
+    
+    // Tether relationships if needed
+    Iterator<Relationship> relIt = relationships.iterator();
+    while(relIt.hasNext())
+    {
+      Relationship r = relIt.next();
+      int srcUid = r.getSourceClassUid();
+      int destUid = r.getDestinationClassUid();
+      if((srcUid > 0) || (destUid > 0))
+      {
+        elIt = elements.iterator();
+        while(elIt.hasNext())
+        {
+          DiagramElement e = elIt.next();
+          if((e.getElementType().equals("Class")) && 
+             (e.getUniqueId() == srcUid))
+          {
+            r.tetherSourceToClass((ClassElement)e);
+          }
+          if((e.getElementType().equals("Class")) && 
+             (e.getUniqueId() == destUid))
+          {
+            r.tetherDestinationToClass((ClassElement)e);
+          }
+        }
+      }
+    }
   }
   
 }

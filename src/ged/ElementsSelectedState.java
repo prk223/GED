@@ -73,7 +73,7 @@ public class ElementsSelectedState extends SelectDiagramState
             selected_elements.remove(e);
             if(selected_elements.size() == 1)
             {
-              next_state = new ElementSelectedState(view_port, 
+              return new ElementSelectedState(view_port, 
                       selected_elements.get(0), evt);
             }
           }
@@ -90,10 +90,10 @@ public class ElementsSelectedState extends SelectDiagramState
             drag_start_y = evt.getY();
           }
           else
-            next_state = new ElementSelectedState(view_port, e, evt);
+            return new ElementSelectedState(view_port, e, evt);
         }
         else
-          next_state = new SelectDiagramState(view_port, evt);
+          return new SelectDiagramState(view_port, evt);
       }
       catch (IOException ex)
       {
@@ -101,7 +101,7 @@ public class ElementsSelectedState extends SelectDiagramState
       }
     }
     
-    return next_state;
+    return this;
   }
   
   @Override
@@ -122,7 +122,7 @@ public class ElementsSelectedState extends SelectDiagramState
       }
     }
       
-    return next_state;
+    return this;
   }
   
   @Override
@@ -134,8 +134,7 @@ public class ElementsSelectedState extends SelectDiagramState
       DiagramElement e = elIt.next();
       diag_controller.removeDiagramElement(e);
     }
-    next_state = new SelectDiagramState(view_port);
-    return next_state;
+    return new SelectDiagramState(view_port);
   }
   
   @Override
@@ -148,9 +147,7 @@ public class ElementsSelectedState extends SelectDiagramState
       DiagramElement e = elIt.next();
       diag_controller.removeDiagramElement(e);
     }
-    next_state = new SelectDiagramState(view_port);
-    
-    return next_state;
+    return new SelectDiagramState(view_port);
   }
   
   @Override
@@ -164,7 +161,7 @@ public class ElementsSelectedState extends SelectDiagramState
       copied_elements.add(e.cloneElement());
     }
     
-    return next_state;
+    return this;
   }
   
 }

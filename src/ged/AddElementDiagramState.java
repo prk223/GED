@@ -39,34 +39,34 @@ public class AddElementDiagramState extends DiagramState
     try
     {
       diag_controller.addDiagramElement(new_element);
-      next_state = new SelectDiagramState(view_port);
+      return new SelectDiagramState(view_port);
     }
     catch (IOException ex)
     {
       System.err.println("ERR:AddElemDiagramState: Failed to create select state");
     }
-    return next_state;
+    return this;
   }
   
   @Override
   public DiagramState mouseMoved(MouseEvent evt)
   {
     new_element.setLocation(new Point(evt.getX(), evt.getY()));
-    return next_state;
+    return this;
   }
   
   @Override
   public DiagramState mouseEntered(MouseEvent evt)
   {
     mouse_on_diagram = true;
-    return next_state;
+    return this;
   }
   
   @Override
   public DiagramState mouseExited(MouseEvent evt)
   {
     mouse_on_diagram = false;
-    return next_state;
+    return this;
   }
   
   @Override

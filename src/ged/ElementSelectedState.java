@@ -64,13 +64,13 @@ public class ElementSelectedState extends SelectDiagramState
             ArrayList<DiagramElement> elements = new ArrayList<>();
             elements.add(selected_element);
             elements.add(e);
-            next_state = new ElementsSelectedState(view_port, elements, evt);
+            return new ElementsSelectedState(view_port, elements, evt);
           }
           else
-            next_state = new ElementSelectedState(view_port, e, evt);
+            return new ElementSelectedState(view_port, e, evt);
         }
         else
-          next_state = new SelectDiagramState(view_port, evt);
+          return new SelectDiagramState(view_port, evt);
       }
       catch (IOException ex)
       {
@@ -78,7 +78,7 @@ public class ElementSelectedState extends SelectDiagramState
       }
     }
     
-    return next_state;
+    return this;
   }
   
   @Override
@@ -92,7 +92,7 @@ public class ElementSelectedState extends SelectDiagramState
       selected_element.setLocation(p);
     }
       
-    return next_state;
+    return this;
   }
   
   @Override
@@ -107,15 +107,14 @@ public class ElementSelectedState extends SelectDiagramState
       left_mouse_down = false;
     }
     
-    return next_state;
+    return this;
   }
   
   @Override
   public DiagramState delete() throws IOException
   {
     diag_controller.removeDiagramElement(selected_element);
-    next_state = new SelectDiagramState(view_port);
-    return next_state;
+    return new SelectDiagramState(view_port);
   }
   
   @Override
@@ -123,9 +122,7 @@ public class ElementSelectedState extends SelectDiagramState
   {
     copy();
     diag_controller.removeDiagramElement(selected_element);
-    next_state = new SelectDiagramState(view_port);
-    
-    return next_state;
+    return new SelectDiagramState(view_port);
   }
   
   @Override
@@ -134,7 +131,7 @@ public class ElementSelectedState extends SelectDiagramState
     copied_elements = new ArrayList<>();
     copied_elements.add(selected_element.cloneElement());
     
-    return next_state;
+    return this;
   }
   
 }
