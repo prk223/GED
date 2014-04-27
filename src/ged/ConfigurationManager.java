@@ -154,12 +154,6 @@ public class ConfigurationManager
     return item;
   }
   
-  private int getCfgIndex(String varName)
-  {
-    ConfigurationItem cfgItem = getCfgItem(varName);
-    return config_items.indexOf(cfgItem);
-  }
-  
   /**
    *
    * @return
