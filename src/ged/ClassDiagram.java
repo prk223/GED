@@ -375,7 +375,10 @@ public class ClassDiagram extends DiagramElement
     {
       DiagramElement element = elIt.next();
       if(e == element)
+      {
         elIt.remove();
+        break;
+      }
     }
   }
   

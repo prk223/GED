@@ -20,7 +20,7 @@ import javax.swing.JViewport;
  *
  * @author Comp
  */
-public class SelectDiagramState extends DiagramState
+public class SelectState extends DiagramState
 {
   private final ConfigurationManager cfg_mgr;
   private int diag_ref_x; // reference for dragging diagram
@@ -28,7 +28,7 @@ public class SelectDiagramState extends DiagramState
   private final double select_distance;
   protected boolean left_mouse_down;
   
-  public SelectDiagramState(JViewport v) throws IOException
+  public SelectState(JViewport v) throws IOException
   {
     super(v);
     cfg_mgr = ConfigurationManager.getInstance();
@@ -37,7 +37,7 @@ public class SelectDiagramState extends DiagramState
     left_mouse_down = false;
   }
   
-  public SelectDiagramState(JViewport v, MouseEvent evt) throws IOException
+  public SelectState(JViewport v, MouseEvent evt) throws IOException
   {
     super(v);
     cfg_mgr = ConfigurationManager.getInstance();
@@ -79,7 +79,7 @@ public class SelectDiagramState extends DiagramState
       }
       catch (IOException ex)
       {
-        Logger.getLogger(SelectDiagramState.class.getName()).log(Level.SEVERE, null, ex);
+        Logger.getLogger(SelectState.class.getName()).log(Level.SEVERE, null, ex);
       }
       diag_ref_x = evt.getX();
       diag_ref_y = evt.getY();

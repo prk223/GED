@@ -17,12 +17,12 @@ import javax.swing.JViewport;
  *
  * @author Comp
  */
-public class AddElementDiagramState extends DiagramState
+public class AddElementState extends DiagramState
 {
   private final ElementDecorator new_element;
   private boolean mouse_on_diagram;
   
-  public AddElementDiagramState(JViewport v, DiagramElement e) throws IOException
+  public AddElementState(JViewport v, DiagramElement e) throws IOException
   {
     super(v);
     new_element = new ElementDecorator(e, Color.RED);
@@ -35,7 +35,7 @@ public class AddElementDiagramState extends DiagramState
     try
     {
       diag_controller.addDiagramElement(new_element.getElement());
-      return new SelectDiagramState(view_port);
+      return new SelectState(view_port);
     }
     catch (IOException ex)
     {

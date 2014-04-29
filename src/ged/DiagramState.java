@@ -24,7 +24,7 @@ public class DiagramState
   protected static ArrayList<DiagramElement> copied_elements;
   
   @SuppressWarnings("LeakingThisInConstructor")
-  public DiagramState(JViewport v) throws IOException
+  protected DiagramState(JViewport v) throws IOException
   {
     view_port = v;
     diag_controller = DiagramController.getInstance();
@@ -65,33 +65,14 @@ public class DiagramState
     return this;
   }
   
-  public DiagramState addClassBtnClicked() throws IOException
+  public DiagramState addElement(DiagramElement e) throws IOException
   {
-    ClassElement e = new ClassElement("", 0, 0);
-    return new AddElementDiagramState(view_port, e);
-  }
-  
-  public DiagramState addInheritanceBtnClicked() throws IOException
-  {
-    InheritanceRelationship r = new InheritanceRelationship(0, 0);
-    return new AddElementDiagramState(view_port, r);
-  }
-  
-  public DiagramState addAggregationBtnClicked() throws IOException
-  {
-    AggregationRelationship r = new AggregationRelationship(0,0);
-    return new AddElementDiagramState(view_port, r);
-  }
-  
-  public DiagramState addAssociationBtnClicked() throws IOException
-  {
-    AssociationRelationship r = new AssociationRelationship(0,0);
-    return new AddElementDiagramState(view_port, r);
+    return new AddElementState(view_port, e);
   }
   
   public DiagramState selectBtnClicked() throws IOException
   {
-    return new SelectDiagramState(view_port);
+    return new SelectState(view_port);
   }
   
   public void draw(Graphics g)

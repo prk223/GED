@@ -21,7 +21,7 @@ import javax.swing.JViewport;
  *
  * @author Comp
  */
-public class ElementsSelectedState extends SelectDiagramState
+public class ElementsSelectedState extends SelectState
 {
   protected final ArrayList<ElementDecorator> selected_elements;
   private int drag_start_x; // offset from element loc to spot clicked
@@ -125,11 +125,11 @@ public class ElementsSelectedState extends SelectDiagramState
             return new ElementSelectedState(view_port, e, evt);
         }
         else
-          return new SelectDiagramState(view_port, evt);
+          return new SelectState(view_port, evt);
       }
       catch (IOException ex)
       {
-        Logger.getLogger(SelectDiagramState.class.getName()).log(Level.SEVERE, null, ex);
+        Logger.getLogger(SelectState.class.getName()).log(Level.SEVERE, null, ex);
       }
     }
     
@@ -165,7 +165,7 @@ public class ElementsSelectedState extends SelectDiagramState
       ElementDecorator e = elIt.next();
       diag_controller.removeDiagramElement(e.getElement());
     }
-    return new SelectDiagramState(view_port);
+    return new SelectState(view_port);
   }
   
   @Override

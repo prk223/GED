@@ -6,14 +6,17 @@
 
 package ged;
 
+import java.awt.Color;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -21,10 +24,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.KeyStroke;
 import javax.swing.border.TitledBorder;
 import javax.swing.Timer;
+import javax.swing.filechooser.FileFilter;
 
 /**
  *
@@ -74,6 +79,29 @@ public class CodeDialog extends javax.swing.JDialog
     });
     
     file_index = 0;
+    
+    FileFilter javaFilter = new FileFilter(){
+      @Override
+      public String getDescription() { return "Java (*.java)"; }
+      @Override
+      public boolean accept(File f)
+      {
+        if (f.isDirectory()) return true;
+        else return f.getName().toLowerCase().endsWith(".java");
+      }
+    };
+    FileFilter cppFilter = new FileFilter(){
+      @Override
+      public String getDescription() { return "C++ (*.cpp)"; }
+      @Override
+      public boolean accept(File f)
+      {
+        if (f.isDirectory()) return true;
+        else return f.getName().toLowerCase().endsWith(".cpp");
+      }
+    };
+    CodeFileChooser.addChoosableFileFilter(javaFilter);
+    CodeFileChooser.addChoosableFileFilter(cppFilter);
   }
   
   private void initKeyComponents()
@@ -103,6 +131,7 @@ public class CodeDialog extends javax.swing.JDialog
   private void initComponents()
   {
 
+    CodeFileChooser = new javax.swing.JFileChooser();
     CodeMessage = new javax.swing.JLabel();
     CodeScrollPane = new javax.swing.JScrollPane();
     CodeTextArea = new javax.swing.JTextArea();
@@ -339,15 +368,58 @@ public class CodeDialog extends javax.swing.JDialog
   
   private void save()
   {
-    // TODO save code as
-    boolean saved = diag_controller.saveDiagram();
+    boolean saved = false;
+    if(file_index < code_files.size())
+    {
+      File codeFile = code_files.get(file_index);
+      String path = cfg_mgr.getConfigValue(
+              ConfigurationManager.WORKSPACE_PATH);
+      File workspace = new File(path);
+      CodeFileChooser.setCurrentDirectory(workspace);
+      int btnClicked = CodeFileChooser.showSaveDialog(this);
+      if(btnClicked == JFileChooser.APPROVE_OPTION)
+      {
+        try 
+        {
+          path = CodeFileChooser.getSelectedFile().getAbsolutePath();
+          File newFile = new File(path);
+          try (BufferedReader fileRead = new BufferedReader(new FileReader(codeFile)))
+          {
+            BufferedWriter copyWriter = new BufferedWriter(new FileWriter(newFile));
+            String line = fileRead.readLine();
+            while(line != null)
+            {
+              copyWriter.write(line + "\n");
+              line = fileRead.readLine();
+            }
+            fileRead.close();
+            copyWriter.close();
+            saved = true;
+          }
+        }
+        catch (IOException ex)
+        {
+          Logger.getLogger(CodeDialog.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+    }
+    
     String saveMsg;
+    Color color;
     if(saved)
-      saveMsg = "Successfully saved diagram: ";
+    {
+      saveMsg = "Successfully saved skeleton code!";
+      color = Color.GREEN;
+    }
     else
-      saveMsg = "FAILED TO SAVE DIAGRAM: ";
-    saveMsg += diag_controller.getOpenDiagramName();
+    {
+      saveMsg = "FAILED to save skeleton code!";
+      color = Color.RED;
+    }
+
+    
     CodeMessage.setText(saveMsg);
+    CodeMessage.setBackground(color);
     CodeMessage.setVisible(true);
     
     code_msg_timer.stop();
@@ -410,6 +482,7 @@ public class CodeDialog extends javax.swing.JDialog
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JMenuItem CodeCloseItem;
+  private javax.swing.JFileChooser CodeFileChooser;
   private javax.swing.JMenu CodeFileMenu;
   private javax.swing.JMenuBar CodeMenuBar;
   private javax.swing.JLabel CodeMessage;

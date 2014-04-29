@@ -90,6 +90,7 @@ public class DiagramDialog extends javax.swing.JDialog
       }
     };
     DiagramFileChooser.addChoosableFileFilter(dgm_filter);
+    CloseDialog.setVisible(false);
   }
   
   private void initDrawspaceComponents(DiagramPanel diagPanel)
@@ -311,6 +312,11 @@ public class DiagramDialog extends javax.swing.JDialog
   {
 
     DiagramFileChooser = new javax.swing.JFileChooser();
+    CloseDialog = new javax.swing.JDialog();
+    CancelCloseBtn = new javax.swing.JButton();
+    CloseNoSaveBtn = new javax.swing.JButton();
+    SaveAndCloseBtn = new javax.swing.JButton();
+    CloseWithoutSavingText = new javax.swing.JTextField();
     DiagramMessage = new javax.swing.JLabel();
     AddClassBtn = new javax.swing.JButton();
     AddInheritanceBtn = new javax.swing.JButton();
@@ -333,6 +339,73 @@ public class DiagramDialog extends javax.swing.JDialog
     CopyItem = new javax.swing.JMenuItem();
     CutItem = new javax.swing.JMenuItem();
     PasteItem = new javax.swing.JMenuItem();
+
+    CloseDialog.setModal(true);
+
+    CancelCloseBtn.setText("Cancel");
+    CancelCloseBtn.addMouseListener(new java.awt.event.MouseAdapter()
+    {
+      public void mouseClicked(java.awt.event.MouseEvent evt)
+      {
+        CancelCloseBtnMouseClicked(evt);
+      }
+    });
+
+    CloseNoSaveBtn.setText("Close");
+    CloseNoSaveBtn.addMouseListener(new java.awt.event.MouseAdapter()
+    {
+      public void mouseClicked(java.awt.event.MouseEvent evt)
+      {
+        CloseNoSaveBtnMouseClicked(evt);
+      }
+    });
+
+    SaveAndCloseBtn.setText("Save and Close");
+    SaveAndCloseBtn.addMouseListener(new java.awt.event.MouseAdapter()
+    {
+      public void mouseClicked(java.awt.event.MouseEvent evt)
+      {
+        SaveAndCloseBtnMouseClicked(evt);
+      }
+    });
+
+    CloseWithoutSavingText.setEditable(false);
+    CloseWithoutSavingText.setBackground(new java.awt.Color(0, 0, 0));
+    CloseWithoutSavingText.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+    CloseWithoutSavingText.setForeground(new java.awt.Color(255, 0, 0));
+    CloseWithoutSavingText.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+    CloseWithoutSavingText.setText("ARE YOU SURE YOU WANT TO CLOSE WITHOUT SAVING?");
+    CloseWithoutSavingText.setSelectedTextColor(new java.awt.Color(255, 0, 0));
+
+    javax.swing.GroupLayout CloseDialogLayout = new javax.swing.GroupLayout(CloseDialog.getContentPane());
+    CloseDialog.getContentPane().setLayout(CloseDialogLayout);
+    CloseDialogLayout.setHorizontalGroup(
+      CloseDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CloseDialogLayout.createSequentialGroup()
+        .addContainerGap()
+        .addGroup(CloseDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+          .addComponent(CloseWithoutSavingText, javax.swing.GroupLayout.DEFAULT_SIZE, 821, Short.MAX_VALUE)
+          .addGroup(CloseDialogLayout.createSequentialGroup()
+            .addGap(0, 0, Short.MAX_VALUE)
+            .addComponent(SaveAndCloseBtn)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(CloseNoSaveBtn)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(CancelCloseBtn)))
+        .addContainerGap())
+    );
+    CloseDialogLayout.setVerticalGroup(
+      CloseDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CloseDialogLayout.createSequentialGroup()
+        .addContainerGap()
+        .addComponent(CloseWithoutSavingText, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGroup(CloseDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(CancelCloseBtn)
+          .addComponent(CloseNoSaveBtn)
+          .addComponent(SaveAndCloseBtn))
+        .addContainerGap())
+    );
 
     setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     setModal(true);
@@ -775,6 +848,24 @@ public class DiagramDialog extends javax.swing.JDialog
     openDiagram();
   }//GEN-LAST:event_OpenDiagramItemActionPerformed
 
+  private void SaveAndCloseBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_SaveAndCloseBtnMouseClicked
+  {//GEN-HEADEREND:event_SaveAndCloseBtnMouseClicked
+    CloseDialog.setVisible(false);
+    save();
+    closeWithoutSaving();
+  }//GEN-LAST:event_SaveAndCloseBtnMouseClicked
+
+  private void CloseNoSaveBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_CloseNoSaveBtnMouseClicked
+  {//GEN-HEADEREND:event_CloseNoSaveBtnMouseClicked
+    CloseDialog.setVisible(false);
+    closeWithoutSaving();
+  }//GEN-LAST:event_CloseNoSaveBtnMouseClicked
+
+  private void CancelCloseBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_CancelCloseBtnMouseClicked
+  {//GEN-HEADEREND:event_CancelCloseBtnMouseClicked
+    CloseDialog.setVisible(false);
+  }//GEN-LAST:event_CancelCloseBtnMouseClicked
+
   public void open(String diagram) throws IOException
   {
     boolean opened = diag_controller.openDiagram(diagram);
@@ -834,8 +925,26 @@ public class DiagramDialog extends javax.swing.JDialog
   
   public void close() throws IOException
   {
-    diag_controller.closeDiagram();
-    setVisible(false);
+    String msg = "Are you sure you want to close ";
+    msg += diag_controller.getOpenDiagramName();
+    msg += " without saving???";
+    CloseWithoutSavingText.setText(msg);
+    CloseDialog.setBounds(GraphicsEnvironment.getLocalGraphicsEnvironment().
+            getMaximumWindowBounds());
+    CloseDialog.setVisible(true);
+  }
+  
+  public void closeWithoutSaving()
+  {
+    try
+    {
+      diag_controller.closeDiagram();
+      setVisible(false);
+    }
+    catch(IOException ex)
+    {
+      System.err.println("ERROR: close without saving FAILED");
+    }
   }
   
   private void undo()
@@ -999,6 +1108,10 @@ public class DiagramDialog extends javax.swing.JDialog
   private javax.swing.JButton AddAssociationBtn;
   private javax.swing.JButton AddClassBtn;
   private javax.swing.JButton AddInheritanceBtn;
+  private javax.swing.JButton CancelCloseBtn;
+  private javax.swing.JDialog CloseDialog;
+  private javax.swing.JButton CloseNoSaveBtn;
+  private javax.swing.JTextField CloseWithoutSavingText;
   private javax.swing.JMenuItem CopyItem;
   private javax.swing.JButton CppGenerateCodeBtn;
   private javax.swing.JMenuItem CutItem;
@@ -1015,6 +1128,7 @@ public class DiagramDialog extends javax.swing.JDialog
   private javax.swing.JButton JavaGenerateCodeBtn;
   private javax.swing.JMenuItem OpenDiagramItem;
   private javax.swing.JMenuItem PasteItem;
+  private javax.swing.JButton SaveAndCloseBtn;
   private javax.swing.JMenuItem SaveAsItem;
   private javax.swing.JMenuItem SelectAllItem;
   private javax.swing.JButton SelectBtn;

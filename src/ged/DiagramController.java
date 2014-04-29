@@ -76,26 +76,15 @@ public class DiagramController
   public void closeDiagram() throws IOException
   {
     cur_diagram = null;
-    state = new SelectDiagramState(view_port);
+    state = new SelectState(view_port);
   }
   
   public boolean openDiagram(String diagName) throws IOException
   {
-    boolean openedSuccessfully = false;
-    
-    // Close diagram if one is already open
-    closeDiagram();
-    
     String workspacePath = cfg_mgr.getConfigValue(varWsPath);
     String path = workspacePath + "\\" + diagName + DIAG_EXTENSION;
-    cur_diagram = ClassDiagram.loadDiagram(path);
-    if(cur_diagram != null)
-    {
-      openedSuccessfully = true;
-      undo_redo = new UndoRedo(cur_diagram);
-    }
     
-    return openedSuccessfully;
+    return openDiagramFile(path);
   }
   
   public boolean openDiagramFile(String filePath) throws IOException
@@ -265,7 +254,7 @@ public class DiagramController
       {
         cur_diagram = undoneDiag;
         undone = true;
-        state = new SelectDiagramState(view_port);
+        state = new SelectState(view_port);
         diag_panel.repaint();
       }
     }
@@ -283,7 +272,7 @@ public class DiagramController
       {
         cur_diagram = redoneDiag;
         redone = true;
-        state = new SelectDiagramState(view_port);
+        state = new SelectState(view_port);
         diag_panel.repaint();
       }
     }
@@ -295,7 +284,7 @@ public class DiagramController
   {
     diag_panel = p;
     view_port  = v;
-    state = new SelectDiagramState(v);
+    state = new SelectState(v);
   }
   
   
@@ -379,25 +368,29 @@ public class DiagramController
   
   public void prepAddClass() throws IOException
   {
-    state = state.addClassBtnClicked();
+    ClassElement c = new ClassElement("", 0, 0);
+    state = state.addElement(c);
     diag_panel.repaint();
   }
   
   public void prepAddInheritance() throws IOException
   {
-    state = state.addInheritanceBtnClicked();
+    InheritanceRelationship r = new InheritanceRelationship(0,0);
+    state = state.addElement(r);
     diag_panel.repaint();
   }
   
   public void prepAddAggregation() throws IOException
   {
-    state = state.addAggregationBtnClicked();
+    AggregationRelationship r = new AggregationRelationship(0,0);
+    state = state.addElement(r);
     diag_panel.repaint();
   }
   
   public void prepAddAssociation() throws IOException
   {
-    state = state.addAssociationBtnClicked();
+    AssociationRelationship r = new AssociationRelationship(0,0);
+    state = state.addElement(r);
     diag_panel.repaint();
   }
   
