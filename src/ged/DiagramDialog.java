@@ -35,6 +35,7 @@ public class DiagramDialog extends javax.swing.JDialog
   private final ConfigurationManager cfg_mgr;
   private final DiagramController diag_controller;
   private Timer diagram_msg_timer;
+  private Timer close_timer;
   private final CodeDialog code_dialog;
   private final Point mouse_loc;
   private final FileFilter dgm_filter;
@@ -73,6 +74,16 @@ public class DiagramDialog extends javax.swing.JDialog
       {
         DiagramMessage.setVisible(false);
         diagram_msg_timer.stop();
+      }
+    });
+    close_timer = new Timer(msgTimeoutMs / 2, new ActionListener(){
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        close_timer.stop();
+        CloseWithoutSavingText.setForeground(new Color(255,0,0));
+        CloseDialog.setVisible(false);
+        closeWithoutSaving();
       }
     });
     
@@ -850,8 +861,22 @@ public class DiagramDialog extends javax.swing.JDialog
 
   private void SaveAndCloseBtnMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_SaveAndCloseBtnMouseClicked
   {//GEN-HEADEREND:event_SaveAndCloseBtnMouseClicked
-    CloseDialog.setVisible(false);
-    save();
+    boolean success = save();
+    
+    if(success)
+    {
+      CloseWithoutSavingText.setText("Successfully saved!");
+      CloseWithoutSavingText.setForeground(Color.GREEN);
+      CloseDialog.repaint();
+    }
+    else
+    {
+      CloseWithoutSavingText.setText("Save FAILED!");
+      CloseDialog.repaint();
+    }
+    
+    close_timer.stop();
+    close_timer.start();
     closeWithoutSaving();
   }//GEN-LAST:event_SaveAndCloseBtnMouseClicked
 
@@ -993,7 +1018,7 @@ public class DiagramDialog extends javax.swing.JDialog
     }
   }
   
-  private void save()
+  private boolean save()
   {
     boolean saved = diag_controller.saveDiagram();
     String saveMsg;
@@ -1015,6 +1040,8 @@ public class DiagramDialog extends javax.swing.JDialog
     
     diagram_msg_timer.stop();
     diagram_msg_timer.start();
+    
+    return saved;
   }
   
   private void selectAll() throws IOException
